@@ -1,0 +1,9 @@
+		
+		if (examStartTime != null) {
+			examStartTime = DateTimeUtils.getDayBegin(examStartTime);
+			inDTO.setExamStartTime(examStartTime);
+		}
+		if (examEndTime != null) {
+			examEndTime = DateTimeUtils.getDayEnd(examEndTime);
+			inDTO.setExamEndTime(examEndTime);
+		}

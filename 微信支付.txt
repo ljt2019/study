@@ -1,0 +1,24 @@
+1、app唤起微信支付所需参数：
+   	@JsonProperty("appid")
+	private String appId;
+	@JsonProperty("partnerid")
+	private String partnerId;
+	/*
+	 * 预支付交易会话ID,下单接口后返回
+	 */
+	@JsonProperty("prepayid")
+	private String prepayId;
+	/*
+	 * 固定值Sign=WXPay
+	 */
+	@JsonProperty("package")
+	private String packag;
+	@JsonProperty("noncestr")
+	private String nonceStr;
+	/*
+	 * 自1970年1月1日 0点0分0秒以来的秒数
+	 */
+	@JsonProperty("timestamp")
+	private String timestamp;
+	@JsonProperty("sign")
+	private String sign;

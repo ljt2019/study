@@ -1,0 +1,51 @@
+
+1、比较使用 EXISTS 和 IN 的查询。注意两个查询返回相同的结果。IN适合于外表大而内表小的情况；EXISTS适合于外表小而内表大的情况。
+select * from TableIn where exists(select BID from TableEx where BNAME=TableIn.ANAME)
+select * from TableIn where ANAME in(select BNAME from TableEx)
+符合情况则返回true，不符合则返回false：SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member_report_id = #{reportId} AND _view.delete_flag = 0)
+		
+		<select id="HavehealthRecordByReportTypeAndMemPrescriptionId" resultType="java.lang.Boolean">
+			SELECT EXISTS(SELECT 1 FROM mem_health_record _health_record WHERE _health_record.mem_prescription_id = #{memPrescriptionId} AND _health_record.record_type = #{recordType})
+		</select>
+
+2、  	if(_member.sex = 0,'女','男') sexText,
+		if(_info.exam_num &gt; 0,'有','无') isTest,
+
+3、		<if test="inDTO.mallId !=null and inDTO.mallId !='' ">
+			AND instr(_member.mall_id,#{inDTO.mallId}) > 0
+	    </if>
+		<if test="inDTO.bizName !=null and inDTO.bizName != ''">
+			AND instr(_account_a_r.biz_name,#{inDTO.bizName}) > 0
+		</if>
+
+4、		concat(_member.height,'cm') AS height
+		假如_member.height查询结果为 1.80，则height最终返回结果为字符串 1.80cm 
+   
+
+5、     CASE WHEN IFNULL(apkDeviceRel.id , 0 ) != 0 
+		THEN NULL ELSE dev.device_token
+		END AS deviceToken
+
+        CASE WHEN _Device.is_deposit_open = 0 THEN '关闭'
+		WHEN _Device.is_deposit_open = 1 THEN '开启' 
+		END AS isDepositOpenStr
+
+		CASE WHEN device.manufacturer = 0 THEN '好家庭'
+		WHEN device.manufacturer = 1 THEN '汇祥'
+		WHEN device.manufacturer = 2 THEN '清华同方'
+		WHEN device.manufacturer = 3 THEN '东华原'
+		WHEN device.manufacturer = 4 THEN '中大'
+		WHEN device.manufacturer = 5 THEN '英吉多' END AS manufacturerName
+		
+6、		<if test="param.deviceIdentity != null and param.deviceIdentity != '' ">
+			AND device.device_identity LIKE CONCAT('%', #{param.deviceIdentity}, '%')
+		</if>
+		<if test="param.onlineStatus != null and param.onlineStatus != '' ">
+			AND device.online_status =#{param.onlineStatus}
+		</if>
+		
+		
+		
+		
+		
+		

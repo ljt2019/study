@@ -1,0 +1,16 @@
+
+1、首先确定eclipse是否安装了个git插件，如果没有则去安装。
+
+2、配置git信息：菜单栏Window ->Preferences -> Team -> Git -> Configuration，点击AddEntry…，添加name和email，在将项目代码commit到Git时需要用到name和email信息。在点击AddEntry…弹出的对话框中，Key填user.name，Value填姓名信息，这是添加name信息，在添加email信息时，Key填user.email，Value填email地址。
+
+3、关联Git：Team -> Share Project，选Git，点击Next。勾选Use or create repository in parent folder of project，选中要发布的项目，点击Create Repository，点击Finish完成。 
+
+4、commit项目到本地：鼠标选中要发布的项目，单击右键，Team -> Commit，
+注意记得填写Commit message，勾选全选，点击Commit提交。
+
+5、发布到GitHub：Team -> Remote -> Push，粘贴URI，填写User和Password，点击Next；点击Source ref的下拉框，选择master，点击Add Spec，点击Finish，点击OK。
+
+6、Eclipse导入GitHub项目：Window -> Show View -> Git -> GitRepositories，点击OK；
+在Git Repositories视图中，点击图示按钮，进入Clone Git Repository对话框；
+填写URI，User，Password，点击Next；点击Next；选择要保存的路径，点击Finish。
+至此，项目代码就被下载到指定目录下了，需要使用的时候通过Eclipse Import进来即可。

@@ -1,0 +1,5 @@
+
+
+Map<String, Long> collect1 = rels.stream().collect(Collectors.groupingBy(PreQuestionResultSubjectRel::getQuestionResultId, Collectors.counting()));
+
+symptoms_name£∫[{"id": "25e12321da2a11e7b9def48e38c3c5b0", "name": "∏Œ”Ù∆¯÷Õ"}, {"id": "29b3c097da2a11e7b9def48e38c3c5b0", "name": "“ı–È—Ùø∫"}]

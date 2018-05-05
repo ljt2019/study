@@ -1,0 +1,21 @@
+
+
+1、关于时间格式转换：DateTimeUtils.paseTimeStr(Long timestamp);//将时间戳转为时分秒
+
+2、关于json数据：JsonUtils
+例如：List<String> images = JsonUtils.toListHasCatch(gymHouseInDTO.getImages(), String.class);
+      List<TagCategory> tagCategories = JsonUtils.toListHasCatch(symptom.getTagCategory(), TagCategory.class);
+
+2、后台获取当前用户信息：ShiroUtils
+
+3、app获取当前用户信息:AppPricipalUtil【静态方法方式，在service层取用】
+                       SSOAuthenticationToken【以参数形式传进方式，在controller层取用】
+
+4、获得权益卡数据：EquityCardDTO equityCardDTO = sysConfigService.queryCard();
+
+5、订单编码规则：OrderUtil
+
+6、常量工具类：CommonConstant
+
+7、属性复制工具：BeanUtils.copyProperties ( param , gym );   将前者的值复制给后者
+

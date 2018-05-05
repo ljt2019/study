@@ -1,0 +1,100 @@
+{
+    "code": 2000,
+    "msg": "OK",
+    "data": {
+        "motionScheme": {//表示小象运动方案
+            "id": "62",
+            "schemeName": "正常跑",
+            "sportTime": 20,
+            "effect": "初始训练方案",
+            "calorie": 0
+        },
+		
+        "outdoor": {//户外步行方案
+            "id": "d02025f5e49011e7b9def48e38c3c5b0",
+            "name": "正常走",
+            "effect": "正常走",
+            "count": 60,
+            "walkSpeed": 90,
+            "walkCount": 120,
+            "walkScop": 0.75,
+            "duration": 50
+        },
+		
+        "courses": [//课程方案
+            {
+                "id": "18ff4bf1e49011e7b9def48e38c3c5b0",//课程id
+                "effect": "以小器械训练为基础运动形式，快速改善肌肉松弛，燃脂增肌，塑造完美曲线的效果。",//功效
+                "duration": 312,//持续时间
+                "consume": 36.27,//消费金额
+                "name": "塑形（力量）",//一级动作名称
+                "hobby": [//爱好编号
+                    "3"
+                ],
+                "hoppyText": [//爱好
+                    "力量"
+                ],
+                "baseMotionNames": [//二级动作名称
+                    "开合跳",
+                    "横向移动",
+                    "臂曲伸",
+                    "俯身飞鸟",
+                    "俯卧撑",
+                    "站姿推举",
+                    "俯身划船",
+                    "臂弯举",
+                    "拉伸",
+                    "深蹲",
+                    "侧平举",
+                    "肩袖外展"
+                ],
+                "hasLifeCourse": 0//是否有生活馆课程
+            },
+            {
+                "id": "74baa738ef9c11e7b9def48e38c3c5b0",
+                "effect": "圣达菲撒飞洒圣达菲阿斯顿分撒旦飞洒发达萨德仿盛大散打是撒啊发分身大师的啊啊萨德萨德分撒旦范德萨散打盛大范德萨萨德萨德散打说多都是萨德撒旦撒的飞洒地方圣达菲圣达菲散打分身大师的萨德圣达菲的飞洒圣达菲圣达菲圣达菲散打费撒地方撒地方   圣达菲萨德法萨芬撒仿盛大仿盛大分撒旦圣达菲是范德萨都是萨德仿盛大仿盛大散打飞飞洒仿盛大仿盛大飞范德萨撒地方的萨菲圣达菲的萨菲散打阿斯蒂芬散打圣达菲的萨菲倒萨的萨菲的萨菲盛大范德萨是艾丝凡散打发飞洒地方散打费撒地方撒地方散打发士大夫圣达菲的盛大萨德费仿盛大萨德费仿盛大撒地方撒地方圣达菲萨德圣达菲的萨菲打算的萨德的萨菲的萨菲第三方的说到是否",
+                "duration": 15,
+                "consume": 4.4848,
+                "name": "拉伸",
+                "hobby": [
+                    "1",
+                    "2",
+                    "3"
+                ],
+                "hoppyText": [
+                    "心肺",
+                    "柔韧",
+                    "力量"
+                ],
+                "baseMotionNames": [
+                    "凤凰顺翅",
+                    "按掌入定",
+                    "23",
+                    "推磨式"
+                ],
+                "hasLifeCourse": 1
+            }
+        ],
+		
+        "haveMotionRecord": false,
+        "haveCoursesRecord": true,
+        "HaveHealthCareRecord": false,
+        "prescriptionCreateTime": 1516000995000,
+        "examTime": null,
+		
+        "healthCares": [//理疗处方
+            {
+                "id": "38818c16e61411e7b9def48e38c3c5b0",
+                "name": "脊椎推拿脊椎推拿脊椎推拿脊椎推拿脊椎推拿",
+                "effect": null,
+                "content": null,
+                "duration": 100000,
+                "chronicNames": [
+                    "高血压",
+                    "脂肪肝"
+                ]
+            }
+        ]
+    },
+    "succeed": true
+}

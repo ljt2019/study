@@ -1,0 +1,8 @@
+
+工具类  --> JxlsUtil
+
+1、JxlsUtil ，取消注释此类中的postman专用代码 ，调用接口生成的文件在次工程的根目录下。
+
+2、Postman中的请求方式为：【x-www-form-urlencoded】
+
+3、注意excel表格的格式问题。

@@ -1,0 +1,7 @@
+            
+			collect = query.stream().map(tmp -> {
+                PreQuestionOutDTO preQuestionOutDTO = new PreQuestionOutDTO();
+                BeanUtils.copyProperties(tmp, preQuestionOutDTO);
+                preQuestionOutDTO.setTypeName(PreQuestionEnum.getByCode(tmp.getType()).getMsg());
+                return preQuestionOutDTO;
+            }).collect(Collectors.toList());

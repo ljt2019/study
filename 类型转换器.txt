@@ -1,0 +1,14 @@
+
+<result property="symptomNames" column="symptomNames" typeHandler="cn.healthmall.sail.common.mybatis.TypeHandle.JsonTypeHandler" javaType="List"/>
+
+	<resultMap type="cn.healthmall.sail.member.dto.ExamReportOutDTO" id="ExamReportOutDTO">
+		<result property="id" column="id"/>
+		<result property="examTime" column="examTime"/>
+		<result property="deviceId" column="deviceId"/>
+		<result property="reportType" column="reportType"/>
+		<result property="sex" column="sex"/>
+		<result property="birthday" column="birthday"/>
+		<result property="height" column="height"/>
+		<result property="weight" column="weight"/>
+		<result property="symptomNames" column="symptomNames" typeHandler="cn.healthmall.sail.common.mybatis.TypeHandle.JsonTypeHandler" javaType="List"/>
+	</resultMap>

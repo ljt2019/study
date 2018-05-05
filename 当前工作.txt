@@ -1,0 +1,29 @@
+
+   course_ids：["74baa738ef9c11e7b9def48e38c3c5b0","18ff4bf1e49011e7b9def48e38c3c5b0"]
+   health_care_ids：["1","2201f948e56711e7b9def48e38c3c5b0","3","38818c16e61411e7b9def48e38c3c5b0","4","ddeb412ce56711e7b9def48e38c3c5b0"]
+   symptom_ids：["beb65a23da2911e7b9def48e38c3c5b0","af5c8ceada2911e7b9def48e38c3c5b0","ba11e008d1c711e7b9def48e38c3c5b0","3a45dbccda2a11e7b9def48e38c3c5b0","3e6a7525da2a11e7b9def48e38c3c5b0","361b6c71da2a11e7b9def48e38c3c5b0","4ea0b293da2a11e7b9def48e38c3c5b0"]
+  
+    COURSE(1,"课程"),
+    MOTION(2,"小象运动跑步"),
+    OUTDOOR(3,"户外步行"),
+    OTHER(4,"其它运动"),
+    HEALTHCARE(5,"理疗");
+  
+  foodTherapy
+  foodTherapies  
+  
+[{"selected":false,"content":"的萨菲","source":1,"index":"A","subjectIndex":null,"detailsContent":null,"option":"A","map":null},{"selected":false,"content":"阿斯蒂芬","source":2,"index":"B","subjectIndex":null,"detailsContent":null,"option":"B","map":null}]
+
+[{"tagType":1,"tags":["二阴","大肠","胃"]}]
+[{"tagType":1,"tags":["二阴","大肠","胃"]},{"tagType":2,"tags":["二阴","大肠","胃"]},{"tagType":3,"tags":["二阴","大肠","胃"]}]
+  
+显示对应的证型慢性病对应选项的数量
+tagCategories ========= TagCategory [tagType=3, tags=[二阴, 大肠, 胃]]
+JsonUtils.toJson(tag.getTags()) ========= ["二阴","大肠","胃"]
+
+
+269caacc4f8111e8b9def48e38c3c5b0   用户id
+269caacc4f8111e8b9def48e38c3c5b0
+269caacc4f8111e8b9def48e38c3c5b0
+bfb60c7525ca11e8b9def48e38c3c5b0   运动记录id
+

@@ -1,0 +1,10 @@
+		
+	CriteriaList criteriaList = new CriteriaList();
+	criteriaList.and(CardType_.id.equal(cardTypeInDTO.getId()));
+	criteriaList.and(CardType_.deleteFlag.equal(CommonConstant.NOT_DELETE));
+	List<CardType> cardTypeList = query(Query.newQuery().where(criteriaList.getData()), null);
+
+	String cardTypeId = cardType.getId();
+	CardTypeCityRelExample cardTypeCityRelExample = new CardTypeCityRelExample();
+	cardTypeCityRelExample.createCriteria().andCardTypeIdEqualTo(cardTypeId);
+	cardTypeCityRelService.deleteByExample(cardTypeCityRelExample);
