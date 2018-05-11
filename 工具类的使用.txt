@@ -1,11 +1,13 @@
 
 
 1、关于时间格式转换：DateTimeUtils.paseTimeStr(Long timestamp);//将时间戳转为时分秒
+                     org.apache.commons.lang3.time.DateUtils
 
 2、关于json数据：JsonUtils
 例如：List<String> images = JsonUtils.toListHasCatch(gymHouseInDTO.getImages(), String.class);
       List<TagCategory> tagCategories = JsonUtils.toListHasCatch(symptom.getTagCategory(), TagCategory.class);
-
+	  JsonUtils.toJson(param.getImagelist())
+	  
 2、后台获取当前用户信息：ShiroUtils
 
 3、app获取当前用户信息:AppPricipalUtil【静态方法方式，在service层取用】
@@ -18,4 +20,42 @@
 6、常量工具类：CommonConstant
 
 7、属性复制工具：BeanUtils.copyProperties ( param , gym );   将前者的值复制给后者
+
+8、分组统计问题数：【String:评分结果id   Long：评分结果对应的题目的数量】
+	Map<String, Long> collect1 = rels.stream().collect(Collectors.groupingBy(PreQuestionResultSubjectRel::getQuestionResultId, Collectors.counting()));
+	Map<String, List<PreQuestionResultSubjectRel>> collect2 = rels.stream().collect(Collectors.groupingBy(PreQuestionResultSubjectRel::getQuestionResultId, Collectors.toList()));
+
+9、判空处理：StringUtils.isBlank(param.getChronicDiseasesId())
+
+10、格式转换：
+BigDecimal distance = sportRecordMiniOutDTO.getDistance();
+			if (distance != null) {
+				distance = distance.setScale(1, BigDecimal.ROUND_HALF_UP);
+				sportRecordMiniOutDTO.setDistance(calorie);
+			}else {
+				sportRecordMiniOutDTO.setDistance(new BigDecimal(1));
+			}
+
+11、距离转换：recordListOutDTO.setSportKilometre(UnitChangeUtil.metre2Kilometre(recordListOutDTO.getSportKilometre(), 2));
+
+12、private static final List<Integer> DATE_TYPE = Arrays.asList(1, 2, 3);
+
+13、排序
+Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
+				@Override
+				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
+					return o2.getUseStatus().compareTo(o1.getUseStatus());
+				}
+			});
+
+
+
+
+
+
+
+
+
+
+
 

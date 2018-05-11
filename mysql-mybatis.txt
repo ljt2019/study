@@ -44,7 +44,18 @@ select * from TableIn where ANAME in(select BNAME from TableEx)
 			AND device.online_status =#{param.onlineStatus}
 		</if>
 		
+7、,DATE_FORMAT(record.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime
+	date_format(_record.start_time,'%Y-%m-%d %H:%i:%s') AS startTimeStr
+   时间格式：yyyy-MM-dd HH:mm:ss
 		
+8、依据时间进行分组，并按时间进行降序排序
+select t.* from
+    (select r.mall_id
+	,SUM(r.sport_metre) as sportMetre
+	,SUM(r.sport_duration) as sportDuration
+	,DATE_FORMAT(r.create_time,'%Y-%m-%d') as createDate 
+    from mem_sport_record r where r.mall_id='t2042483793' and r.create_time>='2018-01-01 00:00:00' and r.create_time<= '2018-05-11 23:59:59'  GROUP BY createDate) t 
+ORDER BY t.createDate asc;	
 		
 		
 		
