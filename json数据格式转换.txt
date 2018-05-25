@@ -26,17 +26,7 @@
         return null;
     }
 	
-控制台打印：
-item.getTagCategory() === [{"tagType":1,"tags":["二阴","大肠","胃"]},{"tagType":2,"tags":["二阴","大肠","胃"]}]
-tag.getTagType() === 1
-courseTagEnum === VISCERA
-tag.getTags() === [二阴, 大肠, 胃]
-JsonUtils.toJson(tag.getTags()) === ["二阴","大肠","胃"]
-tags === 二阴,大肠,胃
-map === {脏腑=二阴,大肠,胃, 经络=二阴,大肠,胃, 骨骼=二阴,大肠,胃}
 
-
-43375f4d4f9c11e8b9def48e38c3c5b0
 
 
 

@@ -5,3 +5,13 @@
                 preQuestionOutDTO.setTypeName(PreQuestionEnum.getByCode(tmp.getType()).getMsg());
                 return preQuestionOutDTO;
             }).collect(Collectors.toList());
+            
+            for (PreQuestion preQuestion : query) {
+            	PreQuestionOutDTO preQuestionOutDTO = new PreQuestionOutDTO();
+            	BeanUtils.copyProperties(preQuestion, preQuestionOutDTO);
+            	preQuestionOutDTO.setTypeName(PreQuestionEnum.getByCode(preQuestion.getType()).getMsg());
+            	collect.add(preQuestionOutDTO);
+			}
+			
+getIds();
+setIds()

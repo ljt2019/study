@@ -1,0 +1,20 @@
+
+public AppResultObj alter(@Validated(AlterGroup.class) @RequestBody InDTO param) {return AppPageResultObj.success(list, pageParameter);}
+
+1、输入参数校验类：@Validated(AddGroup.class)
+                   @Validated(AlterGroup.class)
+				   @RequestBody
+
+2、入参DTO：以组的形式列出全部提示
+@NotEmpty(groups = { AlterGroup.class, DelGroup.class, ByIdGroup.class })
+@NotEmpty(groups = { AddGroup.class, AlterGroup.class })
+@NotEmpty(groups = {AddGroup.class,AlterGroup.class})
+@Length(max = 300,message = "功效描述不能超过300字",  groups = {AddGroup.class,AlterGroup.class}) 【下面的groups不能少】
+
+2、
+
+
+	输入参数校验
+	String memId = arRecord.getMembeId();
+	Assert.notNull ( memId , "memId不能为空" );
+	Member member = memberService.selectByPrimaryKey(memId);

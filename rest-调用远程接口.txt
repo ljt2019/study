@@ -1,0 +1,76 @@
+package cn.healthmall.sail.app.wrapper;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import cn.healthmall.sail.app.service.AccessService;
+import cn.healthmall.sail.common.dto.AppResultObj;
+import cn.healthmall.sail.common.util.JsonUtils;
+
+@Service
+public class ARService2 {
+	private Logger logger = LoggerFactory.getLogger(ARService2.class);
+
+	@Value("${httpclient.devMgmt.arStartUrl}")
+	private String startUrl;
+
+	@Autowired
+	private AccessService accessService;
+
+	@Autowired
+	private RestTemplate restTemplate;
+
+	public AppResultObj startAR(String deviceId, String videoId) {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("videoId", videoId);
+		map.put("deviceId", deviceId);
+
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+
+		String jsonData = JsonUtils.toJson(map);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(jsonData, headers);
+		logger.info("开始调用接入系统，启动ar接口");
+		AppResultObj result = restTemplate.postForObject(accessService.getArStartUrl(deviceId), requestEntity,
+				AppResultObj.class);
+		String temp = JsonUtils.toJson(result);
+		logger.info("调用接入系统，返回结果为{}", temp);
+		return result;
+	}
+}
+
+===================================================
+	/**
+	 * 推送数据到远程接口
+	 * @return
+	 */
+	private void pushToLifeHouse(ArRecordToLifeHouseDTO arRecord) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		String jsonData = JsonUtils.toJson(arRecord);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(jsonData, headers);
+		//生活馆接口
+		String url = "http://betamanagelife2.healthmall.cn/gateway/sail/api/sail/ar/saveArCourseData";
+		try {
+			restTemplate.postForObject(url, requestEntity,AppResultObj.class);
+			logger.info("======推送成功=====");
+		} catch (Exception e) {
+			logger.info("======连接失败====="+e);
+		}
+	}

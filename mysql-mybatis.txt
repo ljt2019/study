@@ -17,6 +17,9 @@ select * from TableIn where ANAME in(select BNAME from TableEx)
 		<if test="inDTO.bizName !=null and inDTO.bizName != ''">
 			AND instr(_account_a_r.biz_name,#{inDTO.bizName}) > 0
 		</if>
+		
+		模糊搜索
+		AND gym.name LIKE CONCAT('%', #{param.name}, '%')
 
 4、		concat(_member.height,'cm') AS height
 		假如_member.height查询结果为 1.80，则height最终返回结果为字符串 1.80cm 
@@ -46,6 +49,7 @@ select * from TableIn where ANAME in(select BNAME from TableEx)
 		
 7、,DATE_FORMAT(record.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime
 	date_format(_record.start_time,'%Y-%m-%d %H:%i:%s') AS startTimeStr
+	---------------------------------------------------------------
    时间格式：yyyy-MM-dd HH:mm:ss
 		
 8、依据时间进行分组，并按时间进行降序排序
@@ -57,6 +61,21 @@ select t.* from
     from mem_sport_record r where r.mall_id='t2042483793' and r.create_time>='2018-01-01 00:00:00' and r.create_time<= '2018-05-11 23:59:59'  GROUP BY createDate) t 
 ORDER BY t.createDate asc;	
 		
-		
-		
-		
+9、直接查询实体信息：【null中可以填入分页参数】
+		List < Device > list = this.query ( Query.newQuery ()
+				.where ( Device_.deviceIdentity.equal ( deviceId ) , Query.and , Device_.deleteFlag.equal ( CommonConstant.NOT_DELETE ) ) , null );
+		if ( list != null && list.size () > 0 )
+		{
+			return list.get ( 0 );
+		}
+
+	
+
+
+
+
+
+
+
+
+	

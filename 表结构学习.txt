@@ -5,7 +5,7 @@ auth_role：角色表【权限表】
 
 auth_role_resouce_rel：角色资源
 
-1、mem_sport_report：用户报告总表
+1、mem_sport_report：用户报告总表（体测数据）
 
 	mem_body_report_view：人体成分分析报告
 
@@ -40,7 +40,7 @@ auth_role_resouce_rel：角色资源
 
 13、pre_question_result_subject_rel：问卷评分关联
 
-14、pre_symptom：症候管理表
+14、pre_symptom：症型管理表
 
 15、pre_tag：标签管理表
 
@@ -54,7 +54,13 @@ auth_role_resouce_rel：角色资源
 
 20、运动记录共用部分：运动记录共用部分【多种设备运动记录】
 
-21、
+21、mem_card_type：会员卡类型表【1 月卡 2 季卡 3 年卡 4 次卡 5 周卡】
+
+21、mem_point_record：积分记录
+
+22、base_ar_course：Ar基础课程
+23、mem_ar_record：AR运动记录【course_id 课程id】
+24、mem_ar_record_detail：AR运动详情表【vr_record_id AR运动记录id】
 
 
 

@@ -6,7 +6,9 @@
 2、关于json数据：JsonUtils
 例如：List<String> images = JsonUtils.toListHasCatch(gymHouseInDTO.getImages(), String.class);
       List<TagCategory> tagCategories = JsonUtils.toListHasCatch(symptom.getTagCategory(), TagCategory.class);
-	  JsonUtils.toJson(param.getImagelist())
+	  List<GoodInfoInDTO> goodInfoInDTOList = JsonUtils.toList(foodTherapy.getGoodInfo(), GoodInfoInDTO.class);【json --> List<Object>】
+	  JsonUtils.toJson(param.getImagelist());【List<Object> --> json】
+	  JsonUtils.jsonArrayToString(foodTherapy.getSymptomIds()); 【将json格式的数据中的多余字符去掉】
 	  
 2、后台获取当前用户信息：ShiroUtils
 
@@ -17,7 +19,7 @@
 
 5、订单编码规则：OrderUtil
 
-6、常量工具类：CommonConstant
+6、常量工具类：CommonConstant、BigDecimalUtils
 
 7、属性复制工具：BeanUtils.copyProperties ( param , gym );   将前者的值复制给后者
 
@@ -26,6 +28,7 @@
 	Map<String, List<PreQuestionResultSubjectRel>> collect2 = rels.stream().collect(Collectors.groupingBy(PreQuestionResultSubjectRel::getQuestionResultId, Collectors.toList()));
 
 9、判空处理：StringUtils.isBlank(param.getChronicDiseasesId())
+             CollectionUtils.isEmpty(param.getImagelist())
 
 10、格式转换：
 BigDecimal distance = sportRecordMiniOutDTO.getDistance();
@@ -41,16 +44,38 @@ BigDecimal distance = sportRecordMiniOutDTO.getDistance();
 12、private static final List<Integer> DATE_TYPE = Arrays.asList(1, 2, 3);
 
 13、排序
-Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
+			//将空闲挪到前边排序
+			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
 				@Override
 				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
 					return o2.getUseStatus().compareTo(o1.getUseStatus());
 				}
 			});
 
+			//按编号排序非空闲设备
+			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
+				@Override
+				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
+					if(o2.getUseStatus()!=5&&o1.getUseStatus()!=5) {
+						if(Integer.valueOf(o2.getDeviceNo())<Integer.valueOf(o1.getDeviceNo())) {
+							return 1;
+						}else {
+							return -1;
+						}
+					}else {
+						return 0;
+					}
+				}
+			});
 
+14、时区转换：@JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8") 【记得时区转换】
+             ,DATE_FORMAT(sc.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime  【sql中不需要这个似乎也可以】
 
+    入参数dto：@DateTimeFormat(pattern="yyyy-MM-dd")
 
+15、List<String> gameids = java.util.Arrays.asList(gameString.split(","));
+
+16、判空工具：StringUtils
 
 
 
