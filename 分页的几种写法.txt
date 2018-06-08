@@ -1,0 +1,16 @@
+
+1¡¢Ð´·¨1£º
+	PageParameter pageParameter = new PageParameter(
+		parameter.getCurrentPage() == null ? 0 : parameter.getCurrentPage(),
+		parameter.getPageSize()== null ? 20 : parameter.getPageSize());
+
+2¡¢Ð´·¨2£º
+	int page = parameter.getCurrentPage() != null ? parameter.getCurrentPage() : 0;
+	int count = parameter.getPageSize() != null ? parameter.getPageSize() : 20;
+	PageParameter pageParameter = new PageParameter(page, count);
+
+3¡¢Ð´·¨3£º
+	PageParameter pageParameter = null;
+		if (parameter != null && parameter.getPage() != null && parameter.getCount() != null) {
+			pageParameter = new PageParameter(parameter.getPage(), parameter.getCount());
+		}

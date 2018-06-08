@@ -1,0 +1,18 @@
+
+-------------- Ajax方式请求 --------------
+
+1、按快捷键F12进入浏览器的开发者调试模式【这里以谷歌浏览器为例】
+
+2、选中【NetWork】-->【XHR】(当然读者可以查看其它信息可以选中其它例如：All、JS、CSS、Img...)
+
+3、请求参数：查看顺序
+  【(alter)的接口】 --> 【Headers】-->【Request PayLoad(有两种查看方式：vive source(符合json数据格式，可以直接copy用PostMan调用)和vive parsed)】
+  
+4、返回参数
+  【(alter)的接口】 --> 【Response】
+  
+5、Cookies
+  【(alter)的接口】 --> 【Cookies】
+  
+6、...
+  

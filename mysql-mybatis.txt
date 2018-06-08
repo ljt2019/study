@@ -5,7 +5,16 @@ select * from TableIn where ANAME in(select BNAME from TableEx)
 符合情况则返回true，不符合则返回false：SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member_report_id = #{reportId} AND _view.delete_flag = 0)
 		
 		<select id="HavehealthRecordByReportTypeAndMemPrescriptionId" resultType="java.lang.Boolean">
-			SELECT EXISTS(SELECT 1 FROM mem_health_record _health_record WHERE _health_record.mem_prescription_id = #{memPrescriptionId} AND _health_record.record_type = #{recordType})
+			SELECT EXISTS(
+				SELECT 
+					1 
+				FROM 
+					mem_health_record _health_record 
+				WHERE 
+					_health_record.mem_prescription_id = #{memPrescriptionId} 
+				AND 
+					_health_record.record_type = #{recordType}
+				)
 		</select>
 
 2、  	if(_member.sex = 0,'女','男') sexText,
@@ -17,57 +26,59 @@ select * from TableIn where ANAME in(select BNAME from TableEx)
 		<if test="inDTO.bizName !=null and inDTO.bizName != ''">
 			AND instr(_account_a_r.biz_name,#{inDTO.bizName}) > 0
 		</if>
-		
-		模糊搜索
-		AND gym.name LIKE CONCAT('%', #{param.name}, '%')
 
 4、		concat(_member.height,'cm') AS height
 		假如_member.height查询结果为 1.80，则height最终返回结果为字符串 1.80cm 
    
-
-5、     CASE WHEN IFNULL(apkDeviceRel.id , 0 ) != 0 
+5、    
+		CASE WHEN IFNULL(apkDeviceRel.id , 0 ) != 0 
 		THEN NULL ELSE dev.device_token
 		END AS deviceToken
-
-        CASE WHEN _Device.is_deposit_open = 0 THEN '关闭'
-		WHEN _Device.is_deposit_open = 1 THEN '开启' 
-		END AS isDepositOpenStr
 
 		CASE WHEN device.manufacturer = 0 THEN '好家庭'
 		WHEN device.manufacturer = 1 THEN '汇祥'
 		WHEN device.manufacturer = 2 THEN '清华同方'
 		WHEN device.manufacturer = 3 THEN '东华原'
 		WHEN device.manufacturer = 4 THEN '中大'
-		WHEN device.manufacturer = 5 THEN '英吉多' END AS manufacturerName
+		WHEN device.manufacturer in (5,6,7) THEN '英吉多' 
+		ELSE '其他'
+		END AS manufacturerName	
 		
-6、		<if test="param.deviceIdentity != null and param.deviceIdentity != '' ">
+6、模糊搜索【注意：数字和字符串连接应该用CONCAT()】
+		<if test="param.deviceIdentity != null and param.deviceIdentity != '' ">
 			AND device.device_identity LIKE CONCAT('%', #{param.deviceIdentity}, '%')
 		</if>
-		<if test="param.onlineStatus != null and param.onlineStatus != '' ">
-			AND device.online_status =#{param.onlineStatus}
-		</if>
+		//全模糊查询,效率更高
+		<if test="inDTO.mallId !=null and inDTO.mallId !='' ">
+			AND instr(_member.mall_id,#{inDTO.mallId}) > 0
+	    </if>
 		
-7、,DATE_FORMAT(record.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime
+7、时间格式处理【yyyy-MM-dd HH:mm:ss】
+	,DATE_FORMAT(record.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime
 	date_format(_record.start_time,'%Y-%m-%d %H:%i:%s') AS startTimeStr
-	---------------------------------------------------------------
-   时间格式：yyyy-MM-dd HH:mm:ss
+	属性注解：@JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8") 【记得时区转换】
 		
-8、依据时间进行分组，并按时间进行降序排序
+8、依据时间进行分组，并按时间进行降序排序【分组查询】
 select t.* from
     (select r.mall_id
 	,SUM(r.sport_metre) as sportMetre
 	,SUM(r.sport_duration) as sportDuration
 	,DATE_FORMAT(r.create_time,'%Y-%m-%d') as createDate 
-    from mem_sport_record r where r.mall_id='t2042483793' and r.create_time>='2018-01-01 00:00:00' and r.create_time<= '2018-05-11 23:59:59'  GROUP BY createDate) t 
+    from mem_sport_record r where r.mall_id=#{mallId} and r.create_time>=#{startTime} and r.create_time<=#{endTime} GROUP BY createDate) t 
 ORDER BY t.createDate asc;	
-		
-9、直接查询实体信息：【null中可以填入分页参数】
-		List < Device > list = this.query ( Query.newQuery ()
-				.where ( Device_.deviceIdentity.equal ( deviceId ) , Query.and , Device_.deleteFlag.equal ( CommonConstant.NOT_DELETE ) ) , null );
-		if ( list != null && list.size () > 0 )
-		{
-			return list.get ( 0 );
-		}
+
+9、判空集合是否为空：【!param.statuses.isEmpty()】
+	<if test="param.statuses != null and !param.statuses.isEmpty()">
+         and da.status in
+        <foreach item="item" index="index" collection="param.statuses" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+    </if>
+	
+10、【省市区关联】
+		LEFT JOIN pub_region province ON province.id = xx.provinceId
+		LEFT JOIN pub_region city ON city.id = xx .cityId
+		LEFT JOIN pub_region region ON region.id = xx.regionId
 
 	
 

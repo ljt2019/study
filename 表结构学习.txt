@@ -20,7 +20,7 @@ auth_role_resouce_rel：角色资源
   
 3、dev_device：运动设备表
 
-4、mem_health_info：用户健康定制信息
+4、mem_health_info：用户健康定制信息【默认没有体测的为0才对，数据库中的默认值是null】
 
 5、mem_member：用户信息表
 
@@ -54,14 +54,16 @@ auth_role_resouce_rel：角色资源
 
 20、运动记录共用部分：运动记录共用部分【多种设备运动记录】
 
-21、mem_card_type：会员卡类型表【1 月卡 2 季卡 3 年卡 4 次卡 5 周卡】
-
 21、mem_point_record：积分记录
 
-22、base_ar_course：Ar基础课程
+22、base_ar_course：Ar基础课程 【AR运动详情表  新的】
 23、mem_ar_record：AR运动记录【course_id 课程id】
+	
 24、mem_ar_record_detail：AR运动详情表【vr_record_id AR运动记录id】
 
+25、mem_card_type：会员卡类型表【1 月卡 2 季卡 3 年卡 4 次卡 5 周卡】
+
+26、dev_activity：后台活动表
 
 
 

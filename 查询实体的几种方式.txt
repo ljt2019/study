@@ -1,0 +1,23 @@
+
+1、查询实体列表方式1：【null中可以填入分页参数】
+	List<Device> list = this.query(Query.newQuery()
+		.where(Device_.deviceIdentity.equal(deviceId) ,Query.and ,Device_.deleteFlag.equal(CommonConstant.NOT_DELETE)) ,null);
+	if (list != null && list.size() > 0){
+		return list.get(0);
+	}
+		
+2、	查询实体列表方式2：【null中可以填入分页参数】
+	CriteriaList criteriaList = new CriteriaList();
+	criteriaList.and(CardType_.id.equal(cardTypeInDTO.getId()));
+	criteriaList.and(CardType_.deleteFlag.equal(CommonConstant.NOT_DELETE));
+	List<CardType> cardTypeList = this.query(Query.newQuery().where(criteriaList.getData()), null);
+	if (list != null && list.size() > 0){
+		return list.get(0);
+	}
+		
+3、查询单个实体（实体类名+Example）
+	ActivityExample activityExample = new ActivityExample();
+    activityExample.createCriteria().andIdEqualTo(id).andDeleteFlagEqualTo(CommonConstant.NOT_DELETE);
+    Activity activity = activityService.selectOneByExample(activityExample);
+
+		

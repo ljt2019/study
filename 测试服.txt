@@ -1,0 +1,31 @@
+
+a)IP:121.201.68.220   Port:6633
+
+b)登录成功以后 输入P 显示所有的服务器IP，再选择2，是当前正在使用服务器
+
+c)sail-app-api目录：cd /apps/dat/javadat/app
+
+d)sail-mgmt-api目录：cd /apps/dat/javadat/mgmt
+
+e)发布步骤：（已后台为例）
+
+a)进入mgmt目录：cd /apps/dat/javadat/mgmt.
+
+b)查看进程：(找到对应的pid号):ps -ef|grep java
+
+c)关掉对应的进程：kill -9 <pid>
+
+d)上传jar包：rz –y <对应项目的jar包>
+
+e) 启动对应的项目：（注意：必须要有 &）
+
+f) 滚动查看对应的日志：tail –f nohup.out
+
+
+#下载日志
+   1、cd /apps/logs/app【app日志】
+   2、sz sail-app-api.log
+
+
+
+

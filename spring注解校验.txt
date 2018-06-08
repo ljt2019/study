@@ -10,11 +10,23 @@ public AppResultObj alter(@Validated(AlterGroup.class) @RequestBody InDTO param)
 @NotEmpty(groups = { AddGroup.class, AlterGroup.class })
 @NotEmpty(groups = {AddGroup.class,AlterGroup.class})
 @Length(max = 300,message = "功效描述不能超过300字",  groups = {AddGroup.class,AlterGroup.class}) 【下面的groups不能少】
+@Pattern(regexp = "\\w*", message = "设备编码只能输入字母或数字或下划线", groups = { AddGroup.class, AlterGroup.class })【正则表达校验】
+@RequestBody(required = false) DTO param 【参数不是必填】
 
-2、
-
-
-	输入参数校验
+2、输入参数校验
 	String memId = arRecord.getMembeId();
 	Assert.notNull ( memId , "memId不能为空" );
 	Member member = memberService.selectByPrimaryKey(memId);
+	
+3、字段忽略，不再前端显示
+	@JsonIgnore【com.fasterxml.jackson.annotation.JsonIgnore】
+	
+4、事务 执行查询操作时的事务级别【只读】
+   @Transactional(readOnly = true)
+   
+5、
+   @RequestMapping("/{id}")
+   public AppResultObj getActivityById(@PathVariable("id") String id) {}
+   
+6、事务回滚：@Transactional(rollbackFor = Exception.class)【当发生异常时，数据库中的数据回滚到此方法没被执行前的状态】
+   

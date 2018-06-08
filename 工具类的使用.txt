@@ -7,8 +7,9 @@
 例如：List<String> images = JsonUtils.toListHasCatch(gymHouseInDTO.getImages(), String.class);
       List<TagCategory> tagCategories = JsonUtils.toListHasCatch(symptom.getTagCategory(), TagCategory.class);
 	  List<GoodInfoInDTO> goodInfoInDTOList = JsonUtils.toList(foodTherapy.getGoodInfo(), GoodInfoInDTO.class);【json --> List<Object>】
-	  JsonUtils.toJson(param.getImagelist());【List<Object> --> json】
+	  JsonUtils.toJson(param.getImagelist());【List<Object> --> json】JsonUtils.toJson(arInDTO)【打印日志用到】
 	  JsonUtils.jsonArrayToString(foodTherapy.getSymptomIds()); 【将json格式的数据中的多余字符去掉】
+	  GoodDTO goodDTO = JsonUtils.fromJson(good,GoodDTO.class)【json --> Object】
 	  
 2、后台获取当前用户信息：ShiroUtils
 
@@ -21,15 +22,15 @@
 
 6、常量工具类：CommonConstant、BigDecimalUtils
 
-7、属性复制工具：BeanUtils.copyProperties ( param , gym );   将前者的值复制给后者
+7、属性复制工具：org.springframework.beans.BeanUtils.copyProperties ( param , gym );   将前者的值复制给后者
 
 8、分组统计问题数：【String:评分结果id   Long：评分结果对应的题目的数量】
 	Map<String, Long> collect1 = rels.stream().collect(Collectors.groupingBy(PreQuestionResultSubjectRel::getQuestionResultId, Collectors.counting()));
 	Map<String, List<PreQuestionResultSubjectRel>> collect2 = rels.stream().collect(Collectors.groupingBy(PreQuestionResultSubjectRel::getQuestionResultId, Collectors.toList()));
 
-9、判空处理：StringUtils.isBlank(param.getChronicDiseasesId())
-             CollectionUtils.isEmpty(param.getImagelist())
-
+9、判空工具：org.apache.commons.lang3.StringUtils
+             org.apache.commons.collections4.CollectionUtils.isEmpty(param.getGoodsImageList())
+			  
 10、格式转换：
 BigDecimal distance = sportRecordMiniOutDTO.getDistance();
 			if (distance != null) {
@@ -75,11 +76,23 @@ BigDecimal distance = sportRecordMiniOutDTO.getDistance();
 
 15、List<String> gameids = java.util.Arrays.asList(gameString.split(","));
 
-16、判空工具：StringUtils
+16、直接查询实体信息：【null中可以填入分页参数】
+		List < Device > list = this.query ( Query.newQuery ()
+				.where ( Device_.deviceIdentity.equal ( deviceId ) , Query.and , Device_.deleteFlag.equal ( CommonConstant.NOT_DELETE ) ) , null );
+		if ( list != null && list.size () > 0 )
+		{
+			return list.get ( 0 );
+		}
+17、直接查询实体信息【单个实体】
+		ActivityExtendExample extendExample = new ActivityExtendExample();
+		extendExample.createCriteria().andActivityIdEqualTo(id).andDeleteFlagEqualTo(CommonConstant.NOT_DELETE);
+		ActivityExtend activityExtend = this.selectOneByExample(extendExample);
 
-
-
-
+18、比较时间的方法
+       1)、thisDay.after(anotherDay)【java.util.Date.after()】
+       2)、thisDay.compareTo(anotherDay) >= 0  【java.util.Date.compareTo()】
+		
+		
 
 
 
