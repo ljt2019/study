@@ -65,6 +65,10 @@ auth_role_resouce_rel：角色资源
 
 26、dev_activity：后台活动表
 
+27、base_medal：勋章表（包括等级勋章和乐享勋章）
+
+28、
+
 
 
 

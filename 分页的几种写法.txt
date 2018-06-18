@@ -4,13 +4,14 @@
 		parameter.getCurrentPage() == null ? 0 : parameter.getCurrentPage(),
 		parameter.getPageSize()== null ? 20 : parameter.getPageSize());
 
-2、写法2：
-	int page = parameter.getCurrentPage() != null ? parameter.getCurrentPage() : 0;
-	int count = parameter.getPageSize() != null ? parameter.getPageSize() : 20;
-	PageParameter pageParameter = new PageParameter(page, count);
+2、写法2：【好用】
+		Integer page = param.getPage() == null ? 0 : param.getPage();
+		Integer count = param.getCount() == null ? 0 : param.getCount();
+		PageParameter pageParameter = new PageParameter(page, count);
 
 3、写法3：
 	PageParameter pageParameter = null;
 		if (parameter != null && parameter.getPage() != null && parameter.getCount() != null) {
 			pageParameter = new PageParameter(parameter.getPage(), parameter.getCount());
 		}
+		

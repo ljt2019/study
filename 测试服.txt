@@ -26,6 +26,8 @@ f) 滚动查看对应的日志：tail –f nohup.out
    1、cd /apps/logs/app【app日志】
    2、sz sail-app-api.log
 
+   
+	nohup java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar&
 
 
 

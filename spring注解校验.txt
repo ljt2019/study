@@ -10,15 +10,22 @@ public AppResultObj alter(@Validated(AlterGroup.class) @RequestBody InDTO param)
 @NotEmpty(groups = { AddGroup.class, AlterGroup.class })
 @NotEmpty(groups = {AddGroup.class,AlterGroup.class})
 @Length(max = 300,message = "功效描述不能超过300字",  groups = {AddGroup.class,AlterGroup.class}) 【下面的groups不能少】
-@Pattern(regexp = "\\w*", message = "设备编码只能输入字母或数字或下划线", groups = { AddGroup.class, AlterGroup.class })【正则表达校验】
+
+	@Pattern(regexp = "^[1-9]*[1-9][0-9]*$", message = "只能输入大于0的整数", groups = { AddGroup.class})【正则表达校验】
+	@NotNull(groups = {message = "只能输入不能为空！", AddGroup.class})
+    private String requirement;
+
 @RequestBody(required = false) DTO param 【参数不是必填】
+@JsonInclude(Include.NON_NULL) 【】
+
+
 
 2、输入参数校验
 	String memId = arRecord.getMembeId();
 	Assert.notNull ( memId , "memId不能为空" );
 	Member member = memberService.selectByPrimaryKey(memId);
 	
-3、字段忽略，不再前端显示
+3、字段忽略，不需要入参也不需要出参时可以使用此注解
 	@JsonIgnore【com.fasterxml.jackson.annotation.JsonIgnore】
 	
 4、事务 执行查询操作时的事务级别【只读】

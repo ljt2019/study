@@ -80,11 +80,59 @@ ORDER BY t.createDate asc;
 		LEFT JOIN pub_region city ON city.id = xx .cityId
 		LEFT JOIN pub_region region ON region.id = xx.regionId
 
+	<resultMap id="GymRegionOutDTOMap" type="cn.healthmall.sail.base.dto.GymDeviceOutDTO"> 
+
+		<id column="gymId" property="gymId"/>
+		<result column="address" property="address"/>
+		<result column="openTime" property="openTime"/>
+		<result column="endTime" property="endTime"/>
+		<result column="gymName" property="gymName"/>
+		<result column="latitude" property="latitude"/>
+		<result column="longitude" property="longitude"/>
+		<result column="gymType" property="gymType"/>
+		<result column="gymTypeNumber" property="gymTypeNumber"/>
+		<result column="images" property="images"/>
+		<collection property="gymDeviceList" javaType="ArrayList" 
+			ofType="cn.healthmall.sail.base.dto.GymDeviceDetailOutDTO" column="id">
+			<result column="id" property="id"/>
+			<result column="useStatus" property="useStatus"/>
+			<result column="deviceName" property="deviceName"/>
+			<result column="devicePrice" property="devicePrice"/>
+			<result column="deviceIdentity" property="deviceIdentity"/>
+			<result column="productId" property="productId"/>
+			<result column="deviceNo" property="deviceNo"/>
+			<result column="productInfoId" property="productInfoId"/>
+		</collection>
+	</resultMap>
 	
+11、返回集合list
 
+   1)、首先写一个 resultMap
+	<resultMap id="Commodities" type="cn.healthmall.sail.base.dto.CommodityOutDTO" >
+		<id column="id" property="id" />
+    	<result column="commodity_name" property="commodityName"/>
+    	<result column="commodity_type" property="commodityType"/>
+    	<result column="commodity_h_integral" property="commodityHIntegral"/>
+    	<result column="commodity_money" property="commodityMoney"/>
+    	<result column="commodity_mix_img_url" property="commodityMixImgUrl"/>
+    	<result column="sales_num" property="salesNum"/>
+	</resultMap>
+	
+   2)、接着 
+	<select id="getCommodities" resultMap="Commodities">
+	    SELECT 
+			_commodity.id as id
+			,_commodity.commodity_name as commodityName
+			,_commodity.commodity_type as commodityType
+			,_commodity.commodity_h_integral as commodityHIntegral
+			,_commodity.commodity_money as commodityMoney
+			,_commodity.commodity_mix_img_url as commodityMixImgUrl
+			,_commodity.sales_num as salesNum
+		FROM base_commodity _commodity
+		WHERE _commodity.delete_flag = 0
+	</select>
 
-
-
+12、返回txt文本信息【带With,在xml中】：List<Medal> selectByExampleWithBLOBs(MedalExample example);
 
 
 
