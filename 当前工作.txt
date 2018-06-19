@@ -1,26 +1,23 @@
-
-Medal
-
-GiftInfoDTO
-CouponDTO
-ShareInfoDTO
-
-Continuous login
-CONTINUOUS_LOGIN
-
-Accumulative
-ACCUMULATIVE
-consumption
-
-ddd214056d2111e8b9def48e33c5b0
-ddd214056d2111e8b9def48e38c3c5b0
-
-CommodityController
-
-CommodityExpMapper.xml
-
-CommodityTypeEnum
-
-QuotaTypeEnum
-
-Coupon
+	<select id='getGymId' parameterType="java.lang.String" resultType="java.lang.String">
+		select temp.gym_id from (
+			(SELECT 
+				gym_id
+				,1 AS use_status
+			FROM dev_device 
+			WHERE trainer_mall_id =#{mallId}
+			AND product_info_id =0 
+			AND use_status=2 
+			AND delete_flag=0 
+			GROUP BY gym_id  LIMIT 1 )
+			UNION ALL 
+			(SELECT 
+				gym_id
+				,0 AS use_status
+			FROM dev_device 
+			WHERE trainer_mall_id =#{mallId}
+			AND product_info_id =0 
+			AND delete_flag=0 
+			GROUP BY gym_id  LIMIT 1)
+		) temp 
+			ORDER BY  use_status desc  limit 1
+	</select>

@@ -15,3 +15,11 @@
 			pageParameter = new PageParameter(parameter.getPage(), parameter.getCount());
 		}
 		
+4¡¢Ð´·¨4£º		
+	PageParameter pageParameter = null;
+		if (arInDTO != null && arInDTO.getPage() != null && arInDTO.getCount() != null) {
+			pageParameter = new PageParameter();
+			pageParameter.setCurrentPage(arInDTO.getPage());
+			pageParameter.setPageSize(arInDTO.getCount());
+		}
+		

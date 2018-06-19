@@ -56,7 +56,7 @@ auth_role_resouce_rel：角色资源
 
 21、mem_point_record：积分记录
 
-22、base_ar_course：Ar基础课程 【AR运动详情表  新的】
+22、base_ar_course：Ar基础课程 【AR运动详情表  新的pre_top_motion】
 23、mem_ar_record：AR运动记录【course_id 课程id】
 	
 24、mem_ar_record_detail：AR运动详情表【vr_record_id AR运动记录id】
