@@ -1,43 +1,35 @@
 
-1、比较使用 EXISTS 和 IN 的查询。注意两个查询返回相同的结果。IN适合于外表大而内表小的情况；EXISTS适合于外表小而内表大的情况。
-select * from TableIn where exists(select BID from TableEx where BNAME=TableIn.ANAME)
-select * from TableIn where ANAME in(select BNAME from TableEx)
-符合情况则返回true，不符合则返回false：SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member_report_id = #{reportId} AND _view.delete_flag = 0)
-		
-		<select id="HavehealthRecordByReportTypeAndMemPrescriptionId" resultType="java.lang.Boolean">
-			SELECT EXISTS(
-				SELECT 
-					1 
-				FROM 
-					mem_health_record _health_record 
-				WHERE 
-					_health_record.mem_prescription_id = #{memPrescriptionId} 
-				AND 
-					_health_record.record_type = #{recordType}
-				)
-		</select>
+1、【in 适合于外表大而内表小的情况，exists 适合于外表小而内表大的情况。但not时，无论那个表大，用not exists都比not in要快。】
 
-2、【sql中if函数的用法：IF(expr1,expr2,expr3)，其中，expr1是判断条件，expr2和expr3是符合expr1的自定义的返回结果。】
-		if(_info.exam_num &gt; 0,'有','无') isTest,
-   【三种选择条件以上】
-	CASE WHEN _type.order_type_id = 'SALE' THEN '销售'  
-	WHEN _type.order_type_id = 'PURCHASE' THEN '采购'
-	ELSE '其他'	
-	END AS orderType
-			
-3、
+	例如：表A（小表），表B（大表）
+	
+	select * from A where aa in (select bb from B) 效率低，用到了A表上aa列的索引；
+	select * from A where exists(select bb from B where bb=A.aa) 效率高，用到了B表上bb列的索引。 
 
-4、【sql中CONCAT函数的用法】
-	CONCAT(_member.height,'cm') AS height,假如_member.height查询结果为 1.80，则height最终返回结果为字符串 1.80cm 
+	select * from B where bb in (select aa from A) 效率高，用到了B表上bb列的索引；
+	select * from B where exists(select aa from A where aa=B.bb) 效率低，用到了A表上aa列的索引。
+
+	符合情况则返回true，不符合则返回false：SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member_report_id = #{reportId} AND _view.delete_flag = 0)
+
+2、【if(expr1,expr2,expr3)与我们常用的三目运算类似。expr1是一个表达式，如果true，返回expr2否则为expr3】
+
+   【三种选择条件以上 case when】
    
-5、【mybatis中if标签的用法】
-		<if test="inDTO.mallId !=null and inDTO.mallId !='' ">
-			AND instr(_member.mall_id,#{inDTO.mallId}) > 0
-	    </if>
-		<if test="inDTO.bizName !=null and inDTO.bizName != ''">
-			AND instr(_account_a_r.biz_name,#{inDTO.bizName}) > 0
-		</if>    
+	方式1：其中value=compare-value则返回result。
+	case when _type.order_type_id = 'SALE' then '销售' when _type.order_type_id = 'PURCHASE' then '采购' else '其他' end as orderType;
+	
+	方式2:如果第一个条件为真，返回result。如果没有匹配的result值，那么结果在ELSE后的result被返回。如果没有ELSE部分，那么NULL被返回。 
+	select case _type.order_type_id when 'SALE' then "销售" when 'PURCHASE' then "采购" else "其他" end as orderType;
+	
+3、【ifnull(expr1,expr2)，如果expr1不是null，ifnull()返回expr1，否则它返回expr2。ifnull()返回一个数字或字符串值，取决于它被使用的上下文环境。】
+
+4、【concat(str1,str2,...) 如有任何一个参数为null，则返回值为 null】【concat_ws(str1,str2,...) 函数会忽略任何分隔符参数后的 null 值】
 		
+5、【group_concat([distinct] 要连接的字段 [order by asc/desc 排序字段] [separator '分隔符'])】
+
+	连接起来的字段如果是int型，一定要转换成char再拼起来，否则在你执行后返回的将不是一个逗号隔开的串，而是byte[]。
+	select group_concat(CAST(id as char)) from t_dep 返回逗号隔开的串
+	select group_concat(Convert(id , char)) from t_dep 返回逗号隔开的串  
 		
 6、模糊搜索【注意：数字和字符串连接应该用CONCAT()】
 		<if test="param.deviceIdentity != null and param.deviceIdentity != '' ">
@@ -48,19 +40,18 @@ select * from TableIn where ANAME in(select BNAME from TableEx)
 			AND instr(_member.mall_id,#{inDTO.mallId}) > 0
 	    </if>
 		
-7、时间格式处理【yyyy-MM-dd HH:mm:ss】
-	,DATE_FORMAT(record.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime
-	date_format(_record.start_time,'%Y-%m-%d %H:%i:%s') AS startTimeStr
-	属性注解：@JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8") 【记得时区转换】
+7、【date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr】 @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")记得时区转换
+
+8、【STRCMP(str1, str2):比较两个字符串，如果这两个字符串相等返回0，如果第一个参数是根据当前的排序小于第二个参数顺序返回-1，否则返回1。】
 		
 8、依据时间进行分组，并按时间进行降序排序【分组查询】
-select t.* from
-    (select r.mall_id
-	,SUM(r.sport_metre) as sportMetre
-	,SUM(r.sport_duration) as sportDuration
-	,DATE_FORMAT(r.create_time,'%Y-%m-%d') as createDate 
-    from mem_sport_record r where r.mall_id=#{mallId} and r.create_time>=#{startTime} and r.create_time<=#{endTime} GROUP BY createDate) t 
-ORDER BY t.createDate asc;	
+	select t.* from
+		(select r.mall_id
+		,sum(r.sport_metre) as sportMetre
+		,sum(r.sport_duration) as sportDuration
+		,date_format_(r.create_time,'%Y-%m-%d') as createDate 
+		from mem_sport_record r where r.mall_id=#{mallId} and r.create_time>=#{startTime} and r.create_time<=#{endTime} group by createDate) t 
+	order by t.createDate asc;	
 
 9、判空集合是否为空：【!param.statuses.isEmpty()】
 	<if test="param.statuses != null and !param.statuses.isEmpty()">
@@ -138,7 +129,7 @@ ORDER BY t.createDate asc;
 
 12、返回txt文本信息【带With,在xml中】：List<Medal> selectByExampleWithBLOBs(MedalExample example);
 
-13、【union all】的用法
+13、【union all】的用法，两个表字段顺序要一致
 	<select id="list" parameterType="java.lang.String" resultType="cn.healthmall.sail.member.dto.ArSportRecordOutDTO">
 		SELECT a.* from (
 			SELECT
@@ -151,6 +142,7 @@ ORDER BY t.createDate asc;
 				_record.course_id AS courseId,
 				top.name AS courseName,
 				top.image_url AS frontCoverUrl,
+				'' AS trainer,
 				_record.start_time AS startTime,
 				_record.end_time AS endTime,
 				_record.member_id AS memberId

@@ -17,17 +17,15 @@ c)关掉对应的进程：kill -9 <pid>
 
 d)上传jar包：rz –y <对应项目的jar包>
 
-e) 启动对应的项目：（注意：必须要有 &）
+e) 启动对应的项目：nohup java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar&（注意：必须要有 &）
 
 f) 滚动查看对应的日志：tail –f nohup.out
-
 
 #下载日志
    1、cd /apps/logs/app【app日志】
    2、sz sail-app-api.log
 
-   
-	nohup java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar&
+#ctrl + z 退回到上层操作
 
 
 
