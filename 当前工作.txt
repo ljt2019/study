@@ -1,5 +1,32 @@
-
-
-31a4fa3ce4bb11e7b9def48e38c3c5b0  新表
-
-String.valueOf(Math.round(new Float(requirement[1])*60)*1)
+{
+    "code": 2000,
+    "msg": "OK",
+    "data": {
+        "page": null,
+        "count": null,
+        "id": "3d8ce30475cf11e8b9def48e38c3c5b0",
+        "name": "分享小仙女",
+        "quota": 2,
+        "image": "http://file02.16sucai.com/d/file/2014/0902/b61451cff1a256ecfed42fa0df372242.jpg",
+        "unlitImage": "http://a4.att.hudong.com/20/13/300000195522130770132166707_950.jpg",
+        "medalOutList": [
+            {
+                "id": "fce6a53275d511e8b9def48e38c3c5b0",
+                "name": "分享小象女02",
+                "requirement": "22/4.5333333",
+                "gift": "礼品米女",
+                "giftInfo": "23.2元;法拉利California T 2012款 4.3L 标准型;卡券3144e649共212张;卡券3144e458共3张;",
+                "shareInfo": "23.2元;卡券3144e951共4543张;卡券3144e649共3张;"
+            },
+            {
+                "id": "ff47f26575dd11e8b9def48e38c3c5b0",
+                "name": "分享小象女03",
+                "requirement": "22/4.5333333",
+                "gift": "礼品米女",
+                "giftInfo": "23.2元;法拉利California T 2012款 4.3L 标准型;卡券3144e649共212张;卡券3144e458共3张;",
+                "shareInfo": "23.2元;卡券3144e951共4543张;卡券3144e649共3张;"
+            }
+        ]
+    },
+    "succeed": true
+}

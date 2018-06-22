@@ -1,25 +1,59 @@
 
-public AppResultObj alter(@Validated(AlterGroup.class) @RequestBody InDTO param) {return AppPageResultObj.success(list, pageParameter);}
+1、输入参数校验类 ：@Validated(AddGroup.class) @RequestBody  -- @RequestBody(required = false) DTO param 【参数不是必填】
+	例如：public AppResultObj alter(@Validated(AlterGroup.class) @RequestBody InDTO param) {return AppPageResultObj.success(list, pageParameter);}
 
-1、输入参数校验类：@Validated(AddGroup.class)
-                   @Validated(AlterGroup.class)
-				   @RequestBody
+2、入参实体DTO：以组的形式列出全部提示【groups = { AddGroup.class,AlterGroup.class, DelGroup.class, ByIdGroup.class }】
 
-2、入参DTO：以组的形式列出全部提示
-@NotEmpty(groups = { AlterGroup.class, DelGroup.class, ByIdGroup.class })
-@NotEmpty(groups = { AddGroup.class, AlterGroup.class })
-@NotEmpty(groups = {AddGroup.class,AlterGroup.class})
-@Length(max = 300,message = "功效描述不能超过300字",  groups = {AddGroup.class,AlterGroup.class}) 【下面的groups不能少】
+	Bean Validation：
+	
+	@NotEmpty【验证注解的元素值不为null且不为空（字符串长度不为0、集合大小不为0）】
+	
+	@NotNull(message = "图片不能为空！",groups = { AddGroup.class})【验证注解的元素值不是null】
+	
+	@Null【验证注解的元素值是null】
+	
+	@Size(min=3,max=6,message="姓名长度应在{min}-{max}")【】
+	
+	@Max(value=x)【验证注解的元素值小于等于@Max指定的value值】
+	
+	@Min(value=x)【验证注解的元素值大于等于@Min指定的value值】
+	
+	@Size(min=3,max=6,message="姓名长度应在{min}-{max}")【验证注解的元素值的在min和max（包含）指定区间之内，如字符长度、集合大小】
+	
+	@Valid【验证关联的对象，如账户对象里有一个订单对象，指定验证订单对象】
+	
+	@AssertFalse【验证注解的元素值是false】
+	
+	@AssertTrue【验证注解的元素值是true】
+	
+	@DecimalMax(value=x)【验证注解的元素值小于等于@ DecimalMax指定的value值】
+	
+	@DecimalMin(value=x)【验证注解的元素值大于等于@ DecimalMax指定的value值】
+	
+	@Digits(integer=整数位数, fraction=小数位数)【验证注解的元素值的整数位数和小数位数上限】
+	
+	@Future【验证注解的元素值（日期类型）比当前时间晚】
+	
+	@Past【验证注解的元素值（日期类型）比当前时间早】
+	
+	@Pattern(regexp = "^[1-9]*[1-9][0-9]*$", message = "只能输入大于0的整数")【正则表达校验】
 
-	@Pattern(regexp = "^[1-9]*[1-9][0-9]*$", message = "只能输入大于0的整数", groups = { AddGroup.class})【正则表达校验】
-	@NotNull(groups = {message = "只能输入不能为空！", AddGroup.class})
-    private String requirement;
-
-@RequestBody(required = false) DTO param 【参数不是必填】
-@JsonInclude(Include.NON_NULL) 【】
-
-
-
+	@URL(protocol=,host,port)【检查是否是一个有效的URL，】
+	
+	Hibernate Validation：
+	
+	@Length(min=下限, max=上限) 【验证注解的元素值长度在min和max区间内】
+	
+	@Range(min=最小值, max=最大值)【验证注解的元素值在最小值和最大值之间】
+	
+	@NotEmpty【验证注解的元素值不为null且不为空（字符串长度不为0、集合大小不为0）】
+	
+	@NotBlank【验证注解的元素值不为空（不为null、去除首位空格后长度为0），不同于@NotEmpty，@NotBlank只应用于字符串且在比较时会去除字符串的空格】
+	
+	@Email【验证注解的元素值是Email，也可以通过正则表达式和flag指定自定义的email格式】
+	
+	@CreditCardNumber【对信用卡号进行一个大致的验证】
+	
 2、输入参数校验
 	String memId = arRecord.getMembeId();
 	Assert.notNull ( memId , "memId不能为空" );
@@ -36,4 +70,5 @@ public AppResultObj alter(@Validated(AlterGroup.class) @RequestBody InDTO param)
    public AppResultObj getActivityById(@PathVariable("id") String id) {}
    
 6、事务回滚：@Transactional(rollbackFor = Exception.class)【当发生异常时，数据库中的数据回滚到此方法没被执行前的状态】
-   
+ 
+	@JsonInclude(Include.NON_NULL) 【】 
