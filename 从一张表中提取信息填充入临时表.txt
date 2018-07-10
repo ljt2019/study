@@ -1,0 +1,10 @@
+
+insert into t_temp(id,name,card_no) select replace(UUID(),"-","") as id,real_name as name, id_card_no as card_no from t_member where real_name is not null and id_card_no is not null and real_name !='' and id_card_no != '';
+
+说明：新建临时表t_temp的字段(id,name,card_no)与as后边跟的字段【REPLACE(UUID(),"-","") AS id,real_name AS name, id_card_no AS card_no】名一致，原表t_member可以有任意字段。where 后边带过滤条件
+
+数据库
+数据移植
+数据拷贝
+sql
+mysql

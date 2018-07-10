@@ -67,7 +67,7 @@ auth_role_resouce_rel：角色资源
 
 27、base_medal：勋章表（包括等级勋章和乐享勋章）
 
-28、
+28、base_certification_limit：用于实名认证每日限制
 
 
 

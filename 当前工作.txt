@@ -1,32 +1,66 @@
-{
-    "code": 2000,
-    "msg": "OK",
-    "data": {
-        "page": null,
-        "count": null,
-        "id": "3d8ce30475cf11e8b9def48e38c3c5b0",
-        "name": "分享小仙女",
-        "quota": 2,
-        "image": "http://file02.16sucai.com/d/file/2014/0902/b61451cff1a256ecfed42fa0df372242.jpg",
-        "unlitImage": "http://a4.att.hudong.com/20/13/300000195522130770132166707_950.jpg",
-        "medalOutList": [
-            {
-                "id": "fce6a53275d511e8b9def48e38c3c5b0",
-                "name": "分享小象女02",
-                "requirement": "22/4.5333333",
-                "gift": "礼品米女",
-                "giftInfo": "23.2元;法拉利California T 2012款 4.3L 标准型;卡券3144e649共212张;卡券3144e458共3张;",
-                "shareInfo": "23.2元;卡券3144e951共4543张;卡券3144e649共3张;"
-            },
-            {
-                "id": "ff47f26575dd11e8b9def48e38c3c5b0",
-                "name": "分享小象女03",
-                "requirement": "22/4.5333333",
-                "gift": "礼品米女",
-                "giftInfo": "23.2元;法拉利California T 2012款 4.3L 标准型;卡券3144e649共212张;卡券3144e458共3张;",
-                "shareInfo": "23.2元;卡券3144e951共4543张;卡券3144e649共3张;"
-            }
-        ]
-    },
-    "succeed": true
-}
+
+000dd54d001d11e8b9d2f48e38c3c5b0
+
+
+clusters
+
+http://10.0.2.80:8083/api/sail/bodyReportView/getListByMemId
+
+
+/api/mem/sport/record/detail
+
+cn.healthmall.sail.app.v1.controller.TrainerAdropDeviceController.adropedGymlist
+
+t2042488486
+
+113f028a690a11e7bc01f48e38c3c5b0
+
+cn.healthmall.sail.app.v1.controller.BodyReportViewController.getListByMemId
+cn.healthmall.sail.app.v1.controller.BodyReportViewController.findOne 
+
+5e474146325611e8b9def48e38c3c5b0
+
+"h5URL":"https://beta-sail.healthmall.cn/TestReportProgramNoBtn/e3356bbb7c3e11e8b9def48e38c3c5b0"
+
+"h5URL": "https://beta-sail.healthmall.cn/TestReportProgramNoBtn/edb75489be1e11e7b9def48e38c3c5b0",
+
+
+身份认证
+MemberApiController
+
+real_name
+id_card_no
+
+name		documentNo（10602身份认证测试数据）
+测试一   	110000199001011112   （不通过的数据）
+测试二		110000199001021118
+测试三		110000199001031113
+测试四		110000199001041119
+测试五		110000199001051114
+测试六		110000199001061128
+测试七		110000199001071115
+测试八		110000199001081129
+测试九		110000199001091116
+测试十		11000019900114111x
+	
+code	响应码(2000为正常,其他查看错误代码)
+msg	响应消息
+auth	认证结果
+message	认证响应消息
+	
+INSERT IGNORE INTO auth_info_temp(id,mall_id,NAME,card_no,channel) VALUES (REPLACE(UUID(),"-",""),'猫号','姓名','身份证号码','3');
+	
+authUrl: http://beta-auth.healthmall.cn/auth/api/user/authentication
+authInfoUrl: http://beta-auth.healthmall.cn/auth/api/user/info
+	
+02C6F026A412E81B37F680131D652D11
+02C6F026A412E81B37F680131D652D11
+
+	
+	
+	
+	
+	
+	
+	
+	

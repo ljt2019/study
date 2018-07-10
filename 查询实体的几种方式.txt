@@ -19,5 +19,3 @@
 	ActivityExample activityExample = new ActivityExample();
     activityExample.createCriteria().andIdEqualTo(id).andDeleteFlagEqualTo(CommonConstant.NOT_DELETE);
     Activity activity = activityService.selectOneByExample(activityExample);
-
-		

@@ -1,0 +1,21 @@
+
+1¡¢¼¯ºÏ×ª»»
+			List<BodyReportViewAppOutDTO> collect = bodyReportViewList.stream().map(bodyReportView -> {
+				 BodyReportViewAppOutDTO bodyReportViewAppOutDTO = new BodyReportViewAppOutDTO(
+						bodyReportView.getName(),bodyReportView.getScore(),bodyReportView.getBirthYear()
+						 ,bodyReportView.getHeight(),bodyReportView.getWeight(),bodyReportView.getTestDate()
+						 ,bodyReportView.getBodyType(),bodyReportView.getBodyTypeNum()
+				);
+
+				 if(h5pageUrlNoBtn.length()>65){
+					 bodyReportViewAppOutDTO.setH5URL(h5pageUrlNoBtn);
+				 }else {
+					 bodyReportViewAppOutDTO.setH5URL(h5pageUrlNoBtn+bodyReportView.getId());
+				 }
+				 bodyReportViewAppOutDTO.setId(bodyReportView.getId());
+				 bodyReportViewAppOutDTO.setTestDate(DateTimeUtils.formatDate(bodyReportView.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+				 
+				return bodyReportViewAppOutDTO;
+			}).collect(Collectors.toList());
+			
+2¡¢

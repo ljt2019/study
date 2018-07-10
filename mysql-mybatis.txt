@@ -40,7 +40,9 @@
 			AND instr(_member.mall_id,#{inDTO.mallId}) > 0
 	    </if>
 		
-7、【date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr】 @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")记得时区转换
+7、两时间之差，返回SECOND数【select TIMESTAMPDIFF(SECOND,start_time,end_time)】
+		
+7、格式化时间【date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr】 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")记得时区转换
 
 8、【STRCMP(str1, str2):比较两个字符串，如果这两个字符串相等返回0，如果第一个参数是根据当前的排序小于第二个参数顺序返回-1，否则返回1。】
 		
@@ -179,5 +181,26 @@
 		ORDER BY a.startTime DESC
 	</select>
 
-
+14、查询条件 方式1
+        List<Criteria> lists = new ArrayList<>();
+        lists.add(Activity_.deleteFlag.equal(0));
+        lists.add(Query.and);
+        lists.add(Activity_.activityNo.equal(param.getActivityNo()));
+        lists.add(Query.and);
+        lists.add(Activity_.citiyIds.like("%" + cityId + "%"));
+        lists.add(Query.and);
+        lists.add(Query.leftBracket);
+        lists.add(Activity_.citiyIds.in(tempProvinceIds));
+        lists.add(Query.or);
+        lists.add(Activity_.provinceIds.like("%" + param.getProvinceId() + "%"));
+        lists.add(Query.rightBracket);
+        lists.add(Query.orderby);
+        lists.add(Activity_.releaseTime.desc());
+		List<Activity> activityList = baseMapper.query(new Query().where(lists), pageParameter);
+		
+		方式2
+		List<ArBigOperatingRecord> arBigOperatingRecords = arBigOperatingRecordService
+				.query(new Query().where(ArBigOperatingRecord_.mallId.equal(mallId), Query.and,
+						ArBigOperatingRecord_.deleteFlag.equal(CommonConstant.NOT_DELETE), Query.orderby,
+						ArBigOperatingRecord_.createTime.desc()), pageParameter);
 	

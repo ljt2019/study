@@ -1,4 +1,4 @@
-
+一个人能达到什么高度，除了自身的努力以外，环境也至关重要。
 a)IP:121.201.68.220   Port:6633
 
 b)登录成功以后 输入P 显示所有的服务器IP，再选择2，是当前正在使用服务器
@@ -28,4 +28,9 @@ f) 滚动查看对应的日志：tail –f nohup.out
 #ctrl + z 退回到上层操作
 
 
+app地址：http://dev-apisail.healthmall.cn  -->测试服
+		 http://pre-apisail.healthmall.cn  -->预发布
+         http://apisail.healthmall.cn      -->正式服
 
+后台地址：https://beta-sailweb.healthmall.cn  -->测试服
+          https://sailweb.healthmall.cn       -->正式服

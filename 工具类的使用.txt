@@ -1,7 +1,8 @@
 
-
-1、关于时间格式转换：DateTimeUtils.paseTimeStr(Long timestamp);//将时间戳转为时分秒
-                     org.apache.commons.lang3.time.DateUtils
+1、时间格式转换工具：
+    DateTimeUtils.paseTimeStr(Long timestamp);//将时间戳转为时分秒
+	org.apache.commons.lang3.time.DateUtils
+	org.apache.commons.lang3.time.DateFormatUtils
 
 2、关于json数据：JsonUtils
 例如：List<String> images = JsonUtils.toListHasCatch(gymHouseInDTO.getImages(), String.class);
@@ -31,16 +32,18 @@
 9、判空工具：org.apache.commons.lang3.StringUtils
              org.apache.commons.collections4.CollectionUtils.isEmpty(param.getGoodsImageList())
 			 Assert.notNull ( deviceId , "deviceId不能为空" );
-			 
+
+9、数组工具【org.apache.commons.lang3.ArrayUtils】
+		 
 10、格式转换：
-BigDecimal distance = sportRecordMiniOutDTO.getDistance();
+			BigDecimal distance = sportRecordMiniOutDTO.getDistance();
 			if (distance != null) {
 				distance = distance.setScale(1, BigDecimal.ROUND_HALF_UP);
 				sportRecordMiniOutDTO.setDistance(calorie);
 			}else {
 				sportRecordMiniOutDTO.setDistance(new BigDecimal(1));
 			}
-
+			
 11、距离转换：recordListOutDTO.setSportKilometre(UnitChangeUtil.metre2Kilometre(recordListOutDTO.getSportKilometre(), 2));
 
 12、private static final List<Integer> DATE_TYPE = Arrays.asList(1, 2, 3);
@@ -70,7 +73,7 @@ BigDecimal distance = sportRecordMiniOutDTO.getDistance();
 				}
 			});
 
-14、时区转换：@JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8") 【记得时区转换】
+14、时区转换：@JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8") 【记得时区转换】
              ,DATE_FORMAT(sc.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime  【sql中不需要这个似乎也可以】
 
     入参数dto：@DateTimeFormat(pattern="yyyy-MM-dd")
@@ -97,31 +100,27 @@ BigDecimal distance = sportRecordMiniOutDTO.getDistance();
 	ActivityTypeEnum.TPOS.getCode();
 	ActivityTypeEnum.TPOS.getMsg();
 
-20、查询条件
-        List<Criteria> lists = new ArrayList<>();
-        lists.add(Activity_.deleteFlag.equal(0));
-        lists.add(Query.and);
-        lists.add(Activity_.activityNo.equal(param.getActivityNo()));
-        lists.add(Query.and);
-        lists.add(Activity_.citiyIds.like("%" + cityId + "%"));
-        lists.add(Query.and);
-        lists.add(Query.leftBracket);
-        lists.add(Activity_.citiyIds.in(tempProvinceIds));
-        lists.add(Query.or);
-        lists.add(Activity_.provinceIds.like("%" + param.getProvinceId() + "%"));
-        lists.add(Query.rightBracket);
-        lists.add(Query.orderby);
-        lists.add(Activity_.releaseTime.desc());
-		List<Activity> activityList = baseMapper.query(new Query().where(lists), pageParameter);
+	
+	if (null == medalInfo) {
+		throw new ValidateException("升级勋章不存在");
+    }
+	
+	if(bodyReportView.getDeviceId().matches("^BT(\\w)+")){
+					//同方体测仪内脏脂肪数据处理
+					bodyReportViewAllOutDTO.setVfa(bodyReportView.getVfi());
+					bodyReportViewAllOutDTO.setMineral(bodyReportView.getBone());
+				}	
 		
+	AppResultObj.newResult(CodeConstant.CERTIFICATION_IDCARD_INVALID, "请输入正确的身份证号");
+	
+20、【非spring管理Bean获得spring管理Bean工具类】SpringUtil	
+    @Autowired
+    private static SSOUrlConfigProperties ssoUrlConfigProperties =SpringUtil.getBean(SSOUrlConfigProperties.class);
+
+    @Autowired
+    private static RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
 		
-		
-		
-		
-		
-		
-		
-		
+org.apache.commons.collections.CollectionUtils.sizeIsEmpty(memberMedalList)	
 
 
 
