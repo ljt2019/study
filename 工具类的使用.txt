@@ -11,6 +11,8 @@
 	  JsonUtils.toJson(param.getImagelist());【List<Object> --> json】JsonUtils.toJson(arInDTO)【打印日志用到】
 	  JsonUtils.jsonArrayToString(foodTherapy.getSymptomIds()); 【将json格式的数据中的多余字符去掉】
 	  GoodDTO goodDTO = JsonUtils.fromJson(good,GoodDTO.class)【json --> Object】
+	  //将结果封装到 指定的类型中
+      WechatOutDTO wechatOutDTO = com.alibaba.fastjson.JSONObject.parseObject(result, WechatOutDTO.class);
 	  
 2、后台获取当前用户信息：ShiroUtils【ShiroUtils.getLoginUserId()】
 
@@ -123,4 +125,5 @@
 org.apache.commons.collections.CollectionUtils.sizeIsEmpty(memberMedalList)	
 
 
+mvn install:install-file -DgroupId=com.alipay -DartifactId=sdk-Java -Dversion=20170607114101 -Dpackaging=jar -Dfile=alipay-sdk-java20170607114101.jar
 

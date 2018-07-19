@@ -53,9 +53,52 @@ INSERT IGNORE INTO auth_info_temp(id,mall_id,NAME,card_no,channel) VALUES (REPLA
 authUrl: http://beta-auth.healthmall.cn/auth/api/user/authentication
 authInfoUrl: http://beta-auth.healthmall.cn/auth/api/user/info
 	
-02C6F026A412E81B37F680131D652D11
-02C6F026A412E81B37F680131D652D11
+isIdentityAuthen
 
+{"colour":0,"size":0,"other":0,"colours":[{"number":"红色"},{"number":"白色"}],"sizes":[{"number1":"S"},{"number1":"M"}],"others":[{"number2":"彻底删除"},{"number2":"期望的期望"}]}
+	
+	
+张凌云  362426198505307717
+江一涛 362329199203190615
+周云飞  360281199802215276  
+刘亦菲 352828199006156682
+郑鸿翔  350722198812220010
+
+
+java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar
+
+
+http://beta-sdkhealth.healthmall.cn/activity-service
+http://sdkhealth.healthmall.cn/activity-service
+/api/info/share
+	
+memberMapper	
+
+	
+MemberServiceImpl 实名优化
+	
+	
+	
+董董	
+440982198308081234
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

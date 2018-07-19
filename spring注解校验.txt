@@ -72,3 +72,5 @@
 6、事务回滚：@Transactional(rollbackFor = Exception.class)【当发生异常时，数据库中的数据回滚到此方法没被执行前的状态】
  
 	@JsonInclude(Include.NON_NULL) 【】 
+	
+读写分离的功能了，在实时性要求不强的情况下，查询尽可能从 丛库里面查询。只需在对应的Controller里面加上@ReadDataSource注解。
