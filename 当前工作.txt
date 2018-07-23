@@ -78,10 +78,18 @@ memberMapper
 MemberServiceImpl 实名优化
 	
 	
-	
-董董	
-440982198308081234
-	
+{
+  "lat": 23.125178,
+  "lng": 113.280637
+}
+
+{
+  "lat": 23.125178,
+  "lng": 113.280637
+}
+java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar
+
+null == inDTO.getGender() 与 inDTO.getGender() == null 区别
 	
 	
 	

@@ -128,6 +128,63 @@
 			) temp
 		ORDER BY temp.deviceNo
 	</select>
+	
+两个例子：
+	<!-- 获取省份信息列表 注意：钓鱼岛下边没有市区，没有查出 -->
+	<resultMap id="RegionInfoOutDTOMap"
+		type="cn.healthmall.sail.activity.dto.CityListOutDTO">
+		<id column="provinceId" property="provinceId" />
+		<result column="provinceName" property="provinceName" />
+		<collection property="cities" javaType="ArrayList"
+			ofType="cn.healthmall.sail.activity.dto.CityOutDTO" column="cityId">
+			<result column="cityId" property="cityId" />
+			<result column="cityName" property="cityName" />
+		</collection>
+	</resultMap>
+	<select id="getRegionInfo" resultMap="RegionInfoOutDTOMap">
+		SELECT
+		_city.id AS cityId,
+		_city.name AS cityName,
+		_region.id AS provinceId,
+		_region.name AS provinceName
+		FROM
+		pub_region _city
+		INNER JOIN pub_region _region ON _region.id = _city.parent_id
+		AND _region.level_type = 1
+	</select>
+	
+	<!-- 获取场馆列表 传入经纬度（城市id） -->
+	<resultMap id="GymListOutDTOMap" type="cn.healthmall.sail.activity.dto.GymListOutDTO">
+		<id column="regionId" property="regionId" />
+		<result column="regionName" property="regionName" />
+		<collection property="infos" javaType="ArrayList"
+			ofType="cn.healthmall.sail.activity.dto.GymInfoOutDTO" column="gymId">
+			<result column="gymId" property="gymId" />
+			<result column="gymName" property="gymName" />
+			<result column="isSpecialGym" property="isSpecialGym" />
+			<result column="smallIcon" property="smallIcon" />
+			<result column="normalIcon" property="normalIcon" />
+		</collection>
+	</resultMap>
+	<select id="getGymInfo" resultMap="GymListOutDTOMap">
+		SELECT
+		_gym.id AS gymId,
+		_gym.name AS gymName,
+		_gym.type AS isSpecialGym,
+		_gym.small_icon AS smallIcon,
+		_gym.normal_icon AS normalIcon,
+		_region.name AS regionName,
+		_region.id AS regionId
+		FROM
+		base_gym _gym
+		LEFT JOIN pub_region _city ON _gym.city_id = _city.id
+		LEFT JOIN
+		pub_region _region ON _gym.region_id = _region.id
+		WHERE
+		_city.id = #{cityId}
+		AND _gym.delete_flag = 0
+		ORDER BY _gym.name
+	</select>
 
 12、返回txt文本信息【带With,在xml中】：List<Medal> selectByExampleWithBLOBs(MedalExample example);
 
