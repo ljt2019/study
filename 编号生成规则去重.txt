@@ -9,6 +9,10 @@
 	 * @return
 	 */
 	public String activityNo(String type){
+		//¿ªÊ¼ÐÞ¸Ä
+		int a = 22;
+		int b = 22;
+		int c = 22;
 		StringBuffer activityNo = new StringBuffer(type);
 		long time = System.currentTimeMillis();
 		String timeStr = String.valueOf(time);
