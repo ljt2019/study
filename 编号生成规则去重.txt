@@ -9,6 +9,7 @@
 	 * @return
 	 */
 	public String activityNo(String type){
+<<<<<<< HEAD
 		//HOME 22
 		today is a nice day .my hehe12
 		today is a nice day .my hehe22
@@ -16,6 +17,12 @@
 		today is a nice day .my hehe42
 		today is a nice day .my hehe52
 	
+=======
+		//¿ªÊ¼ÐÞ¸Ä
+		int a = 22;
+		int b = 22;
+		int c = 22;
+>>>>>>> bdd07a9ecdc043ee077b0ae6a0374aa6d8cd251b
 		StringBuffer activityNo = new StringBuffer(type);
 		long time = System.currentTimeMillis();
 		String timeStr = String.valueOf(time);

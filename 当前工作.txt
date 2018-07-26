@@ -78,14 +78,42 @@ memberMapper
 MemberServiceImpl 实名优化
 	
 	
+{
+  "lat": 23.125178,
+  "lng": 113.280637
+}
+
+{
+  "lat": 23.125178,
+  "lng": 113.280637
+}
+java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar
+
+SpringApplicationRunListener
+
 	
-董董	
-440982198308081234
-	
-	
-	
-	
-	
+C:\Users\Administrator\.m2\repository\org\springframework\boot\spring-boot\1.5.3.RELEASE\spring-boot-1.5.3.RELEASE.jar
+
+//				try {
+//					Thread.sleep(3000);
+//					System.out.println("taks1 sleep 1s");
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+
+i am taks1
+task1 is completed?false
+i am task2
+task2 is completed?false
+task1 is completed.
+task2 is completed.
+
+i am taks1
+task1 is completed?false
+task2 is completed?false
+task1 is completed.
+i am task2
+
 	
 	
 	

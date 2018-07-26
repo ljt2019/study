@@ -1,0 +1,17 @@
+1、打开命令行：输入  netstat   -ano|findstr  8080 
+
+2、查看监听代号：例如6856
+
+3、接着在命令行输入：taskkill  /pid  6856  /f 
+
+4、ok 
+
+5、其他端口被占用解决方法一样，或者在其配置文件中修改其他端口号运行。
+
+cmd的一些常用命令：
+
+1、开启和关闭mysql数据库服务：net start mysql[mysql服务名]、net stop mysql
+
+2、控制面板 --> 管理工具 --> 服务  Services.msc
+
+3、设置开机启动项：msconfig

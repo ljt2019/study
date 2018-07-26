@@ -8,7 +8,14 @@
 
 二级：	
 	private AppResultObj verifyInput(GymInDTO param) {
-
+		//开始测试编写
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		//开始测试编写 end
+		
+		
 		AppResultObj appResultObj = null;
 		appResultObj = checkImages(param);
 		if (appResultObj != null) {
@@ -36,7 +43,10 @@
 		}
 		return appResultObj;
 	}
-
+//开始测试编写
+//开始测试编写
+//开始测试编写
+//开始测试编写
 
 三级：
 	private AppResultObj checkImages(GymInDTO param) {
@@ -53,7 +63,10 @@
 		}
 		return null;
 	}
-
+//开始测试编写
+//开始测试编写
+//开始测试编写
+//开始测试编写
 	
 
 	
