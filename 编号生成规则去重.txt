@@ -9,12 +9,28 @@
 	 * @return
 	 */
 	public String activityNo(String type){
+		//HOME 22
+		today is a nice day .my hehe12
+		today is a nice day .my hehe22
+		today is a nice day .my hehe32
+		today is a nice day .my hehe42
+		today is a nice day .my hehe52
+	
 		StringBuffer activityNo = new StringBuffer(type);
 		long time = System.currentTimeMillis();
 		String timeStr = String.valueOf(time);
 		timeStr = timeStr.substring(timeStr.length()-8, timeStr.length());
 		activityNo.append(timeStr);
 		String activityNoStr = activityNo.toString();
+		
+		
+		//HOME 
+		today is a nice day .my hehe1
+		today is a nice day .my hehe2
+		today is a nice day .my hehe3
+		today is a nice day .my hehe4
+		today is a nice day .my hehe5
+		
 		
 		//ШЅжи
 		ActivityExample activityExample = new ActivityExample();
@@ -25,4 +41,8 @@
 		}else {
 			return activityNo(type);
 		}
+		
+	today is a nice day .my hehe1		
+	today is a nice day .my hehe2
+		
 	}
