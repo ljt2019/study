@@ -1,4 +1,9 @@
-
+		//开始测试编写=========home=========
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		//开始测试编写 end
 一级：
 	AppResultObj verifyResult = verifyInput(param);
 		if (verifyResult != null) {
@@ -8,6 +13,14 @@
 
 二级：	
 	private AppResultObj verifyInput(GymInDTO param) {
+	
+		//开始测试编写=========home=========
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		//开始测试编写 end
+	
 		//开始测试编写
 		AppResultObj appResultObj = null;
 		AppResultObj appResultObj = null;
@@ -43,11 +56,22 @@
 		}
 		return appResultObj;
 	}
+		//开始测试编写=========home=========
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		//开始测试编写 end
 //开始测试编写
 //开始测试编写
 //开始测试编写
 //开始测试编写
-
+		//开始测试编写=========home=========
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		//开始测试编写 end
 三级：
 	private AppResultObj checkImages(GymInDTO param) {
 		if (CollectionUtils.isEmpty(param.getImagelist())) {
@@ -63,10 +87,22 @@
 		}
 		return null;
 	}
+		//开始测试编写=========home=========
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		//开始测试编写 end
 //开始测试编写
 //开始测试编写
 //开始测试编写
 //开始测试编写
+		//开始测试编写=========home=========
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		AppResultObj appResultObj = null;
+		//开始测试编写 end
 	
 
 	
