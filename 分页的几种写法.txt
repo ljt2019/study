@@ -3,6 +3,10 @@
 	PageParameter pageParameter = new PageParameter(
 		parameter.getCurrentPage() == null ? 0 : parameter.getCurrentPage(),
 		parameter.getPageSize()== null ? 20 : parameter.getPageSize());
+		
+	PageParameter pageParameter = new PageParameter(
+		parameter.getPage() == null ? 0 : parameter.getPage(), 
+		parameter.getCount() == null ? 20 : parameter.getCount());
 
 2°¢–¥∑®2£∫°æ∫√”√°ø
 		Integer page = param.getPage() == null ? 0 : param.getPage();

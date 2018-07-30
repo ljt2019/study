@@ -101,37 +101,43 @@ C:\Users\Administrator\.m2\repository\org\springframework\boot\spring-boot\1.5.3
 //					e.printStackTrace();
 //				}
 
-i am taks1
-task1 is completed?false
-i am task2
-task2 is completed?false
-task1 is completed.
-task2 is completed.
 
-i am taks1
-task1 is completed?false
-task2 is completed?false
-task1 is completed.
-i am task2
 
+	private Date startTime;  
+	private Date closeTime;
+
+	用户信息
 	
+	 <if test="params.startTime != null ">
+            AND member.regist_time &gt;= #{params.startTime}
+        </if>
+        <if test="params.endTime != null ">
+            AND member.regist_time &lt;= #{params.endTime}
+        </if>
 	
+StadiumController
 	
+Stadium
+stadiumName
 	
+GymStatus 经营状态：0正常营业，1歇业，2关闭   -1代表为null'
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+"orderNum":"YDJL2017062120102195978362294",
+"gymName":"宏太智慧谷场馆",
+"deviceNo":"01",
+"deviceNum":"RH201816",
+"mobile":"13333334444",
+"mallId":"997192800",
+"payType":1,
+"productId":0,
+"startTime":1492827395000,
+"endTime":1500689795000,
+"gymType":0,
+"stadiumName":"宏太智慧谷场馆",
+
+
+
+
+
+
+
