@@ -87,57 +87,54 @@ MemberServiceImpl 实名优化
   "lat": 23.125178,
   "lng": 113.280637
 }
-java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar
-
+java -Dloader.path=../sail-lib/ -jar sail-mgmt-api-001.jar&
+java -Dloader.path=../sail-lib/ -jar sail-app-api-001.jar&
+java -Dloader.path=../sail-lib/ -jar sail-app-api.jar&
 SpringApplicationRunListener
 
+
+
+
+
+SportCourseController.finishsport_v2 结束运动
+
+DeivceAccessController.processHeartBeat 心跳上传跑步数据
+
+ThreadmillActivityRecordController
+	getUserRelated
+	complete_challenge
 	
-C:\Users\Administrator\.m2\repository\org\springframework\boot\spring-boot\1.5.3.RELEASE\spring-boot-1.5.3.RELEASE.jar
-
-//				try {
-//					Thread.sleep(3000);
-//					System.out.println("taks1 sleep 1s");
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-
-
-
-	private Date startTime;  
-	private Date closeTime;
-
-	用户信息
 	
-	 <if test="params.startTime != null ">
-            AND member.regist_time &gt;= #{params.startTime}
-        </if>
-        <if test="params.endTime != null ">
-            AND member.regist_time &lt;= #{params.endTime}
-        </if>
 	
-StadiumController
+share:
+  picturetemplate: https://imgdata1.healthmall.cn/xiaoxiang/xiaoxiang_xiaochengxu_menpiao_template_1.png
+  textTemplate: https://imgdata1.healthmall.cn/xiaoxiang/xiaoxiang_xiaochengxu_menpiao_template_0.png
+
+qiniu:
+  accessKey: _HjWKxYkeya4QaPAiroIS98kRsaKGwMIoZr5QVLy
+  secretKey: EfQJVrnBYrOGGZnRz0ea6hQeXIXpjQK3Ed5UIdMH
+  public:
+    bucket: life-iot-open
+    domainOfBucket: http://ovj1az9fj.bkt.clouddn.com
+  private:
+    bucket: life-iot
+    domainOfBucket: http://ov0vj53rx.bkt.clouddn.com
 	
-Stadium
-stadiumName
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
-GymStatus 经营状态：0正常营业，1歇业，2关闭   -1代表为null'
-	
-"orderNum":"YDJL2017062120102195978362294",
-"gymName":"宏太智慧谷场馆",
-"deviceNo":"01",
-"deviceNum":"RH201816",
-"mobile":"13333334444",
-"mallId":"997192800",
-"payType":1,
-"productId":0,
-"startTime":1492827395000,
-"endTime":1500689795000,
-"gymType":0,
-"stadiumName":"宏太智慧谷场馆",
-
-
-
-
-
-
-
