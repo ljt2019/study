@@ -1,4 +1,6 @@
-一个人能达到什么高度，除了自身的努力以外，环境也至关重要。
+
+Linux JKM-BETAQH-102 3.10.0-514.21.1.el7.x86_64 #1 SMP Thu May 25 17:04:51 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+
 a)IP:121.201.68.220   Port:6633
 
 b)登录成功以后 输入P 显示所有的服务器IP，再选择2，是当前正在使用服务器
@@ -34,3 +36,5 @@ app地址：http://dev-apisail.healthmall.cn  -->测试服
 
 后台地址：https://beta-sailweb.healthmall.cn  -->测试服
           https://sailweb.healthmall.cn       -->正式服
+
+		  

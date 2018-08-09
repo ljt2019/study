@@ -1,5 +1,5 @@
 
-1、show dbs：显示所有数据库列表
+1、show dbs：显示所有数据库列表；      show tables、show collections：显示当前数据库中的所以集合
 
 2、db:显示当前所在的数据库的对象或集合
 
@@ -59,32 +59,144 @@
    
    4)、用户创建的集合名字不能含有保留字符。有些驱动程序的确支持在集合名里面包含，这是因为某些系统生成的集合中包含该字符。除非你要访问这种系统创建的集合，否则千万不要在名字里出现$。
 
-10、
+10、capped collections：特点如下：
 
+   1)、大小固定
    
+   2)、有很高的性能以及队列过期的特性(过期按照插入的顺序).
    
+   3)、高性能自动的维护对象的插入顺序。它非常适合类似记录日志的功能 和标准的collection不同，你必须要显式的创建一个capped collection， 指定一个collection的大小，单位是字节。collection的数据存储空间值提前分配的。
+
+11、use datebase_name ：如果数据库不存在，则创建数据库，否则切换到指定数据库。
+
+12、db.datebase_name.insert({"name":"菜鸟教程"})：刚创建的数据库 datebase_name 并不在数据库的列表中， 要显示它，我们需要向 datebase_name 数据库插入一些数据。
    
+13、db.dropDatabase()：删除当前数据库
+
+14、db.collection.drop()：删除集合
+
+15、db.createCollection(name, options):创建集合  
+
+   1)、name: 要创建的集合名称
    
+   2)、options: 可选参数, 指定有关内存大小及索引的选项
    
+      (1)、capped：（可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。
+	  
+      (2)、autoIndexId：（可选）如为 true，自动在 _id 字段创建索引。默认为 false。
+	  
+      (3)、size：（可选）为固定集合指定一个最大值（以字节计）。如果 capped 为 true，也需要指定该字段。
+	  
+      (4)、max：（可选）指定固定集合中包含文档的最大数量。
+
+      注意：在插入文档时，MongoDB 首先检查固定集合的 size 字段，然后检查 max 字段。
+	  
+16、创建固定集合 mycol，整个集合空间大小 6142800 KB, 文档最大个数为 10000 个。示例如下：
+
+    db.createCollection("mycol", { capped : true, autoIndexId : true, size : 6142800, max : 10000 } ){ "ok" : 1 }
+	  
+17、在 MongoDB 中，你不需要创建集合。当你插入一些文档时，MongoDB 会自动创建集合。
    
+18、文档更新：db.collection.update(<query>,<update>,{upsert: <boolean>, multi: <boolean>,writeConcern: <document> })
+
+   1)、query : update的查询条件，类似sql update查询内where后面的。
    
+   2)、update : update的对象和一些更新的操作符（如$,$inc...）等，也可以理解为sql update查询内set后面的
    
+   3)、upsert : 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。
    
+   4)、multi : 可选，mongodb 默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新。
    
+   5)、writeConcern :可选，抛出异常的级别。
+
+19、删除文档：db.collection.remove(<query>,<justOne>)   db.col.remove({'title':'MongoDB 教程'})  删除了title为MongoDB 教程的文档
+
+    MongoDB 是 2.6 版本以后的，语法格式如下：db.collection.remove(<query>,{justOne: <boolean>,writeConcern: <document>})
+
+   1)、query :（可选）删除的文档的条件。
    
+   2)、justOne : （可选）如果设为 true 或 1，则只删除一个文档。
    
+   3)、writeConcern :（可选）抛出异常的级别。
    
+20、查询文档：db.collection.find(query, projection)
+
+   1)、query ：可选，使用查询操作符指定查询条件
    
+   2)、projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
    
+21、MongoDB 与 RDBMS Where 语句比较  【mongodb中的筛选条件】
+
+	操作				 	格式							范例						 RDBMS中的类似语句
+	
+	等于			{<key>:<value>}			db.col.find({"by":"菜鸟教程"}).pretty()		where by = '菜鸟教程'
+	
+	小于			{<key>:{$lt:<value>}}	db.col.find({"count":{$lt:50}}).pretty()	where count < 50
+	
+	小于或等于		{<key>:{$lte:<value>}}	db.col.find({"count":{$lte:50}}).pretty()	where count <= 50
+	
+	大于			{<key>:{$gt:<value>}}	db.col.find({"count":{$gt:50}}).pretty()	where count > 50
+	
+	大于或等于		{<key>:{$gte:<value>}}	db.col.find({"count":{$gte:50}}).pretty()	where count >= 50
+	
+	不等于			{<key>:{$ne:<value>}}	db.col.find({"count":{$ne:50}}).pretty()	where count != 50
+	
+	db.col.find({likes : {$lt :200, $gt : 100}})    -->    select * from col where likes > 100 AND  likes < 00;
+	
+22、MongoDB and 条件：find() 方法可以传入多个键(key)，每个键(key)以逗号隔开，即常规 SQL 的 AND 条件。语法格式如下：
+
+   db.col.find({key1:value1, key2:value2}).pretty()
    
+23、MongoDB or 条件：db.col.find({$or: [{key1: value1}, {key2:value2}]})
+
+24、and 和 or 联合使用：db.col.find({"count": {$gt:50}, $or: [{"by": "菜鸟教程"},{"title": "MongoDB 教程"}]}).pretty()
+
+25、$type操作符是基于BSON类型来检索集合中匹配的数据类型，并返回结果。
    
+26、MongoDB 中可以使用的类型如下表所示：
+
+	类型					数字		备注
+	Double					1	 
+	String					2	 
+	Object					3	 
+	Array					4	 
+	Binary data				5	 
+	Undefined				6			已废弃。
+	Object id				7	 
+	Boolean					8	 
+	Date					9	 
+	Null					10	 
+	Regular Expression		11	 
+	JavaScript				13	 
+	Symbol					14	 
+	JavaScript (with scope)	15	 
+	32-bit integer			16	 
+	Timestamp				17	 
+	64-bit integer			18	 
+	Min key					255			Query with -1
+	Max key					127	 
    
+27、获取 "col" 集合中 title 为 String 的数据，你可以使用以下命令：
+
+   1)、db.col.find({"title" : {$type : 2}}) 或 db.col.find({"title" : {$type : 'string'}})
    
+28、MongoDB Limit与Skip方法：db.collection.find().limit(number)
    
+29、显示指定字段数据：db.stadium.find({},{'name':1,'address':1,_id:0}).limit(3)
    
+30、MongoDB sort()方法：sort() 方法可以通过参数指定排序的字段，并使用 1 和 -1 来指定排序的方式，其中 1 为升序排列，而 -1 是用于降序排列。
+
+   1)、db.col.find().sort({KEY:1})
    
+31、MongoDB 索引：db.collection.createIndex(keys, options)
+
+32、createIndex() 方法中你也可以设置使用多个字段创建索引（关系型数据库中称作复合索引）：db.col.createIndex({"title":1,"description":-1})
+
+33、MongoDB 聚合：db.collection.aggregate(AGGREGATE_OPERATION)，计算每个作者所写的文章数，使用aggregate()计算结果如下：
+
+   1)、db.app_api_log.aggregate([{$group : {_id : "$code", total_count : {$sum : 1}}}])  -->根据code分组，统计每种code的总数量，total_count为自定义
    
-   
+34、  
    
    
    

@@ -1,0 +1,23 @@
+
+方式一：【常用】
+	if(inDTO.getEnd().before(inDTO.getStart())){
+		return AppResultObj.parameterError("结束时间不能大于开始时间");
+	}
+	
+	if (startTime != null) {
+		startTime = DateTimeUtils.getDayBegin(startTime);
+		parameter.setStartTime(startTime);
+	}
+
+	if (endTime != null) {
+		endTime = DateTimeUtils.getDayEnd(endTime);
+		parameter.setCloseTime(endTime);
+	}
+	
+	
+方式二：
+	if(inDTO.getEnd().before(inDTO.getStart())){
+		return AppResultObj.parameterError("结束时间不能大于开始时间");
+	}
+	inDTO.setStart(DateUtils.truncate(inDTO.getStart(), Calendar.DAY_OF_MONTH));
+	inDTO.setEnd(DateUtils.ceiling(inDTO.getEnd(), Calendar.DAY_OF_MONTH));

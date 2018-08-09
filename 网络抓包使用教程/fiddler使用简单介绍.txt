@@ -1,0 +1,10 @@
+ 
+	抓包前提的电脑和手机在同一个wifi网络环境下
+ 
+1、安装一个抓包工具：例如fiddler
+
+2、在fiddler上设置端口号：【Tools】 --> 【Options】 --> 【Connections】 ,填上可用的一个端口号（例如：8888），接着勾选 Allow remote computers to connect
+
+3、打开android设备，找到所连接的wifi网络，点击选择【修改网络】，勾选【显示高级选项】，在代理中选择手动，填服务器主机名（wifi网络的ip地址），填fiddler中的端口号8888。
+
+	使用注意：要是监控不到，可以关闭wifi重新连接试试
