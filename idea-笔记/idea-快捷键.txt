@@ -1,0 +1,46 @@
+
+1、ctrl+alt+s打开设置界面
+
+2、格式化代码：格式化import列表Ctrl+Alt+O，格式化代码Ctrl+Alt+L
+
+3、Ctrl+/ 或 Ctrl+Shift+/  注释（// 或者/*...*/ ）
+
+4、Ctrl+Shift+上下键  上下移动代码
+
+5、Ctrl+Alt+ left/right 返回至上次浏览的位置
+
+6、Ctrl+X 删除行
+
+7、Ctrl+D 复制行
+
+8、Alt+Enter：自动导包，可以设置自动全部导入
+
+========= 查找-搜索快捷键 =========
+
+9、Ctrl+N：利用类名来找到类文件
+
+10、Ctrl+Shift+N：使用文件名来进行搜索
+
+11、Ctrl+H：查看类继承关系
+
+12、Alt+F7：查找类和方法在哪里被使用
+
+13、Ctrl+Alt+B：看见其中的父类以及定义的方法
+
+14、Ctrl+F：本页面中查找
+
+15、Ctrl+Shift+F：整个idea中查找
+
+16、Shift+Shift：查找所有
+
+
+
+
+
+
+
+
+
+
+
+
