@@ -1,4 +1,8 @@
 
+
+【启动mongodb:在bin目录下运行】
+
+
 1、show dbs：显示所有数据库列表；      show tables、show collections：显示当前数据库中的所以集合
 
 2、db:显示当前所在的数据库的对象或集合

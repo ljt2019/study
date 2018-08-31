@@ -33,6 +33,24 @@
 
 16、Shift+Shift：查找所有
 
+========= 快速创建方法-搜索快捷键 =========
+
+1、main方法：psvm
+
+2、System.out.println()：sout
+
+3、public static final String：psfs
+
+4、public static final int：psfi
+
+5、
+
+
+
+
+
+
+
 
 
 
