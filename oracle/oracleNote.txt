@@ -21,46 +21,90 @@
 	
 	7)、OracleServiceORCL：数据库基础服务，必须启动项
 	
+======================= 表空间 =======================
+	
 5、什么是表空间：
 	1)、表空间实际上是数据库上的逻辑存储结构，可以把表空间理解为在数据库中开辟一个空间，用于存放我们的数据库对象，一个数据库可以由多个表空间构成。
 	
 6、创建表空间：
+
 	1)【create tablespace 表空间名 datafile '表空间的存储文件名.dbf' size 10m;】
+	
 	2)【create temporary tablespace 临时表空间名 tempfile '临时表空间的存储文件名.dbf' size 10m;】
 
-7、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间)：
+7、查看所创建的表空间的存放位置：
+	1)、select file_name from dba_data_files where tablespace_name = 'TEST1_TABLESPACE';
+	
+	2)、select file_name from dba_temp_files where tablespace_name = 'TEMPTEST_TABLESPACE';
+	
+======================= 用户管理 =======================
+
+8、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间)：
+
 	【create user 用户名 identified by 密码 default tablespace 表空间名 temporary tablespace 临时表空间名;】
 
 	例如：create user linjt identified by 123456 default tablespace test_tablespace temporary tablespace temptest_tablespace;
 
-8、查看所创建的表空间的存放位置：
-	select file_name from dba_data_files where tablespace_name = 'TEST1_TABLESPACE';
-	select file_name from dba_temp_files where tablespace_name = 'TEMPTEST_TABLESPACE';
-	
 9、查看创建的用户：【select username from dba_users;】
 
-10、给创建的用户授权：【grant 权限 to 用户名】 例如：grant connect to linjt;
+10、给用户赋角色：【grant 角色 to 用户名1,用户2】 例如：grant connect to linjt;
+
+	收回用户角色：【revoke 角色 from 用户名1,用户2】 例如：revoke connect from linjt;
 	
-11、三种标准的角色（权限）：
-	1、CONNECT(连接角色)：只可以登陆Oracle，不可以创建实体和数据库结构
-	2、RESOURCE(资源角色)：可以创建实体，但不可以创建数据库结构
-	3、DBA(数据管理员角色)：系统最高权限，只有DBA才可以创建数据库结构
+	给角色赋予权限：【grant 权限 to 角色;】   例如：grant create table,create view to manager;
 	
-12、链接用户:【connect 用户名/密码;】   例如：conn sys/123456 as sysdba
+11、用户登陆:【connect 用户名/密码;】   例如：conn sys/123456 as sysdba
 
-13、更改用户名：【alter user 用户名 identified by 新密码;】
+12、更改用户名：【alter user 用户名 identified by 新密码;】
 
-14、锁定某用户：【alter user 用户名 account lock;】
+13、锁定某用户：【alter user 用户名 account lock;】
 
-15、删除用户：【drop user 用户名 cascade;】#加上cascade表示将用户连接以及其所创建的东西全部删除
+14、删除用户：【drop user 用户名 cascade;】
+	#加上cascade表示级联将用户连接以及其所创建的东西全部删除
+
+======================= 角色管理 =======================	
+
+15、什么事角色：即一组权限的集合；用户可以给角色赋予指定的权限，然后将角色赋给相应的用户。
 	
-16、什么事角色：即一组权限的集合；用户可以给角色赋予指定的权限，然后将角色赋给相应的用户。
+16、三种系统的标准的角色：
 
-17、对于普通用户授予connect和resource权限，DBA授予dba权限
+	1)、CONNECT(连接角色)：只可以登陆Oracle，不可以创建实体和数据库结构
+	
+	2)、RESOURCE(资源角色)：可以创建实体（表、视图...），但不可以创建数据库结构
+	
+	3)、DBA(数据管理员角色)：系统最高权限，只有DBA才可以创建数据库结构
+	
+17、创建角色：【create role 角色名;】   例如：create role manager;
 
-18、
+	删除角色：【drop role 角色名;】   例如：drop role manager;
+	
+18、对于普通用户授予connect和resource权限，DBA授予dba权限
 
+======================= 权限管理 =======================
 
+19、权限的分类：
+
+	1)、系统权限：允许用户执行特定的数据库动作，如创建表、创建索引、连接实例等；
+	
+	2)、对象(实体)权限：允许用户操作一些特定的对象，如读取视图、表，可更新某些列、执行存储过程等
+
+20、查询Oracle所以权限：【select * from system_privilege_map;】
+
+	1)、CREATE SESSION		创建会话
+	2)、CREATE SEQUENCE		创建序列
+	3)、CREATE TABLE		创建表
+	4)、CREATE USER			创建用户
+	5)、ALTER USER			更改用户
+	6)、DROP USER			删除用户
+	7)、CREATE VIEW			创建视图
+	
+21、查询Oracle所有的对象权限：【select * from table_privilege_map;】
+	1)、 select
+	2)、 update
+	3)、 insert
+	4)、 delete
+	5)、 all
+         
 	
 	
 	
