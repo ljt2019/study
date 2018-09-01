@@ -1,4 +1,6 @@
 
+默认端口号【1512】
+
 1、Oracle数据库：相关的操作系统文件（即存储在计算机硬盘上的文件）集合，这些文件组织在一起，成为一个逻辑整体，即Oracle数据库。
 
 2、	三个必须文件：1、Data files；2、Controller files；3、Redo Log files
@@ -18,6 +20,7 @@
 	5)、OracleOraDb11g_home1ClrAgent：
 	
 	6)、OracleOraDb11g_home1TNSListener：数据库监听服务，在数据库远程访问时使用
+	注意：在使用sqldeveloper图形界面开发工具时，需要打开此服务
 	
 	7)、OracleServiceORCL：数据库基础服务，必须启动项
 	
@@ -33,40 +36,72 @@
 	2)【create temporary tablespace 临时表空间名 tempfile '临时表空间的存储文件名.dbf' size 10m;】
 
 7、查看所创建的表空间的存放位置：
+
 	1)、select file_name from dba_data_files where tablespace_name = 'TEST1_TABLESPACE';
 	
 	2)、select file_name from dba_temp_files where tablespace_name = 'TEMPTEST_TABLESPACE';
 	
+8、数据字典：数据库提供的表，用来查看用户信息1、dba_tablespaces；2、user_tablespaces
+	
+9、查看所有用户表空间：【select tablespace_name from dba_tablespaces/user_tablespaces;】
+
+10、查看用户默认或临时表空间：
+【select username,default_tablespace,temporary_tablespace from dba_users;】
+
+12、更改用户默认表空和临时表空间：
+【 alter user 用户名 default tablespace 表空间名 temporary tablespace 临时表空间名;】
+
+13、设置表空间联机（即是可读写状态）或脱机的状态：【alter tablespace 表空间名 online/offline;】
+	查看表空间的状态：【select status from dba_tablespaces where tablespace_name = '表空间名';】
+
+14、设置只读或可读写状态(默认是可读写状态)：【alter tablespace 表空间名 read only/read write】
+
+15、在表空间中增加数据文件：【alter tablespace 表空间名 add datafile '数据文件名.dbf' size 10m;】
+
+16、删除表空间中的数据文件：【alter tablespace 表空间名 drop datafile '数据文件名.dbf';】
+	注意：不能删除第一个创建的数据文件，如需删除，则要把表空间删除
+	
+17、删除表空间：【drop tablespace 表空间名 [including contents];】
+	注意：如何想同时把表空间中的数据文件也连同删除，则需加后边的可选项
+
+18、
+
 ======================= 用户管理 =======================
 
-8、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间)：
+用户登录【conn sys/123456 @orcl as sysdba;】
+		【conn scott/123456 @orcl as normal;】
+
+1、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间[USERS/TEMP])：
 
 	【create user 用户名 identified by 密码 default tablespace 表空间名 temporary tablespace 临时表空间名;】
 
 	例如：create user linjt identified by 123456 default tablespace test_tablespace temporary tablespace temptest_tablespace;
 
-9、查看创建的用户：【select username from dba_users;】
+2、查看创建的用户：【select username from dba_users;】
 
-10、给用户赋角色：【grant 角色 to 用户名1,用户2】 例如：grant connect to linjt;
+3、给用户赋角色：【grant 角色 to 用户名1,用户2】 例如：grant connect to linjt;
 
 	收回用户角色：【revoke 角色 from 用户名1,用户2】 例如：revoke connect from linjt;
 	
 	给角色赋予权限：【grant 权限 to 角色;】   例如：grant create table,create view to manager;
 	
-11、用户登陆:【connect 用户名/密码;】   例如：conn sys/123456 as sysdba
+4、用户登陆:【connect 用户名/密码;】   例如：conn sys/123456 as sysdba
 
-12、更改用户名：【alter user 用户名 identified by 新密码;】
+5、更改用户名：【alter user 用户名 identified by 新密码;】
 
-13、锁定某用户：【alter user 用户名 account lock;】
+6、锁定某用户：【alter user 用户名 account lock;】
+   解锁某用户：【alter user 用户名 account unlock;】
 
-14、删除用户：【drop user 用户名 cascade;】
+7、查看当前账户下的所有表信息:【select table_name from user_tables;】
+
+7、删除用户：【drop user 用户名 cascade;】
 	#加上cascade表示级联将用户连接以及其所创建的东西全部删除
 
 ======================= 角色管理 =======================	
 
-15、什么事角色：即一组权限的集合；用户可以给角色赋予指定的权限，然后将角色赋给相应的用户。
+1、什么事角色：即一组权限的集合；用户可以给角色赋予指定的权限，然后将角色赋给相应的用户。
 	
-16、三种系统的标准的角色：
+2、三种系统的标准的角色：
 
 	1)、CONNECT(连接角色)：只可以登陆Oracle，不可以创建实体和数据库结构
 	
@@ -74,21 +109,21 @@
 	
 	3)、DBA(数据管理员角色)：系统最高权限，只有DBA才可以创建数据库结构
 	
-17、创建角色：【create role 角色名;】   例如：create role manager;
+3、创建角色：【create role 角色名;】   例如：create role manager;
 
 	删除角色：【drop role 角色名;】   例如：drop role manager;
 	
-18、对于普通用户授予connect和resource权限，DBA授予dba权限
+4、对于普通用户授予connect和resource权限，DBA授予dba权限
 
 ======================= 权限管理 =======================
 
-19、权限的分类：
+1、权限的分类：
 
 	1)、系统权限：允许用户执行特定的数据库动作，如创建表、创建索引、连接实例等；
 	
 	2)、对象(实体)权限：允许用户操作一些特定的对象，如读取视图、表，可更新某些列、执行存储过程等
 
-20、查询Oracle所以权限：【select * from system_privilege_map;】
+2、查询Oracle所以权限：【select * from system_privilege_map;】
 
 	1)、CREATE SESSION		创建会话
 	2)、CREATE SEQUENCE		创建序列
@@ -98,21 +133,66 @@
 	6)、DROP USER			删除用户
 	7)、CREATE VIEW			创建视图
 	
-21、查询Oracle所有的对象权限：【select * from table_privilege_map;】
+======================= DML =======================
+
+1、查询Oracle所有的对象权限：【select * from table_privilege_map;】
+
 	1)、 select
+	
 	2)、 update
+	
 	3)、 insert
+	
 	4)、 delete
+	
 	5)、 all
-         
 	
+======================= DDL =======================
+
+1、create table：创建数据库表
+2、create index：创建数据库索引
+3、drop table：删除数据库表
+4、drop index：删除数据库索引  
+5、truncate：删除表中的所有行
+6、alter table：更改表的结构，增加、修改、删除列 
+alter table student modify id varchar(32);
+7、alter table add constraint:在已有的表上增加约束
+   
+======================= DCL =======================
+
+1、grant：将权限或角色授予用户或其他角色（授予访问权限）
+2、revoke：从用户或数据库角色回收权限（撤销访问权限）
+3、lock：对数据库特定部分进行锁定
+4、unlock：解锁数据库
 	
+======================= TCL =======================
+
+1、commit：提交事务处理
+2、rellback：回滚
+3、savepoint：设置保存点
+
+======================= Oracle中常见的数据类型 =======================
+
+1、字符类型：
+
+	1)、char：表示固定长度类型，列长度在1到200个字节之间
 	
+	2)、varchar2：表示可变长度字符串，最大长度为4000字节
 	
+2、数值类型：number[(p[,s])]
 	
+	1)、p表示精度，s表示小数点位数，可以存储整数、浮点数等数值类型，最高精度为38位
 	
+	2)、例如：number(5,0):表示最多存储5位整数
+		例如：number(5,2):表示可存储999.99的浮点数
+
+3、日期类型：主要存储日期和时间值 ，包括年月日时分秒，主要的日期类型是 date
+
+4、LOB类型：
+
+	1)、clob：字符lob，可以存储大量的字符数据
 	
-	
+	2)、blob二进制lob，可以存储较大的二进制对象，如图形、视频剪辑、声音文件等
 	
 	
 	
