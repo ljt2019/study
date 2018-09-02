@@ -1,29 +1,8 @@
 
-1、写法1：
-	PageParameter pageParameter = new PageParameter(
-		parameter.getCurrentPage() == null ? 0 : parameter.getCurrentPage(),
-		parameter.getPageSize()== null ? 20 : parameter.getPageSize());
-		
-	PageParameter pageParameter = new PageParameter(
-		parameter.getPage() == null ? 0 : parameter.getPage(), 
-		parameter.getCount() == null ? 20 : parameter.getCount());
+1、写法1：【好用】
 
-2、写法2：【好用】
-		Integer page = param.getPage() == null ? 0 : param.getPage();
-		Integer count = param.getCount() == null ? 0 : param.getCount();
-		PageParameter pageParameter = new PageParameter(page, count);
-
-3、写法3：
-	PageParameter pageParameter = null;
-		if (parameter != null && parameter.getPage() != null && parameter.getCount() != null) {
-			pageParameter = new PageParameter(parameter.getPage(), parameter.getCount());
-		}
-		
-4、写法4：		
-	PageParameter pageParameter = null;
-		if (arInDTO != null && arInDTO.getPage() != null && arInDTO.getCount() != null) {
-			pageParameter = new PageParameter();
-			pageParameter.setCurrentPage(arInDTO.getPage());
-			pageParameter.setPageSize(arInDTO.getCount());
-		}
+	PageParameter pageParameter = new PageParameter(
+		param.getPage() == null ? 0 : param.getPage()
+		, param.getCount() == null ? 10 : param.getCount());
+	
 		

@@ -1,0 +1,113 @@
+
+	@RequestMapping(value = "/exportExcel")
+	public void exportExcel(MemberListInDTO params, HttpServletResponse response) {
+	
+		/*logger.info("用户信息列表记录");
+		ExcelOutDTO outDTO = new ExcelOutDTO();
+		outDTO.setOutDtoName("outDTOList");
+		outDTO.setClazz(MemberService.class);
+		outDTO.setFunctionName("selectExportExcelInfo");
+		outDTO.setParams(params,null);
+		outDTO.setFileName("用户信息列表.xlsx");
+		outDTO.setResponse(response);
+		outDTO.setTemplatePath("excelTemplate/memberList.xlsx");
+		ExcelUtils.export(outDTO);*/
+
+
+		Cell c;
+		Integer PAGE_ROWS=20000;
+		String FILE_NAME="用户信息列表.xlsx";
+		String TEMPLATE_PATH="excelTemplate/memberList.xlsx";
+		Integer index=1;
+		try {
+			Integer page=0;
+			InputStream in = this.getClass().getClassLoader().getResourceAsStream(TEMPLATE_PATH);
+			Workbook workbook = new XSSFWorkbook(in);
+			Sheet sheet = workbook.getSheetAt(0);
+			//获取模板第一行
+			Row row = sheet.getRow(0);
+
+			//创建输出的excel
+			Workbook wb = new SXSSFWorkbook(5000);
+			Sheet s = wb.createSheet();
+			wb.setSheetName(0,sheet.getSheetName());
+			Row r = s.createRow(0);
+			//设置第一行
+			for (Cell cell : row) {
+				c = r.createCell(cell.getColumnIndex());
+				c.setCellValue(cell.getStringCellValue());
+			}
+
+			//关闭模板的流
+			workbook.close();
+			in.close();
+
+			//时间格式
+			SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
+
+			List<MemberListViewOutDTO> memberList ;
+			while (true){
+				memberList = memberService.selectExportExcelInfo(params,page++,20000);
+				if(memberList != null && memberList.size() > 0){
+					for (MemberListViewOutDTO dto : memberList) {
+						r = s.createRow(index++);
+						c = r.createCell(0);
+						c.setCellValue(Optional.ofNullable(dto.getMallId()).orElse(""));
+						c = r.createCell(1);
+						c.setCellValue(Optional.ofNullable(dto.getMobile()).orElse(""));
+						c = r.createCell(2);
+						c.setCellValue(Optional.ofNullable(dto.getNickname()).orElse(""));
+						c = r.createCell(3);
+						c.setCellValue(Optional.ofNullable(dto.getStrHasAnalyze()).orElse(""));
+						c = r.createCell(4);
+						c.setCellValue(Optional.ofNullable(dto.getStrHasScheme()).orElse(""));
+						c = r.createCell(5);
+						c.setCellValue(Optional.ofNullable(dto.getStrHasAuthenticated()).orElse(""));
+						c = r.createCell(6);
+						c.setCellValue(Optional.ofNullable(dto.getStrHasDiscountsAuthenticated()).orElse(""));
+						c = r.createCell(7);
+						c.setCellValue(Optional.ofNullable(dto.getStrIsSupreVIP()).orElse(""));
+						c = r.createCell(8);
+						c.setCellValue(Optional.ofNullable(dto.getCashPledge()).orElse(BigDecimal.valueOf(0)).toString());
+						c = r.createCell(9);
+						c.setCellValue(Optional.ofNullable(dto.getWallet()).orElse(BigDecimal.valueOf(0)).toString());
+						c = r.createCell(10);
+						if(dto.getRegistTime() == null){
+							c.setCellValue("");
+						}else {
+							c.setCellValue(format.format(dto.getRegistTime()));
+						}
+						c = r.createCell(11);
+						c.setCellValue(Optional.ofNullable(dto.getCity()).orElse(""));
+					}
+				}
+				if(memberList == null || memberList.size() < PAGE_ROWS){
+					break;
+				}
+			}
+
+
+			//设置浏览器响应
+			//response.setContentType("application/x-download");
+			response.setHeader("Content-Disposition", "attachment;filename=" + new String(FILE_NAME.getBytes(), "ISO-8859-1"));
+			ServletOutputStream out = response.getOutputStream();
+			wb.write(out);
+			out.close();
+
+			/*@SuppressWarnings("unchecked")
+			List<MemberListViewOutDTO> outDTOList = (List<MemberListViewOutDTO>) memberService.getMemberList(params).getData();
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("outDTOList", outDTOList);
+			ExportExcelDTO exportExcelDTO = new ExportExcelDTO();
+			exportExcelDTO.setData(data);
+			exportExcelDTO.setExportFileName("用户信息列表");
+			exportExcelDTO.setTemplatePath("excelTemplate/memberList.xlsx");
+			exportExcelDTO.setResponse(response);
+			JxlsUtil.exportExcel(exportExcelDTO);*/
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			//return AppPageResultObj.serverError(e.getMessage());
+		}
+	}
