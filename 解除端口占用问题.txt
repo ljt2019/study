@@ -1,8 +1,8 @@
-1、打开命令行：输入  netstat   -ano|findstr  8080 
+1、打开命令行：输入  netstat -ano|findstr 8080 
 
 2、查看监听代号：例如6856
 
-3、接着在命令行输入：taskkill  /pid  6856  /f 
+3、接着在命令行输入：taskkill /pid 6856 /f 
 
 4、ok 
 

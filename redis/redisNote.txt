@@ -3,14 +3,22 @@
 
 1、这里我们下载 Redis-x64-xxx.zip压缩包到 C 盘，解压后，将文件夹重新命名为 redis。
 
-2、打开一个 cmd 窗口 使用cd命令切换目录到 C:\redis 运行 redis-server.exe redis.windows.conf 。
+2、打开一个 cmd 窗口 使用cd命令切换目录到 C:\redis 运行 【redis-server.exe redis.windows.conf】
 
-3、	这时候另启一个cmd窗口，原来的不要关闭，不然就无法访问服务端了。
+3、	这时候另启一个cmd窗口，原来的不要关闭，不然就无法访问服务端了
 
-	切换到redis目录下运行 redis-cli.exe -h 127.0.0.1 -p 6379 。
+	切换到redis目录下运行 【redis-cli.exe -h 127.0.0.1 -p 6379】
 	
-	设置键值对 set myKey abc
+	设置键值对 【set myKey abc】
 
-	取出键值对 get myKey
+	取出键值对 【get myKey】
 	
-4、
+4、springboot中使用注解的方式使用缓存
+
+	1)、@Cacheable：取缓存
+	2)、@CachePut：修改缓存，如果不存在则创建
+	3)、@CacheEvict：如果缓存还存在就必须删除
+	@Cacheable(value = "mysql:findById:deparment", keyGenerator = "simpleKey")
+	@CachePut(value = "mysql:findById:deparment", keyGenerator = "objectId")
+	@CacheEvict(value = "mysql:findById:deparment", keyGenerator = "simpleKey")
+	其中valu中的参数是一个key的前缀，并由keyGenerator按一定规则生成唯一标识
