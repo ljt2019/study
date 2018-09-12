@@ -1,0 +1,14 @@
+
+1、导入vue.min.js头文件
+
+2、vue编写格式，在内嵌在html页面
+<script>
+new Vue({
+  el: '#tiger',
+  data: {
+    message: 'Hello tiger!'
+  }
+})
+</script>
+
+3、
