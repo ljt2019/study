@@ -1,0 +1,8 @@
+
+这样测试就不会乱码，实际添加的是 name=嘻嘻&age=23&cupSize=F
+
+POST http://localhost:8080/girldev/add?name=嘻嘻&age=23&cupSize=F
+Content-Type: application/json
+
+{}
+

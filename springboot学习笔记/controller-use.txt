@@ -1,0 +1,24 @@
+
+--- Controller ---的用法
+
+1、@Controller：处理http请求
+
+2、@RestController：Spring4之后新加的注解，原来返回json需要@ResponseBody配合@Controller
+
+3、@RequestMapping：配置url映射
+
+4、推荐使用@RestController，因为前后端分离越发明显，只需要提供接口，返回json格式数据；而是要模板性能会有很大的消耗。
+
+5、请求方式测试：idea有个rest client,可以代替postman,Tools -> Test RESTful web service
+
+6、@PathVariable 用法如下：请求url：http://localhost:8080/girldev/hello/100/say
+	@RequestMapping(value = "/{id}/say", method = RequestMethod.GET)
+    public String say(@PathVariable("id") Integer id) { return "id: " + id;}
+	
+7、@RequestParam 用法如下：请求url：http://localhost:8080/girldev/hello/hi/100/?id=22
+   @RequestMapping(value = {"/say","/hi/{id}"}, method = RequestMethod.GET)
+    public String say(@RequestParam(value = "id",required = false,defaultValue = "0") Integer id) { return "id: " + id;}
+	
+8、@GetMapping("/say")  ；@PostMapping("/say")
+
+9、数据库操作，hibernate实例：

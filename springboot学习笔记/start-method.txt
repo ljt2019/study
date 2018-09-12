@@ -1,0 +1,9 @@
+
+	springboot的三种启动方式
+
+1、直接在intellij IDEA中run
+
+2、到项目目录下 命令行：mvn spring-boot:run
+
+3、先编译程序：mvn clean install , 之后到 
+java -jar target/girl-0.0.1-SNAPSHOT.jar --spring.profiles=dev
