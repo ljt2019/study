@@ -1,5 +1,55 @@
 
-========= HBase Shell =========
+========= HBase 主要作用 =========大数据
+
+1、海量苏剧存储和海量数据的准实时查询
+
+========= HBase 应用场景 =========
+
+1、交通、金融、电商、移动
+
+========= HBase 特点 =========
+
+1、海量：HBase单表可以有百亿行，百万列，数据矩阵横向和纵向两个维度所支持的数据量级别都非常具有弹性。对比关系型数据库，单边不会超过500万行，列不会超过30列
+
+2、面向列：HBase是面向列的存储和权限控制（关系型数据库是面向行的数据，需要定义表的列结构），并支持独立检索。列是可以动态增加，不需要定义列
+
+3、多版本：每一个列的数据存储多个Version。
+
+4、稀疏性：为空的列并不占用存储空间，表可以设计地非常稀疏。
+
+5、扩展性：底层依赖HDFS
+
+6、高可用性：WAL机制保证了数据写入时不会因为集群异常而导致写入数据丢失：Replication机制保证了在集群出现严重问题时数据不会发生丢失或损坏。而且HBase底层使用HDFS，HDFS本身也有备份。
+
+7、高性能：底层LSM数据结构和RowKey有序排列等架构上的独特设计，使得HBase具有非常高的写入性能。region切分，主键索引和缓存机制使得HBase在海量数据下具备一定的随机读写性能，该性能针对RowKey的查询能够达到毫秒级别。
+
+========= HBase 版本的选择 =========
+
+1、官方版本：http://archive.apache.org/dist/hbase/
+
+2、CDH版本：http://archive.cloudera.com/cdh5/对技术框架的整合，稳定，兼容性好，现实应用中更多的采用这个版本
+
+========= HBase 表结构模型 =========
+
+1、举例：求职简历表结构
+	 个人信息(column family列簇)			教育经历		    工作经历
+  姓名(column列) 年龄 电话 住址 性别     大学 研究生 博士   工作1 工作2 工作3
+
+2、一张表列簇不会超过5个，一般是建表的时候就确定，列可以动态增加列簇不可以
+
+3、列动态增加、数据自动划分、高并发读写、不支持条件查询
+
+========= HBase 安装 =========
+
+1、jdk 1.7以上
+
+2、Hadoop-2.5.0以上
+
+3、Zookeeper-3.4.5
+
+========= HBase Shell ========= 
+
+首先通过 【bin/hbase shell】进入HBase
 
 1、通用命令
 
@@ -13,11 +63,11 @@
 	
 2、数据定义语言
 
-	1)、create: 创建一个表。
+	1)、create:创建一个表:【create 'table_name','column_family1','column_family2' 】
 	
 	2)、list: 列出HBase的所有表。
 	
-	3)、disable: 禁用表。
+	3)、disable: 禁用表：【disable 'table name'】
 	
 	4)、is_disabled: 验证表是否被禁用。
 	
@@ -39,7 +89,8 @@
 	
 3、数据操纵语言
 
-	1)、put: 把指定列在指定的行中单元格的值在一个特定的表。
+	1)、put: 把指定列在指定的行中单元格的值在一个特定的表
+	【put  'table_name’,'RowKey','colFamily:col','colValue'】
 	
 	2)、get: 取行或单元格的内容。
 	
@@ -54,3 +105,24 @@
 	7)、truncate: 禁用，删除和重新创建一个指定的表。
 	
 	8)、Java client API: 在此之前所有上述命令，Java提供了一个客户端API来实现DML功能，CRUD（创建检索更新删除）操作更多的是通过编程，在org.apache.hadoop.hbase.client包下。 在此包HTable 的 Put和Get是重要的类。
+	
+4、HBase的查询实现只提供两种方式：
+
+	1)、按指定RowKey获取唯一一条记录，get方法（org.apache.hadoop.hbase.client.Get）
+
+	2)、按指定的条件获取一批记录，scan方法（org.apache.hadoop.hbase.client.Scan）
+
+5、实现条件查询功能使用的就是scan方式，scan在使用时有以下几点值得注意：
+
+	1)、scan可以通过setCaching与setBatch方法提高速度（以空间换时间）；
+	2)、scan可以通过setStartRow与setEndRow来限定范围。范围越小，性能越高。通过巧妙的RowKey设计使我们批量获取记录集合中的元素挨在一起（应该在同一个Region下），可以在遍历结果时获得很好的性能。
+	
+	3)、scan可以通过setFilter方法添加过滤器，这也是分页、多条件查询的基础。
+
+
+
+
+
+
+
+

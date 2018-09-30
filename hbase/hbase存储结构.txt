@@ -1,0 +1,39 @@
+
+1、行式存储(关系型数据库，事物型)：以行为单位，一行中有很多列，一行一行进行存储，维护大量索引，随机访问效率高，对事物的管理好。
+
+2、列式存储(hbase，分析型):以列为单位，一列一列进行存储，就是说把每一列的数据聚合在一起存储(数据之间的相似度高，可以极度压缩)
+
+3、HBase Table的组成
+Table = RowKey + Family + Column + Timestamp + Value
+
+4、数据存储模式：key -> value 模式
+(Table,RowKey,Family,Column,Timestamp) -> Value
+
+5、列蔟存储：
+	SortedMap<
+		RowKey,List<
+			SortedMap<
+				Column,List<
+					Value,Timestamp
+				>
+			>
+		>
+	>
+
+6、hbase建表语句解析：
+	1)、Replication_scope:复制机制，为了远程集群的复制
+	2)、Compression:数据压缩类型的设置
+		1)Snappy方式压缩特性，以cpu资源换取磁盘空间的资源，对读写性能不会有太大的性能影响
+		
+7、HBase的元信息表：
+			Meta Table
+	Row Key				Value
+table、key、time	region、server
+
+8、HBase中的LSM存储思想
+
+	1)、什么是LSM树？
+
+
+
+
