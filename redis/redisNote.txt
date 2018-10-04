@@ -22,3 +22,4 @@
 	@CachePut(value = "mysql:findById:deparment", keyGenerator = "objectId")
 	@CacheEvict(value = "mysql:findById:deparment", keyGenerator = "simpleKey")
 	其中valu中的参数是一个key的前缀，并由keyGenerator按一定规则生成唯一标识
+	

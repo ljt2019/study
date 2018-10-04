@@ -33,6 +33,12 @@ table、key、time	region、server
 8、HBase中的LSM存储思想
 
 	1)、什么是LSM树？
+	
+9、region是什么：
+	1)、HBase是Region Client与Region Server交互的最小载体
+	2)、HBase中分布式存储和负载均衡的最小单元(注意：存储的最小单元室HFile)，不同的Region分布到不同的Region Server上
+	
+10、Data Block是HBase中数据的最基本的存储单元，是实际存储用户的数据结构
 
 
 
