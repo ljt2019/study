@@ -49,62 +49,69 @@
 
 ========= HBase Shell ========= 
 
-首先通过 【bin/hbase shell】进入HBase
+	1、启动HBase【 bin/start-hbase.sh】 
+
+	2、停用HBase【bin/stop-hbase.sh】
+
+	3、进入HBase客户端命令操作界面【bin/hbase shell】
+
+	4、退出HBase客户端命令操作界面【quit】
+
+	5、查看帮助命令【help】
 
 1、通用命令
 
-	1)、status：提供HBase的状态，例如服务器的数量
+	1)、查看HBase的状态，例如服务器的数量【status】
 	
-	2)、version：提供正在使用HBase版本	
+	2)、HBase版本【version】	
 
-	3)、table_help: 表引用命令提供帮助。
+	3)、表引用命令提供帮助【table_help】
 
-	4)、whoami: 提供有关用户的信息。
+	4)、有关用户的信息【whoami】
 	
 2、数据定义语言
 
-	1)、create:创建一个表:【create 'table_name','column_family1','column_family2' 】
+	1)、创建表【create 'table_name','column_family1','column_family2','xxx' 】
 	
-	2)、list: 列出HBase的所有表。
+	2)、查看当前数据库中有哪些表【list】
 	
-	3)、disable: 禁用表：【disable 'table name'】
+	3)、禁用表【disable 'table_name'】
 	
-	4)、is_disabled: 验证表是否被禁用。
+	4)、删除表【drop 'table_name'】，只有成功禁用表之后才能删除表
 	
-	5)、enable: 启用一个表。
+	6)、验证表是否被禁用【is_disabled 'table_name'】
 	
-	6)、is_enabled: 验证表是否已启用。
+	7)、启用一个表【enable 'table_name'】
 	
-	7)、describe: 提供了一个表的描述。
+	8)、验证表是否已启用【is_enabled 'table_name'】
 	
-	8)、alter: 改变一个表。
+	9)、查看表结构【describe 'table_name'】
 	
-	9)、exists: 验证表是否存在。
+	10)、改变一个表【alter 】
 	
-	10)、drop: 从HBase中删除表。
+	11)、验证表是否存在【exists 'table_name'】
 	
-	11)、drop_all: 丢弃在命令中给出匹配“regex”的表。
-	
-	12)、Java Admin API: 在此之前所有的上述命令，Java提供了一个通过API编程来管理实现DDL功能。在这个org.apache.hadoop.hbase.client包中有HBaseAdmin和HTableDescriptor 这两个重要的类提供DDL功能。
+	12)、丢弃在命令中给出匹配“regex”的表【drop_all】
 	
 3、数据操纵语言
 
-	1)、put: 把指定列在指定的行中单元格的值在一个特定的表
-	【put  'table_name’,'RowKey','colFamily:col','colValue'】
+	1)、put: 添加/更新指定字段的数据【put 'table_name','RowKey','colFamily:col','colValue'】
 	
-	2)、get: 取行或单元格的内容。
+	2)、扫描表all数据【scan 'table_name'】
 	
-	3)、delete: 删除表中的单元格值。
+	3)、查看某个RowKey范围内的数据【scan 'table_name’',{STARTROW => 'startRowKey',STOPROW => 'stopRowKey'}】
 	
-	4)、deleteall: 删除给定行的所有单元格。
+	4)、查看指定行的数据【get 'table_name','RowKey'】
 	
-	5)、scan: 扫描并返回表数据。
+	5)、查看指定行指定列或列族的数据【get 'table_name','RowKey','colFamily:col'】
 	
-	6)、count: 计数并返回表中的行的数目。
+	6)、删除掉某个RowKey中某一列的数据【delete 'student','1001','info:sex'】
+		
+	7)、删除某一个RowKey全部的数据【deleteall 'student','1001'】
 	
-	7)、truncate: 禁用，删除和重新创建一个指定的表。
-	
-	8)、Java client API: 在此之前所有上述命令，Java提供了一个客户端API来实现DML功能，CRUD（创建检索更新删除）操作更多的是通过编程，在org.apache.hadoop.hbase.client包下。 在此包HTable 的 Put和Get是重要的类。
+	8)、清空表数据【truncate 'table_name'】
+
+	9)、统计一张表有多少行数据【count 'table_name'】
 	
 4、HBase的查询实现只提供两种方式：
 
@@ -119,10 +126,39 @@
 	
 	3)、scan可以通过setFilter方法添加过滤器，这也是分页、多条件查询的基础。
 
+6、行键设计规则：
 
+	1)、写入要分散，减少region的热点问题。
+	2)、列族尽量少
+	
+	
+7、HBase读流程：region元信息本质上市存在RegionServer上，而HRegionServer的元信息存在zookeeper上
 
+	1)、首先Client先去访问zookeeper，从zookeeper里面获取RegionServer的meta信息
+	
+	2)、接着Client通过上一步得到的HRegionServer的IP来访问meta表所在的HRegionServer，得到region meta
+	
+	3)、Client通过region meta，访问对应的HRegionServer，然后扫描所在HReginServer的memstore和storefile来查询数据
+	
+	4)、最后HRegionServer把查询到的数据响应给HBaseClient
+	
+7、HBase写流程：
 
+	1)、Client先访问zookeeper，找到meta表，取得meta元数据
+	
+	2)、确定所需要写入数据对应得region和RegionServer服务器
+	
+	3)、HBaseClient向该RegionServr服务器发起写入请求，RegionServer收到并做出响应
 
+	总：Client 访问 zookeeper，zookeeper 返回 meta(HMaster和RegionServer)，访问具体 RegionServer，将数据操作写到 Hlog(本地)，Hlog写成功后，往 MemeStore(64M/40%时写) 中写，同时往 DataNode(一个个HFile)中写数据，将小的文件合并为大文件，当合并的文件所对应的region达到了256M默认值的阈值，开始拆分region
+	
+8、HMaster的职责：(尽量开高可用)
+
+	1)、负责RegionServer的负载均衡，调度RegionServer的工作
+	
+	2)、通过调度RegionServer去执行分割region的任务
+	
+	
 
 
 

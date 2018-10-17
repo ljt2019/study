@@ -40,6 +40,11 @@ table、key、time	region、server
 	
 10、Data Block是HBase中数据的最基本的存储单元，是实际存储用户的数据结构
 
+11、
+
+
+
+
 
 
 

@@ -1,0 +1,9 @@
+
+服务器地址：
+服务器：root@172.16.88.94
+密码：bigdata
+
+su hdfs
+hdfs dfs -ls /user/hdfs
+
+@EnableConfigurationProperties(DotNetProperties.class)
