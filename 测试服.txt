@@ -19,7 +19,7 @@ c)关掉对应的进程：kill -9 <pid>
 
 d)上传jar包：rz –y <对应项目的jar包>
 
-e) 启动对应的项目：nohup java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar&（注意：必须要有 &）
+e) 启动对应的项目：nohup java -Dloader.path=../sail-lib/ -jar sail-mgmt-api.jar&（注意：必须要有 &,后台启动）
 
 f) 滚动查看对应的日志：tail –f nohup.out
 
@@ -28,7 +28,6 @@ f) 滚动查看对应的日志：tail –f nohup.out
    2、sz sail-app-api.log
 
 #ctrl + z 退回到上层操作
-
 
 app地址：http://dev-apisail.healthmall.cn  -->测试服
 		 http://pre-apisail.healthmall.cn  -->预发布

@@ -52,8 +52,10 @@
 	1、启动HBase【 bin/start-hbase.sh】 
 
 	2、停用HBase【bin/stop-hbase.sh】
+	
+	
 
-	3、进入HBase客户端命令操作界面【bin/hbase shell】
+	3、进入HBase客户端命令操作界面【/bin/hbase shell】
 
 	4、退出HBase客户端命令操作界面【quit】
 
@@ -85,7 +87,7 @@
 	
 	8)、验证表是否已启用【is_enabled 'table_name'】
 	
-	9)、查看表结构【describe 'table_name'】
+	9)、查看表结构【desc 'table_name'】
 	
 	10)、改变一个表【alter 】
 	
