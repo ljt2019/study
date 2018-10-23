@@ -1,0 +1,55 @@
+
+1、<packaging>jar</packaging> 改为 <packaging>war</packaging>
+
+2、在maven里排除自带tomcat插件，有两种方法
+
+	1)、<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+	2)、<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+3、启动类Application.java继承SpringBootServletInitializer并重写configure方法
+
+	@SpringBootApplication
+	public class BootdoApplication extends SpringBootServletInitializer {
+		public static void main(String[] args) {
+			SpringApplication.run(BootdoApplication.class, args);
+
+		protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+			// 注意这里要指向原先用main方法执行的Application启动类
+			return builder.sources(BootdoApplication.class);
+		}
+	}
+	
+4、打包项目：【mvn clean package】
+
+5、将打包好的war包丢到tomcat的webapps目录下，到bin目录下启动tomcat
+
+6、注意：spring boot只支持tomcat 8.5 以上版本，如果外部tomcat版本过低，需要在pom.xml里指定低版本的tomcat
+	<properties>
+		<tomcat.version>7.0.47</tomcat.version>
+	</properties>
+
+7、请求方式：【localhost:port/war包名/在SpringBoot中RequestMapping设置的url请求】
+
+
+
+
+
+
+
+
+
+

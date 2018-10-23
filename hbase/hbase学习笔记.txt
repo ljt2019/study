@@ -1,4 +1,12 @@
 
+相关资料链接
+http://www.open-open.com/lib/view/open1417612091323.html
+
+配置环境变量：HADOOP_HOME   (路劲为解压的插件路劲D:\hadoop-common-2.6.0)
+在C:\Windows\System32\drivers\etc 的host文件上添加	172.16.88.102    hadoop1
+
+
+
 ========= HBase 主要作用 =========大数据
 
 1、海量苏剧存储和海量数据的准实时查询
@@ -55,7 +63,7 @@
 	
 	
 
-	3、进入HBase客户端命令操作界面【/bin/hbase shell】
+	3、进入HBase客户端命令操作界面【/opt/hbase-1.2.7/bin/hbase shell】
 
 	4、退出HBase客户端命令操作界面【quit】
 
@@ -73,7 +81,7 @@
 	
 2、数据定义语言
 
-	1)、创建表【create 'table_name','column_family1','column_family2','xxx' 】
+	1)、创建表【create 'table_name','column_family1','column_family2','xxx' 】，指定 表名 和 列族
 	
 	2)、查看当前数据库中有哪些表【list】
 	
@@ -97,7 +105,7 @@
 	
 3、数据操纵语言
 
-	1)、put: 添加/更新指定字段的数据【put 'table_name','RowKey','colFamily:col','colValue'】
+	1)、put: 添加/更新指定字段的数据【put 'table_name','RowKey','column_family1:col','colValue'】
 	
 	2)、扫描表all数据【scan 'table_name'】
 	
@@ -105,11 +113,11 @@
 	
 	4)、查看指定行的数据【get 'table_name','RowKey'】
 	
-	5)、查看指定行指定列或列族的数据【get 'table_name','RowKey','colFamily:col'】
+	5)、查看指定行指定列或列族的数据【get 'table_name','RowKey','column_family1:col'】
 	
-	6)、删除掉某个RowKey中某一列的数据【delete 'student','1001','info:sex'】
+	6)、删除掉某个RowKey中某一列的数据【delete 'table_name','RowKey','column_family1:col'】
 		
-	7)、删除某一个RowKey全部的数据【deleteall 'student','1001'】
+	7)、删除某一个RowKey全部的数据【deleteall 'table_name','RowKey'】
 	
 	8)、清空表数据【truncate 'table_name'】
 
@@ -160,7 +168,27 @@
 	
 	2)、通过调度RegionServer去执行分割region的任务
 	
+10.9、查看页面
+启动成功后，可以通过主机名:60010地址来访问HBase的管理页面
+例如，http://hadoop-senior01.itguigu.com:60010
 	
+9、大数据中hdfs常用的两种数据格式【tsv格式的文件：字段之间以制表符\t分割，csv格式的文件：字段之间以逗号,分割】
 
+10、查看HBase执行MapReduce所依赖的Jar包【/bin/hbase mapredcp】
+
+11、运行官方的MapReduce任务【/opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/yarn jar lib/hbase-server-0.98.6-cdh5.3.6.jar rowcounter student】
+
+12、在hdfs上创建文件夹【hdfs dfs -mkdir /input_fruit/】
+
+13、在HDFS中创建xx.tsv文件夹并上传到hdfs指定文件夹【hdfs dfs -put fruit.tsv /input_fruit/】
+
+14、执行MapReduce将xx.tsv结构化数据导入到HBase的fruit表中【importtsv -Dimporttsv.columns=HBASE_ROW_KEY,info:name,info:color fruit \
+hdfs://hadoop-senior01.itguigu.com:8020/input_fruit
+】
+
+15、
+
+	
+	 sqoop import --connect jdbc:mysql://172.16.104.94:3306/fs_mobilemap  --username fs_dev --password fs_dev --table o_sense_d --hbase-table sense --column-family id
 
 
