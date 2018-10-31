@@ -1,0 +1,14 @@
+	
+	
+	<insert id="insert"
+		parameterType="com.tiger.entity.QrCode">
+
+		<!-- 自动生成UUID主键,插入数据时不需要指定id,会自动生成 -->
+		<selectKey resultType="java.lang.String" keyProperty="id"
+			order="BEFORE">
+			SELECT REPLACE(UUID(), '-', '')
+		</selectKey>
+
+		insert into qr_code_circuit_rent (id, created_at, updated_at)
+		values (#{pkid,jdbcType=VARCHAR}, #{id}, #{created_at}, #{updated_at})
+	</insert>

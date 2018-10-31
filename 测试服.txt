@@ -37,3 +37,4 @@ app地址：http://dev-apisail.healthmall.cn  -->测试服
           https://sailweb.healthmall.cn       -->正式服
 
 		  
+talnet 39.108.114.251 8090

@@ -1,0 +1,60 @@
+
+Swagger2 基本使用(重点加粗显示)：
+@Api: 描述类/接口的主要用途
+
+@ApiOperation: 描述方法用途
+
+@ApiImplicitParam: 描述方法的参数
+
+@ApiImplicitParams: 描述方法的参数(Multi-Params)
+
+可以在上面 创建用户的方法上添加 @ApiImplicitParam(name = "user", value = "用户详细实体user", required = true, dataType = "User")试试看.
+
+@ApiParam:请求属性
+
+@ApiIgnore: 忽略某类/方法/参数的文档
+
+注意与 @ApiModelProperty(hidden = true)不同, @ApiIgnore 不能用在模型数据上
+
+@ApiResponse：响应配置
+
+如: @ApiResponse(code = 400, message = "无效的用户信息") ,注意这只是在 生成的Swagger文档上有效,不要和实际的客户端调用搞混了. 
+通常我们都是统一JSON返回,用不到这个注解
+
+@ApiResponses：响应集配置
+
+@ResponseHeader: 响应头设置
+
+例如: @ResponseHeader(name=”head1”,description=”response head conf”)
+
+@ApiModelProperty:添加和操作模型属性的数据
+
+
+/**
+  swagger2使用说明：
+         @Api：用在类上，说明该类的作用
+         @ApiOperation：用在方法上，说明方法的作用
+         @ApiIgnore：使用该注解忽略这个API
+         @ApiImplicitParams：用在方法上包含一组参数说明
+         @ApiImplicitParam：用在@ApiImplicitParams注解中，指定一个请求参数的各个方面
+            paramType：参数放在哪个地方
+                 header-->请求参数的获取：@RequestHeader
+                 query-->请求参数的获取：@RequestParam
+                 path（用于restful接口）-->请求参数的获取：@PathVariable
+                 body（不常用）
+                 form（不常用）
+             name：参数名
+             dataType：参数类型
+             required：参数是否必须传
+             value：参数的意思
+             defaultValue：参数的默认值
+         @ApiResponses：用于表示一组响应
+         @ApiResponse：用在@ApiResponses中，一般用于表达一个错误的响应信息
+             code：数字，例如400
+             message：信息，例如"请求参数没填好"
+             response：抛出异常的类
+         @ApiModel：描述一个Model的信息（这种一般用在post创建的时候，使用@RequestBody这样的场景，请求参数无法使用@ApiImplicitParam注解进行描述的时候）
+            @ApiModelProperty：描述一个model的属性
+ */
+
+
