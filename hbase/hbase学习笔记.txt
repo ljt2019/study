@@ -81,47 +81,49 @@ http://www.open-open.com/lib/view/open1417612091323.html
 	
 2、数据定义语言
 
-	1)、创建表【create 'table_name','column_family1','column_family2','xxx' 】，指定 表名 和 列族
+	1)、创建表【 create 'table_name','column_family1','column_family2','xxx' 】，指定 表名 和 列族
 	
 	2)、查看当前数据库中有哪些表【list】
 	
-	3)、禁用表【disable 'table_name'】
+	3)、禁用表【 disable 'table_name'】
 	
-	4)、删除表【drop 'table_name'】，只有成功禁用表之后才能删除表
+	4)、删除表【 drop 'table_name'】，只有成功禁用表之后才能删除表
+	
+	8)、清空表数据【 truncate 'table_name'】
 	
 	6)、验证表是否被禁用【is_disabled 'table_name'】
 	
-	7)、启用一个表【enable 'table_name'】
+	7)、启用一个表【 enable 'table_name'】
 	
 	8)、验证表是否已启用【is_enabled 'table_name'】
 	
-	9)、查看表结构【desc 'table_name'】
+	9)、查看表结构【 desc 'table_name'】
 	
-	10)、改变一个表【alter 】
+	10)、改变一个表【 alter 】
 	
-	11)、验证表是否存在【exists 'table_name'】
+	11)、验证表是否存在【 exists 'table_name'】
 	
-	12)、丢弃在命令中给出匹配“regex”的表【drop_all】
+	12)、丢弃在命令中给出匹配“regex”的表【 drop_all】
 	
 3、数据操纵语言
 
-	1)、put: 添加/更新指定字段的数据【put 'table_name','RowKey','column_family1:col','colValue'】
+	1)、put: 添加/更新指定字段的数据【 put 'table_name','RowKey','column_family1:col','colValue'】
 	
-	2)、扫描表all数据【scan 'table_name'】
+	2)、扫描表all数据【 scan 'table_name'】
 	
-	3)、查看某个RowKey范围内的数据【scan 'table_name’',{STARTROW => 'startRowKey',STOPROW => 'stopRowKey'}】
+	3)、查看某个RowKey范围内的数据【 scan 'table_name’',{STARTROW => 'startRowKey',STOPROW => 'stopRowKey'}】
 	
-	4)、查看指定行的数据【get 'table_name','RowKey'】
+	4)、查看指定行的数据【 get 'table_name','RowKey'】
 	
-	5)、查看指定行指定列或列族的数据【get 'table_name','RowKey','column_family1:col'】
+	5)、查看指定行指定列或列族的数据【 get 'table_name','RowKey','column_family1:col'】
 	
-	6)、删除掉某个RowKey中某一列的数据【delete 'table_name','RowKey','column_family1:col'】
+	6)、删除掉某个RowKey中某一列的数据【 delete 'table_name','RowKey','column_family1:col'】
 		
-	7)、删除某一个RowKey全部的数据【deleteall 'table_name','RowKey'】
+	7)、删除某一个RowKey全部的数据【 deleteall 'table_name','RowKey'】
 	
-	8)、清空表数据【truncate 'table_name'】
+	8)、清空表数据【 truncate 'table_name'】
 
-	9)、统计一张表有多少行数据【count 'table_name'】
+	9)、统计一张表有多少行数据【 count 'table_name'】
 	
 4、HBase的查询实现只提供两种方式：
 

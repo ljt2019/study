@@ -261,3 +261,5 @@
 						ArBigOperatingRecord_.deleteFlag.equal(CommonConstant.NOT_DELETE), Query.orderby,
 						ArBigOperatingRecord_.createTime.desc()), pageParameter);
 	
+	
+15、inert into [key存在的就报错] / replace into [key存在的就更新]
