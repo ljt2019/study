@@ -1,9 +1,10 @@
+
 --------- jetty使用步骤 --------- 
 
 1、首先到其官网下载jetty压缩包，直接解压到某个目录下。
 
 2、进入到解压后的根目录下 执行命令启动start.jar：
-  【D:\jetty\demo-base>java -jar D:\jetty\start.jar】
+  【C:\SoftInstalled\jetty\demo-base>java -jar ../start.jar】
  
 3、到浏览器输入【http://localhost:8080】，就可以进入到jetty欢迎页面了。
 

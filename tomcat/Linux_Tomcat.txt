@@ -1,0 +1,11 @@
+=== 进入到tomcat的bin目录下 ===
+
+1、启动：【sh bin/catalina.sh start】            【sh startup.sh或者./startup.sh】
+
+2、查看是否启动：【ps aux | grep tomcat】  查看进程【ps -ef|grep tomcat】
+
+3、关闭：【./shutdown.sh】 【kill -9 xx】
+
+4、重启：【关闭后再启动】【sh bin/catalina.sh stop】【sh bin/catalina.sh start】【sh bin/catalina.sh restart】
+
+5、实时查看启动日志：【tail -f catalina.out】
