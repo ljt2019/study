@@ -49,6 +49,13 @@
 
 
 
+1、maven方式
+
+2、initializer service url方式：https://start.spring.io
+
+
+
+
 
 
 

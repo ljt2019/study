@@ -1,0 +1,31 @@
+
+--------- jetty使用步骤 --------- 
+
+1、首先到其官网下载jetty压缩包，直接解压到某个目录下。
+
+2、进入到解压后的根目录下 执行命令启动start.jar：
+  【C:\SoftInstalled\jetty\demo-base>java -jar ../start.jar】
+ 
+3、到浏览器输入【http://localhost:8080】，就可以进入到jetty欢迎页面了。
+
+4、jetty目录结构中的webapps目录：是运行于Jetty默认配置下的Web应用部署目录(一般实际部署应用会重新创建一个另外一个目录作为Jetty_base路径)。
+
+
+5、springboot切换默认容器：tomcat --> jetty
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <!-- Exclude the Tomcat dependency -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Use Jetty instead -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>

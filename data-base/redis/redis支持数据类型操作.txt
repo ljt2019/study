@@ -51,23 +51,23 @@
 
 4、有序字符串集合（sorted set）：排名，热点话，构建索引数据，带分数score-value有序集合,value不可重复，score可重复
 
-	1)、赋值：【zadd sortset 70 zs 80 ls 90 ww】
-		      【zadd sortset 100 zs】,会替换掉之前存在的分数的值
+	1)、赋值：【zadd key 70 zs 80 ls 90 ww】
+		      【zadd key 100 zs】,会替换掉之前存在的分数的值
 			  
-	2)、取值：【zscore sortset zs】
-		      【zcard sortset】，取长度
-			  【zrange sortset 0 -1】，取某范围内的值，默认是升序
-			  【zrevrange sortset 0 -1】，取某范围内的值，从大到小
-			  【zrange sortset 0 -1 withscores】，取某范围内的值，并将分数也取出
-			  【zrangebyscore sortset 80 100 withscores limit 0 2】，根据分数的范围进行取值
+	2)、取值：【zscore key zs】
+		      【zcard key】，取长度
+			  【zrange key 0 -1】，取某范围内的值，默认是升序
+			  【zrevrange key 0 -1】，取某范围内的值，从大到小
+			  【zrange key 0 -1 withscores】，取某范围内的值，并将分数也取出
+			  【zrangebyscore key 80 100 withscores limit 0 2】，根据分数的范围进行取值
 			  
-	3)、删除：【zrem sortset zs ls】
-		      【zremrangebyrank sortset 0 4】,根据排名的范围进行删除
-			  【zremrangebyscore sortset 80 100】,根据分数的范围进行删除
+	3)、删除：【zrem key zs ls】
+		      【zremrangebyrank key 0 4】,根据排名的范围进行删除
+			  【zremrangebyscore key 80 100】,根据分数的范围进行删除
 			  
-	4)、给某个分数加值：【zincrby sortset 3 ls】,表示给ls的分数加3		
+	4)、给某个分数加值：【zincrby key 3 ls】,表示给ls的分数加3		
 
-	5)、获取某分数之间的个数：【zcount sortset 80 90】
+	5)、获取某分数之间的个数：【zcount key 80 90】
 
 5、字符串集合（set）：不允许重复元素，跟踪数据唯一性，维护数据对象之间的关联关系
 
