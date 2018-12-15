@@ -1,0 +1,23 @@
+
+1、依赖：
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+2、端点（Endpoints）
+Web Endpoints
+JMX Endpoints
+
+3、健康检查（Health Checks）
+Health
+HealthIndicator
+
+4、指标（Metrics）
+内建 Metrics
+Web Endpoint : /actuator/metrics
+自定义 Metrics
+
+可以通过【jconsole】打开查看健康管理
+找到控制台输出的进程id：
