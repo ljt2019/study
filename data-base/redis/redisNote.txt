@@ -1,20 +1,56 @@
 
-默认端口号【6379】
+============ window安装redis ============
 
 1、这里我们下载 Redis-x64-xxx.zip压缩包到 C 盘，解压后，将文件夹重新命名为 redis。
 
-2、打开一个 cmd 窗口 使用cd命令切换目录到 C:\redis 运行 【redis-server.exe redis.windows.conf】
+2、打开一个 cmd 窗口 使用cd命令切换目录到 C:\redis 运行 【redis-server.exe redis.windows.conf】，指定服务脚本与配置文件
 
 3、	这时候另启一个cmd窗口，原来的不要关闭，不然就无法访问服务端了
 
-	切换到redis目录下运行，window系统：【redis-cli.exe -h 127.0.0.1 -p 6379】，Linux系统【redis-cli -h 192.168.31.245 -c -p 7002】
+	切换到redis目录下，前台启动，window系统：【redis-cli.exe -h 127.0.0.1 -p 6379】，Linux系统【redis-cli -h 192.168.31.245 -c -p 7002】
 	
-	设置键值对 【set myKey abc】
-
-	取出键值对 【get myKey】
 	
-4、springboot中使用注解的方式使用缓存
+============ Linux下安装redis ============
+	
+1、下载安装包：【wget http://download.redis.io/releases/redis-3.0.7.tar.gz】  稳定版
 
+2、解压：【tar -zxvf redis-3.0.7.tar.gz】
+
+3、安装gcc(如果没有则执行以下两命令,[gcc --version]检验有没有该编译器)：
+	【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
+	【yum -y install wget httpd-tools vim】
+	
+4、进入目录：【cd redis-5.0.3】
+
+5、执行编译：【make】，出现[Hint: It's a good idea to run 'make test' ;)],则说明编译成功
+
+6、进入src目录：【cd src】
+
+7、执行：【make install】
+
+8、建立两个文件夹存放redis命令和配置文件
+	【mkdir -p /usr/local/redis/etc】
+	【mkdir -p /usr/local/redis/bin】
+	
+9、将redis-3.0.7目录下的redis.conf拷贝到新建的etc目录下：【cp redis.conf /usr/local/redis/etc/】
+
+10、将redis-3.0.7/src目录下的一些文件移动到新建的bin目录下：
+   【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
+
+11、编辑redis.conf文件，使之后台启动：【vim redis.conf】，后台启动【daemonize yes】，持久化存放的位置【dir /usr/local/redis/etc/】
+
+12、退出编辑器：【:wq+enter键】
+
+13、启动：指定服务脚本与配置文件：【/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf】
+
+14、客户端进入：【/usr/local/redis/bin/redis-cli shutdown】
+
+15、客户端进入：【/usr/local/redis/bin/redis-cli】
+
+
+============ springboot中使用redis ============
+	
+1、springboot中使用注解的方式使用缓存
 	1)、@Cacheable：取缓存
 	2)、@CachePut：修改缓存，如果不存在则创建
 	3)、@CacheEvict：如果缓存还存在就必须删除
@@ -22,11 +58,10 @@
 	@CachePut(value = "mysql:findById:deparment", keyGenerator = "objectId")
 	@CacheEvict(value = "mysql:findById:deparment", keyGenerator = "simpleKey")
 	其中valu中的参数是一个key的前缀，并由keyGenerator按一定规则生成唯一标识
-	
 	@Cacheable(value = "SenseServiceImpl", key = "'getSenseList'.concat(#param.startTime.toString()).concat(#param.endTime.toString())", unless = "#result eq null")
 
+2、注意事项：1、key不要过长、不要过短、统一的命名规范
 
-注意事项：1、key不要过长、不要过短、统一的命名规范
 
 ============ Redis 5种数据类型 ============
 
@@ -76,27 +111,7 @@
 	3)、删除：【lpop list】,弹出左边的元素
 			  【rpop list】,弹出右边的元素
 
-4、有序字符串集合（sorted set）：排名，热点话，构建索引数据，带分数score-value有序集合,value不可重复，score可重复
-
-	1)、赋值：【zadd key 70 zs 80 ls 90 ww】
-		      【zadd key 100 zs】,会替换掉之前存在的分数的值
-			  
-	2)、取值：【zscore key zs】
-		      【zcard key】，取长度
-			  【zrange key 0 -1】，取某范围内的值，默认是升序
-			  【zrevrange key 0 -1】，取某范围内的值，从大到小
-			  【zrange key 0 -1 withscores】，取某范围内的值，并将分数也取出
-			  【zrangebyscore key 80 100 withscores limit 0 2】，根据分数的范围进行取值
-			  
-	3)、删除：【zrem key zs ls】
-		      【zremrangebyrank key 0 4】,根据排名的范围进行删除
-			  【zremrangebyscore key 80 100】,根据分数的范围进行删除
-			  
-	4)、给某个分数加值：【zincrby key 3 ls】,表示给ls的分数加3		
-
-	5)、获取某分数之间的个数：【zcount key 80 90】
-
-5、字符串集合（set）：不允许重复元素，跟踪数据唯一性，维护数据对象之间的关联关系
+4、字符串集合（set）：不允许重复元素，跟踪数据唯一性，维护数据对象之间的关联关系
 
 	1)、赋值：【sadd set a b c】
 			  【sadd set 1 2 3】
@@ -119,6 +134,27 @@
 	8)、交集存储：【sinterstore set set1 set2】
 	
 	8)、并集存储：【sunionstore set set1 set2】
+
+5、有序字符串集合（sorted set）：排名，热点话，构建索引数据，带分数score-value有序集合,value不可重复，score可重复
+
+	1)、赋值：【zadd key 70 zs 80 ls 90 ww】
+		      【zadd key 100 zs】,会替换掉之前存在的分数的值
+			  
+	2)、取值：【zscore key zs】
+		      【zcard key】，取长度
+			  【zrange key 0 -1】，取某范围内的值，默认是升序
+			  【zrevrange key 0 -1】，取某范围内的值，从大到小
+			  【zrange key 0 -1 withscores】，取某范围内的值，并将分数也取出
+			  【zrangebyscore key 80 100 withscores limit 0 2】，根据分数的范围进行取值
+			  
+	3)、删除：【zrem key zs ls】
+		      【zremrangebyrank key 0 4】,根据排名的范围进行删除
+			  【zremrangebyscore key 80 100】,根据分数的范围进行删除
+			  
+	4)、给某个分数加值：【zincrby key 3 ls】,表示给ls的分数加3		
+
+	5)、获取某分数之间的个数：【zcount key 80 90】
+	
 	
 ============ Redis Key的一些操作 ============
 
@@ -136,6 +172,7 @@
 
 7、获取key的类型：【type key】
 
+
 ============ Redis 中的多数据库 ============
 
 1、一共有15个数据库，默认存储的是0号数据库
@@ -149,16 +186,35 @@
 	2)、提交事务：【exec】	
 	
 	3)、事务回滚：【discard】
+	
 
 ============ Redis 持久化 ============
 
-1、RDB方式：默认，在指定的时间间隔内将内存中的数据集快照写入磁盘，例如30秒
+1、RDB方式：默认，在指定的时间间隔内将内存中的数据集快照写入磁盘，例如30秒【dbfilename dump.rdb】持久化文件所存放的目录【dir /usr/local/redis/etc/】
 
-2、AOF方式：日志记录
+2、AOF方式：日志记录，体现数据的高可靠，必须开启，工作中常用，但一定层度上会导致变慢    
+   //AOF开启快照【appendonly yes】文件名：【appendfilename "appendonly.aof"】，可以修改
 
 3、无持久化：缓存
 
 
+====================== Redis 集群 =Redis不是靠单点的性能来决定的，强调的是多实例，而memcache强调的是单点性能 ======================
 
+1、主从模式：一主多从，一台主机(可写)，多台从机(可读，适用高并发，类似于mysql的主从读写分离)，此方式最简陋，一旦主节点挂掉则不可用
 
+2、哨兵模式：一主多从，第一种模式升级，哨兵对各节点进行健康监控，一旦主节点挂掉，就在从节点中选出一个性能最佳的升级为主节[主从替换]点，2.x使用的机制，实现了高可用，[但没法实现分布式的数据库，主从数据都是一致的]
+
+3、集群模式：第二种模式的升级，多主多从，主从替换。可以任意水平扩展，数据可以任意切割
+
+4、问题：高并发是写入比较慢怎么解决？
+	答：1、水平扩展集群，分担写的操作
+		2、redis+ssdb技术结合(ssdb高并发时写操作很快)
 	
+5、如何解决高并发问题？	
+	答：解决高并发是一个综合的技术考虑，不单单是一个技术点能解决的，例如需要考虑:技术、业务、前台、后台、入口、数据库层
+
+高并发，负载均衡
+	前端的措施：Lvs+ng服务器 --> ng下又挂多个ng，分流，使不同的业务往不同的系统跑
+	java代码层：加高并发容器，做一些判断
+	业务层措施：
+	数据库措施：加缓存给数据库减压，能放进缓存的可以放入缓存

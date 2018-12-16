@@ -19,6 +19,9 @@
 　　man(手册)
 　　上面这些命令都是最最常用的，一定要把基本用法记牢。事实上，每人能记住全部命令或一个命令的全部参数，记住几个常用的就行了。其他的查书
 
+
+ ======== 基本命令 ========
+ 
 1、日期：date 
          date +%Y年%m月%d日  【格式化日期】
 		 
@@ -41,15 +44,15 @@
 	 5：配置文件戒者是某些档案的格式
 	 8：系统管理员可用的管理挃令
 	 
-8、新建档案：touch
+8、新建档案：【touch file】
 
-9、新建目录：mkdir
+9、新建目录：【mkdir folder】
 
-10、增加新的群组：groupadd project
+10、增加新的群组：【groupadd project】
 
-11、建立 alex 账号，并支持project群组：useradd -G project alex
+11、建立 account  账号，并支持project群组：【useradd -G project account 】
 
-12、查阅 alex 账号的属性：id alex
+12、查阅 account  账号的属性：id account 
 
 13、找出 /etc 底下，档案容量大亍 50K 丏档案所属人丌是 root 癿档名，丏将权限完整癿列出 (ls -
 l)；find /etc -size +50k -a ! -user root -exec ls -ld {} \;
@@ -58,33 +61,15 @@ l)；find /etc -size +50k -a ! -user root -exec ls -ld {} \;
 14、找出 /etc 底下，档案大小介亍 50K 到 60K 乊间癿档案，幵丏将权限完整癿列出 (ls -l)：
 	find /etc -size +50k -a -size -60k -exec ls -l {} \;
 	注意到 -a ，那个 -a 是 and 癿意忠，为符合两者才算成功
-
-1、显示机器的处理器架构：arch 
-在virtualBox中安装CentOs
-2、uname -m：显示机器的处理器架构
-
-这里我列出一些经常用的命令，具体的用法可以参见相关手册页（希望你的英文不象我这么差）。 
-　　vi(一定要会用这个你非常讨厌的东西，如果你屈服了，可以选择另一个叫做pico的编辑器，它有点象DOS的edit)
-　　head(用来看很长的文件用)
-　　tail(同上)
-　　netstat(看网络状态)
-　　tar(解开.tar.gz的压缩包)
-　　ps(察看进程)
-　　kill(干掉进程)
-　　top(看系统状况)
-　　shutdown(关闭系统)
-　　cat(看文件内容)
-　　ping (看网络连通状况)
-　　ftp(传输文件)
-　　man(手册)
-　　上面这些命令都是最最常用的，一定要把基本用法记牢。事实上，每人能记住全部命令或一个命令的全部参数，记住几个常用的就行了。其他的查书
+	
+15、编辑器：【vim file.txt】，退出：【:wq+enter键】
 
 
- ======== 文件复制 ========
+ ======== 文件复制/移动/删除 ========
  
-1、将档案的所以特性都一起复制过来:cp -a /var/log/wtmp wtmp_2
+1、将档案的所以特性都一起复制过来:【cp -a /var/log/wtmp wtmp_2】
 
-2、利用『 cp -a /etc /tmp 』来下达命令喔！尤其是在备份的情况下！
+2、利用【cp -a /etc /tmp】来下达命令喔！尤其是在备份的情况下！
 
 3、使用-l及-s都会建立所谓的连结档(link file)，那个-l是实体链接，-s 则是符号链接，bashrc_slink 是一个『忚捷方式』
 
@@ -94,8 +79,31 @@ l)；find /etc -size +50k -a ! -user root -exec ls -ld {} \;
 
 7、-r ：递归持续复制，用于目录的复制行为；(常用)
 
+8、移动文件：【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
+
+9、重命名：【mv file1 file2】
+
+9、删除文件：【rm file】 删除文件夹：【rm -rf folder】
 
 
+ ======== 查看进程 ========
+ 
+1、关键字查看：【ps -ef | grep redis】 ps -ef | grep 6379】
+
+2、端口号查看：【netstat -tunpl | grep 6379】 【netstat -ano | grep 6379】 
+
+3、查看所有进程：【netstat -ntlp】 
+ 
+
+ ======== 安装一些插件 ========
+ 
+1、文件下载插件：【yum -y install wget】
+
+2、gcc编译插件：
+	【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
+	【yum -y install wget httpd-tools vim】
+	
+3、网络工具：【yum install net-tools】
 
 
 
