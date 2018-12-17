@@ -44,9 +44,9 @@
 	 5：配置文件戒者是某些档案的格式
 	 8：系统管理员可用的管理挃令
 	 
-8、新建档案：【touch file】
+8、新建文件：【touch filename】
 
-9、新建目录：【mkdir folder】
+9、新建目录：【mkdir folder】 
 
 10、增加新的群组：【groupadd project】
 
@@ -55,17 +55,20 @@
 12、查阅 account  账号的属性：id account 
 
 13、找出 /etc 底下，档案容量大亍 50K 丏档案所属人丌是 root 癿档名，丏将权限完整癿列出 (ls -
-l)；find /etc -size +50k -a ! -user root -exec ls -ld {} \;
+	find /etc -size +50k -a ! -user root -exec ls -ld {} \;
 	find /etc -size +50k -a ! -user root -type f -exec ls -l {} \;
 
 14、找出 /etc 底下，档案大小介亍 50K 到 60K 乊间癿档案，幵丏将权限完整癿列出 (ls -l)：
 	find /etc -size +50k -a -size -60k -exec ls -l {} \;
 	注意到 -a ，那个 -a 是 and 癿意忠，为符合两者才算成功
 	
-15、编辑器：【vim file.txt】，退出：【:wq+enter键】
+15、查看所在目录路劲：【pwd】
 
+16、测试是否ping通：【ping 192.168.56.101】
 
- ======== 文件复制/移动/删除 ========
+17、发送命令道全部终端：[查看 --> 撰写 --> 撰写栏]，在撰写栏下面勾选全部Xshell
+
+ ======== 文件的 创建/编辑/复制/移动/删除 ========
  
 1、将档案的所以特性都一起复制过来:【cp -a /var/log/wtmp wtmp_2】
 
@@ -73,7 +76,7 @@ l)；find /etc -size +50k -a ! -user root -exec ls -ld {} \;
 
 3、使用-l及-s都会建立所谓的连结档(link file)，那个-l是实体链接，-s 则是符号链接，bashrc_slink 是一个『忚捷方式』
 
-  /tmp 可以将多个数据一次复制到同一个目录去！最后面一定是目弽！
+  /tmp 可以将多个数据一次复制到同一个目录去！最后面一定是目录！
 
 6、如果没有加上任何选项时cp复制的是源文件，而非链接文件的属性！若要复制链接文件的属性，就得要使用 -d的选项了！
 
@@ -81,10 +84,31 @@ l)；find /etc -size +50k -a ! -user root -exec ls -ld {} \;
 
 8、移动文件：【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
 
-9、重命名：【mv file1 file2】
+9、重命名：【mv filename1 filename2】
 
-9、删除文件：【rm file】 删除文件夹：【rm -rf folder】
+9、删除文件：【rm filename】 删除文件夹：【rm -rf folder】[-r表示递归删除]
 
+10、新建文件：【touch filename】
+
+11、新建目录：【mkdir folder】
+
+12、编辑器：【vim filename】
+
+	1)、保存退出：【Esc --> :x--> enter】文件没改动时属性不变 、【Esc --> :wq--> enter】不管如何属性都会更新
+
+	2)、不保存退出：【Esc --> :q! --> enter】?
+
+	3)、强制退出：【Esc --> :! --> enter】
+
+	4)、正常退出：【Esc --> :q --> enter】
+	
+	5)、保存：【Esc --> :w】
+	
+	6)、搜索：【/keyword --> enter】
+	
+	7)、把编辑处理后的结果写到指定的文件中保存【:w filename】
+
+12、远程复制：【scp -r redis-3.0.7/ 192.168.56.102:/usr/local/】
 
  ======== 查看进程 ========
  
@@ -97,13 +121,48 @@ l)；find /etc -size +50k -a ! -user root -exec ls -ld {} \;
 
  ======== 安装一些插件 ========
  
-1、文件下载插件：【yum -y install wget】
+1、文件下载工具：【yum -y install wget】
 
-2、gcc编译插件：
-	【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
-	【yum -y install wget httpd-tools vim】
+2、gcc编译插件：【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
 	
-3、网络工具：【yum install net-tools】
+3、vim编辑器：【yum -y install wget httpd-tools vim】
+	
+4、网络工具：【yum install net-tools】
+
+
+ ======== 修改连接名 ========
+ 
+1、[root@localhost ~]# 【vim /etc/sysconfig/network】 ，进入加入下面信息
+NETWORKING=yes
+HOSTNAME=redis101
+
+2、[root@localhost ~]# 【hostname redis101】
+
+3、关闭连接重开，出现：[root@redis101 ~]#
+
+
+ ======== 防火墙 ========
+
+1、临时关闭防火墙 ：【systemctl stop firewalld】
+
+2、永久防火墙开机自关闭 ：【systemctl disable firewalld】
+
+3、临时打开防火墙 ：【systemctl start firewalld】
+
+4、防火墙开机启动 ：【systemctl enable firewalld】
+
+5、查看防火墙状态 ：【systemctl status firewalld】
+
+ ======== SELinux ========
+ 
+1、临时关闭SELinux：【setenforce 0】
+
+2、临时打开SELinux ：【setenforce 1】
+
+3、查看SELinux状态 ：【getenforce】
+
+4、开机关闭SELinux：【修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled ，重启机器即】 
+
 
 
 

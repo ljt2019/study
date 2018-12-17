@@ -43,9 +43,15 @@
 
 13、启动：指定服务脚本与配置文件：【/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf】
 
-14、客户端进入：【/usr/local/redis/bin/redis-cli shutdown】
+14、关闭redis服务：【/usr/local/redis/bin/redis-cli shutdown】，或查看进程方式kill掉
 
 15、客户端进入：【/usr/local/redis/bin/redis-cli】
+
+16、客户端进入：【/usr/local/redis/bin/redis-cli】，有密码：【/usr/local/redis/bin/redis-cli -a password】
+
+17、设置密码：【requirepass foobared】将此行取消注释
+
+18：密码输入：【auth password】
 
 
 ============ springboot中使用redis ============
@@ -67,17 +73,23 @@
 
 1、字符串（String）：二进制的形式存储，value最大容纳数据长度512M,key-value(string/int/float)
 
-	1)、赋值：【set key value】
+	1)、赋值更新：【set key value】 ，【setnx key value】(如果key存在就不设置，返回0，不存在才设置，返回1)
 	
-	2)、取值：【get key】
+	2)、赋值多个值：【mset key1 value1 key2 value2】
 	
-	3)、删除：【del key】
+	3)、设置过期时间：【setex key second value】,second表示second后秒过期
 	
-	4)、扩展：【getset key value】,表示先将值取出再重新覆盖赋值
+	4)、按索引替换：【setrange key index value】,index表示从index处开始替换
 	
-	5)、数值增减：【incr/decr key】,key自增/减1，如果key不存在，则先给key自动赋值0，再加/减1	
+	5)、取值：【get key】
+	
+	6)、删除：【del key】
+	
+	7)、扩展：【getset key value】,表示先将值取出再重新覆盖赋值
+	
+	8)、数值增减：【incr/decr key】,key自增/减1，如果key不存在，则先给key自动赋值0，再加/减1	
 				  【incrby/decrby key 2】,key的加/减加2	
-
+				
 2、哈希（hash）：由多个key-value散列组组成，其中key是字符串，value是元素，按key进行增加删除
 	
 	1)、赋值：【hset hashMap key value】
@@ -190,21 +202,32 @@
 
 ============ Redis 持久化 ============
 
-1、RDB方式：默认，在指定的时间间隔内将内存中的数据集快照写入磁盘，例如30秒【dbfilename dump.rdb】持久化文件所存放的目录【dir /usr/local/redis/etc/】
+1、修改redis.conf 文件：【vim /usr/local/redis/etc/redis.conf】
 
-2、AOF方式：日志记录，体现数据的高可靠，必须开启，工作中常用，但一定层度上会导致变慢    
-   //AOF开启快照【appendonly yes】文件名：【appendfilename "appendonly.aof"】，可以修改
+2、两种持久化方式:
 
-3、无持久化：缓存
+  1）、snapshotting(快照)默认方式：在指定的时间间隔内将内存中的数据集快照写入磁盘，rdb文件：dump.rdb
+    snapshotting设置：
+    (1)、save 900 1 ###900秒内如果超过1个key被修改则发起快照保存
+    (2)、save 300 10 ###300秒内如果超过10个key被修改则发起快照保存
+    (3)、save 60 10000 ###60秒内如果超过10000个key被修改则发起快照保存
+
+  2)、append-only file(aof)方式：类似于Oracle日志，体现数据的高可靠，必须开启，工作中常用，但一定层度上会导致变慢  
+    aof设置：【appendonly yes】，开启后，rdb方式自动失效，文件名：【appendfilename "appendonly.aof"】，可以修改
+    (1)、#appendfsnyc always ###收到命令立即写入磁盘，效率最慢，但保证完全持久化，工作中用
+    (2)、#appendfsnyc everysec ###每秒写入一次磁盘，在性能和持久化方面做了折中
+    (3)、#appendfsnyc no ###完全依赖os，持久化没保证，一般不用
+   
+3、将持久化文件放到改目录下便于管理：【dir /usr/local/redis/etc/】
 
 
 ====================== Redis 集群 =Redis不是靠单点的性能来决定的，强调的是多实例，而memcache强调的是单点性能 ======================
 
 1、主从模式：一主多从，一台主机(可写)，多台从机(可读，适用高并发，类似于mysql的主从读写分离)，此方式最简陋，一旦主节点挂掉则不可用
 
-2、哨兵模式：一主多从，第一种模式升级，哨兵对各节点进行健康监控，一旦主节点挂掉，就在从节点中选出一个性能最佳的升级为主节[主从替换]点，2.x使用的机制，实现了高可用，[但没法实现分布式的数据库，主从数据都是一致的]
+2、哨兵模式：一主多从，第一种模式升级，哨兵对各节点进行健康监控，一旦主节点挂掉，就在从节点中选出一个性能最佳的升级为主节[主从替换]点，2.x使用的机制，实现了高可用，[但没法实现分布式的数据库，主从数据都是一致的]，开启aof后，一般结合ssdb（写操作快）
 
-3、集群模式：第二种模式的升级，多主多从，主从替换。可以任意水平扩展，数据可以任意切割
+3、集群模式：第二种模式的升级，多主多从，主从替换。可以任意水平扩展，数据可以任意切割，分布式写操作
 
 4、问题：高并发是写入比较慢怎么解决？
 	答：1、水平扩展集群，分担写的操作
@@ -218,3 +241,51 @@
 	java代码层：加高并发容器，做一些判断
 	业务层措施：
 	数据库措施：加缓存给数据库减压，能放进缓存的可以放入缓存
+	
+
+============ Redis 主从复制：确保三台机器安装了相同版本的redis ============
+
+1、建立一台master，前面的在Linux下安装redis流程
+
+2、拷贝两台从，【scp -r redis-3.0.7/ 192.168.56.102:/usr/local/】，拷贝master的文件进行修改
+
+3、删除日志文件：【rm -f dump.rdb】
+
+4、修改slave配置文件：【vim redis.conf】，添加下面信息
+# slaveof <masterip> <masterport>
+【slaveod 192.168.56.101 6379】
+
+5、配置文件修改密码（如果master有密码则设置）：【masterauth root -123456】
+
+6、关闭防火墙：【yum install iptables-services】-->【service iptables stop】
+
+7、关闭seLinux：修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled ，重启机器即
+
+8、找到redis.conf中的 bind 127.0.0.1，将其注释 #bind 127.0.0.1，保存退出
+
+8、使用【info】或【info replication 】127.0.0.1:6379> info ， 可以查看Replication的一些信息
+
+
+============ Redis 哨兵设置 ============
+
+1、哨兵的作用：监控master和slave数据库是否正常运行，当master出现异常时，可以自动将其中一台slave切换为master。
+
+2、实现步骤：
+
+  1)、在其中一台slave中配置sentinel.conf,例如这台192.168.56.102
+  
+  2)、copy一份sentinel.conf到/usr/local/redis/etc/中，修改sentinel.conf
+  【sentinel monitor mymaster 192.168.56.101 6379 1  ###名称 ip 端口号 投票次数】
+  【sentinel down-after-milliseconds mymaster 5000  ###默认1s检验一次，这里配置5000毫秒为宕机】
+  【sentinel failover-timeout mymaster 900000】
+  【sentinel parallel-syncs mymaster 2】
+  【sentinel can-failover mymaster yes】
+ 
+  3)、启动哨兵：【/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf --sentinel &】
+  
+  4)、查看sentinel相关信息命令：【/usr/local/redis/bin/redis-cli -h 192.168.56.102 -p 26379 info Sentinel】
+  
+  5)、关闭master查看集群信息：【/usr/local/redis/bin/redis-cli -h 192.168.56.101 -p 6379 shutdown】
+  
+  
+
