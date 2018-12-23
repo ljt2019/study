@@ -20,7 +20,7 @@
 　　上面这些命令都是最最常用的，一定要把基本用法记牢。事实上，每人能记住全部命令或一个命令的全部参数，记住几个常用的就行了。其他的查书
 
 
- ======== 基本命令 ========
+======== 基本命令 ========
  
 1、日期：date 
          date +%Y年%m月%d日  【格式化日期】
@@ -68,7 +68,7 @@
 
 17、发送命令道全部终端：[查看 --> 撰写 --> 撰写栏]，在撰写栏下面勾选全部Xshell
 
- ======== 文件的 创建/编辑/复制/移动/删除 ========
+======== 文件的 创建/编辑/复制/移动/删除 ========
  
 1、将档案的所以特性都一起复制过来:【cp -a /var/log/wtmp wtmp_2】
 
@@ -110,7 +110,9 @@
 
 12、远程复制：【scp -r redis-3.0.7/ 192.168.56.102:/usr/local/】
 
- ======== 查看进程 ========
+13、建立软连接：【ln -s /usr/java/jdk1.8.0_60/ /usr/jdk】
+
+======== 查看进程 ========
  
 1、关键字查看：【ps -ef | grep redis】 ps -ef | grep 6379】
 
@@ -119,7 +121,7 @@
 3、查看所有进程：【netstat -ntlp】 
  
 
- ======== 安装一些插件 ========
+======== 安装一些插件 ========
  
 1、文件下载工具：【yum -y install wget】
 
@@ -130,7 +132,7 @@
 4、网络工具：【yum install net-tools】
 
 
- ======== 修改连接名 ========
+======== 修改连接名 ========
  
 1、[root@localhost ~]# 【vim /etc/sysconfig/network】 ，进入加入下面信息
 NETWORKING=yes
@@ -141,7 +143,7 @@ HOSTNAME=redis101
 3、关闭连接重开，出现：[root@redis101 ~]#
 
 
- ======== 防火墙 ========
+======== 防火墙 ========
 
 1、临时关闭防火墙 ：【systemctl stop firewalld】
 
@@ -153,7 +155,7 @@ HOSTNAME=redis101
 
 5、查看防火墙状态 ：【systemctl status firewalld】
 
- ======== SELinux ========
+======== SELinux ========
  
 1、临时关闭SELinux：【setenforce 0】
 
@@ -164,13 +166,13 @@ HOSTNAME=redis101
 4、开机关闭SELinux：【修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled ，重启机器即】 
 
 
- ======== rz和sz的安装 ========
+======== rz和sz的安装 ========
  
 1、wget下载lrzsz安装包：【wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz】，wget如果未安装，则需要【yum install wget】进行安装
 
-2、解压：【tar -zxvf lrzsz-0.12.20.tar.gz】
+2、解压：【tar -zxvf lrzsz-0.12.20.tar.gz -C /usr/local/】
 
-3、进入解压后的目录：【cd lrzsz-0.12.20】
+3、进入解压后的目录：【cd /usr/local/lrzsz-0.12.20】
 
 4、配置安装路径：【./configure】
 
@@ -180,7 +182,7 @@ HOSTNAME=redis101
   1)、创建rz的软链接，并命名rz：【ln -s /usr/local/bin/lrz rz】
   2)、创建sz的软链接，并命名sz：【ln -s /usr/local/bin/lsz sz】
 
- ======== Ruby 安装 ========  
+======== Ruby 安装 ========  
 
 1、下载最新版的 Ruby 压缩文件：【http://www.ruby-lang.org/en/downloads/】
 
@@ -196,10 +198,13 @@ HOSTNAME=redis101
 
 7、查看是否安装成功：【ruby -v】
 
- ========用RVM安装Ruby ======== 
+
+========用RVM安装Ruby ======== 
+
 1、【rvm install 2.4.2】
 
- ======== RVM 安装 ======== 
+
+======== RVM 安装 ======== 
  
 1、切换到root目录下：【cd /】
  
@@ -211,4 +216,72 @@ HOSTNAME=redis101
 
 5、查看是否安装成功：【rvm -v】
 
-               
+
+======== JDK安装 rpm方式简便======== 
+
+1、下载jdk：【wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u131-linux-x64.rpm】
+
+2、执行安装命令：【rpm -ivh jdk-8u131-linux-x64.rpm】
+
+3、检查是否安装成功：【java -version】
+
+4、卸载：【rpm -e --nodeps 要卸载的软件包 //软件包查询方法：rpm -qa|grep jdk】
+
+======== JDK安装 gz方式========
+ 
+1、下载jdk：【wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz】
+  
+2、解压到指定目录
+
+3、配置环境变量：【vim /etc/profile】，添加如下内容：JAVA_HOME根据实际目录来
+JAVA_HOME=/usr/java/jdk1.8.0_60
+CLASSPATH=$JAVA_HOME/lib/
+PATH=$PATH:$JAVA_HOME/bin
+export PATH JAVA_HOME CLASSPATH
+
+4、重启机器或执行命令 ：【source /etc/profile】
+
+5、8.查看安装情况：【java -version】
+
+
+======== tomcat安装========
+
+1、下载：【wget https://mirrors.cnnic.cn/apache/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.tar.gz】
+
+2、解压到目录：【tar -zxvf apache-tomcat-8.5.35.tar.gz -C /usr/local/】
+
+3、
+
+
+
+======== &的一些含义 ======== 
+
+1、三个命令同时执行：【command1 & command2 & command3】
+
+2、不管前面命令执行成功没有，后面的命令继续执行：【command1; command2; command3】 ? ? ??
+
+3、只有前面命令执行成功，后面命令才继续执行：【command1 && command2】 ? ? ? ? ? ? ? ? ? ? ??
+
+1.安装软件：执行rpm -ivh rpm包名，如：
+
+
+======== rpm的一些含义 ======== 
+
+1、安装软件：【rpm -ivh rpm包名】如：rpm -ivh apache-1.3.6.i386.rpm
+
+2、升级软件：【rpm -Uvh rpm包名】
+
+3、反安装：【rpm -e rpm包名】
+
+4、查询软件包的详细信息：【rpm -qpi rpm包名】
+
+5、查询某个文件是属于那个rpm包的：【rpm -qf rpm包名】
+
+6、查该软件包会向系统里面写入哪些文件：【rpm -qpl rpm包名】
+
+
+5.4、添加指定端口到防火墙中：【iptables -I INPUT -p 协议 --dport 端口号 -j ACCEPT】例如：
+	1 iptables -I INPUT -p udp --dport 161 -j ACCEPT
+	2 iptables -I INPUT -p tcp --dport 8080 -j ACCEPT        
+
+7、开放防火墙80端口，指令是【firewall-cmd --permanent --add-port=80/tcp】【firewall-cmd --reload】

@@ -323,6 +323,10 @@
 	
   5)、逐个启动6个redis实例：【/usr/local/redis/bin/redis-server /usr/local/redis-cluster/700*/redis.conf】
   
+  安装在同台机器时启动：【/usr/local/redis/bin/redis-server /usr/local/redis-cluster/7001/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7002/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7003/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7004/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7005/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7006/redis.conf】
+  
+  安装在同台机器时关闭：【/usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7001 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7002 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7003 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7004 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7005 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7006 shutdown】
+  
   6)、检查是否启动成功：【ps -ef | grep redis】,查看是否已存在对应进程
   
   7)、在redis的安装目录下，执行集群脚本，启动集群：【/usr/local/redis-3.0.7/src/redis-trib.rb create --replicas 1 192.168.56.101:7001 192.168.56.101:7002 192.168.56.101:7003 192.168.56.101:7004 192.168.56.101:7005 192.168.56.101:7006】，下次重启机器不需要此操作
