@@ -164,7 +164,51 @@ HOSTNAME=redis101
 4、开机关闭SELinux：【修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled ，重启机器即】 
 
 
+ ======== rz和sz的安装 ========
+ 
+1、wget下载lrzsz安装包：【wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz】，wget如果未安装，则需要【yum install wget】进行安装
 
+2、解压：【tar -zxvf lrzsz-0.12.20.tar.gz】
 
-   
-                  
+3、进入解压后的目录：【cd lrzsz-0.12.20】
+
+4、配置安装路径：【./configure】
+
+5、编译&安装：【make && make install】
+
+6、创建软链接，上面安装过程默认把lsz和lrz安装到了/usr/local/bin/目录下，进入目录：【cd /usr/local/bin】
+  1)、创建rz的软链接，并命名rz：【ln -s /usr/local/bin/lrz rz】
+  2)、创建sz的软链接，并命名sz：【ln -s /usr/local/bin/lsz sz】
+
+ ======== Ruby 安装 ========  
+
+1、下载最新版的 Ruby 压缩文件：【http://www.ruby-lang.org/en/downloads/】
+
+2、解压到目录;【tar -xvzf ruby-2.5.3.tgz -C /usr/local/】
+
+3、进入目录【cd /usr/local/ruby-2.5.3】
+
+4、配置安装路径：【./configure】
+
+5、编译：【make】
+
+6、安装;【sudo make install】
+
+7、查看是否安装成功：【ruby -v】
+
+ ========用RVM安装Ruby ======== 
+1、【rvm install 2.4.2】
+
+ ======== RVM 安装 ======== 
+ 
+1、切换到root目录下：【cd /】
+ 
+2、【gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB】
+
+3、【curl -sSL https://get.rvm.io | bash -s stable】
+
+4、【source /etc/profile.d/rvm.sh】
+
+5、查看是否安装成功：【rvm -v】
+
+               

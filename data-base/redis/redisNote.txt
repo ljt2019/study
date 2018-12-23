@@ -8,50 +8,6 @@
 3、	这时候另启一个cmd窗口，原来的不要关闭，不然就无法访问服务端了
 
 	切换到redis目录下，前台启动，window系统：【redis-cli.exe -h 127.0.0.1 -p 6379】，Linux系统【redis-cli -h 192.168.31.245 -c -p 7002】
-	
-	
-============ Linux下安装redis ============
-	
-1、下载安装包：【wget http://download.redis.io/releases/redis-3.0.7.tar.gz】  稳定版
-
-2、解压：【tar -zxvf redis-3.0.7.tar.gz】
-
-3、安装gcc(如果没有则执行以下两命令,[gcc --version]检验有没有该编译器)：
-	【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
-	【yum -y install wget httpd-tools vim】
-	
-4、进入目录：【cd redis-5.0.3】
-
-5、执行编译：【make】，出现[Hint: It's a good idea to run 'make test' ;)],则说明编译成功
-
-6、进入src目录：【cd src】
-
-7、执行：【make install】
-
-8、建立两个文件夹存放redis命令和配置文件
-	【mkdir -p /usr/local/redis/etc】
-	【mkdir -p /usr/local/redis/bin】
-	
-9、将redis-3.0.7目录下的redis.conf拷贝到新建的etc目录下：【cp redis.conf /usr/local/redis/etc/】
-
-10、将redis-3.0.7/src目录下的一些文件移动到新建的bin目录下：
-   【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
-
-11、编辑redis.conf文件，使之后台启动：【vim redis.conf】，后台启动【daemonize yes】，持久化存放的位置【dir /usr/local/redis/etc/】
-
-12、退出编辑器：【:wq+enter键】
-
-13、启动：指定服务脚本与配置文件：【/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf】
-
-14、关闭redis服务：【/usr/local/redis/bin/redis-cli shutdown】，或查看进程方式kill掉
-
-15、客户端进入：【/usr/local/redis/bin/redis-cli】
-
-16、客户端进入：【/usr/local/redis/bin/redis-cli】，有密码：【/usr/local/redis/bin/redis-cli -a password】
-
-17、设置密码：【requirepass foobared】将此行取消注释
-
-18：密码输入：【auth password】
 
 
 ============ springboot中使用redis ============
@@ -242,10 +198,53 @@
 	业务层措施：
 	数据库措施：加缓存给数据库减压，能放进缓存的可以放入缓存
 	
+============ Linux下安装redis ============
+	
+1、下载安装包：【wget http://download.redis.io/releases/redis-3.0.7.tar.gz】  稳定版
 
-============ Redis 主从复制：确保三台机器安装了相同版本的redis ============
+2、解压/usr/local/目录下：【tar -zxvf redis-3.0.7.tar.gz -C /usr/local/】
 
-1、建立一台master，前面的在Linux下安装redis流程
+3、安装gcc(如果没有则执行以下两命令,[gcc --version]检验有没有该编译器)：
+	【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
+	【yum -y install wget httpd-tools vim】
+	
+4、进入目录：【cd redis-5.0.3】
+
+5、执行编译：【make】，出现[Hint: It's a good idea to run 'make test' ;)],则说明编译成功
+
+6、进入src目录：【cd src】
+
+7、执行：【make install】
+
+8、建立两个文件夹存放redis命令和配置文件
+	【mkdir -p /usr/local/redis/etc】
+	【mkdir -p /usr/local/redis/bin】
+	
+9、将redis-3.0.7目录下的redis.conf拷贝到新建的etc目录下：【cp redis.conf /usr/local/redis/etc/】
+
+10、将redis-3.0.7/src目录下的一些文件移动到新建的bin目录下：
+   【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
+
+11、编辑redis.conf文件，使之后台启动：【vim redis.conf】，后台启动【daemonize yes】，持久化存放的位置【dir /usr/local/redis/etc/】
+
+12、退出编辑器：【:wq+enter键】
+
+13、启动：指定服务脚本与配置文件：【/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf】
+
+14、关闭redis服务：【/usr/local/redis/bin/redis-cli shutdown】，或查看进程方式kill掉
+
+15、客户端进入：【/usr/local/redis/bin/redis-cli】
+
+16、客户端进入：【/usr/local/redis/bin/redis-cli】，有密码：【/usr/local/redis/bin/redis-cli -a password】
+
+17、设置密码：【requirepass foobared】将此行取消注释
+
+18：密码输入：【auth password】
+
+
+============ Redis 主从复制 ============
+
+1、建立一台master，见Linux下安装redis具体步骤；注：确保三台机器安装了相同版本的redis
 
 2、拷贝两台从，【scp -r redis-3.0.7/ 192.168.56.102:/usr/local/】，拷贝master的文件进行修改
 
@@ -253,7 +252,7 @@
 
 4、修改slave配置文件：【vim redis.conf】，添加下面信息
 # slaveof <masterip> <masterport>
-【slaveod 192.168.56.101 6379】
+【slaveof 192.168.56.101 6379】
 
 5、配置文件修改密码（如果master有密码则设置）：【masterauth root -123456】
 
@@ -272,13 +271,13 @@
 
 2、实现步骤：
 
-  1)、在其中一台slave中配置sentinel.conf,例如这台192.168.56.102
+  1)、在其中一台slave服务器中配置sentinel.conf,例如这台192.168.56.102
   
-  2)、copy一份sentinel.conf到/usr/local/redis/etc/中，修改sentinel.conf
+  2)、copy一份sentinel.conf到/usr/local/redis/etc/中，修改sentinel.conf中的5处信息
   【sentinel monitor mymaster 192.168.56.101 6379 1  ###名称 ip 端口号 投票次数】
   【sentinel down-after-milliseconds mymaster 5000  ###默认1s检验一次，这里配置5000毫秒为宕机】
-  【sentinel failover-timeout mymaster 900000】
   【sentinel parallel-syncs mymaster 2】
+  【sentinel failover-timeout mymaster 900000】
   【sentinel can-failover mymaster yes】
  
   3)、启动哨兵：【/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf --sentinel &】
@@ -286,6 +285,110 @@
   4)、查看sentinel相关信息命令：【/usr/local/redis/bin/redis-cli -h 192.168.56.102 -p 26379 info Sentinel】
   
   5)、关闭master查看集群信息：【/usr/local/redis/bin/redis-cli -h 192.168.56.101 -p 6379 shutdown】
+ 
+============ Redis 集群 ============
+
+1、说明：至少6台，3主3从，本例中【7001[master1]、7002[master2]、7003[master3]、7004[slave1]、7005[slave2]、7006[slave3]】，搭建在同台机器上
+
+2、搭建步骤：
+
+  1)、递归创建文件夹：【mkdir -p /usr/local/redis-cluster】
   
+  2)、在/usr/local/redis-cluster目录下创建6个文件夹：【mkdir 7001、mkdir 7002、mkdir 7003、mkdir 7004、mkdir 7005、mkdir 7006】
   
+  3)、将redis.conf配置文件分别copy到700*下，进行修改各个文件的内容
+    (1)、后台启动：【daemonize yes】
+	(2)、端口号：【port 700*】
+	(3)、绑定当前机器IP：【bind 192.168.56.101】
+	(4)、指定数据文件存放路径：【dir /usr/local/redis-cluster/700*/】,不修改担心丢失数据
+	(5)、持久方式开启快照：【appendonly yes】，生产上用【appendfsync always】
+	(6)、启动集群模式：【cluster-enabled yes】
+	(7)、节点配置文件与端口号对应：【cluster-config-file nodes700*.conf】，让每个节点相互知道对方的存在
+	(8)、设置超时时间：【cluster-node-timeout 15000】
+	
+  4.1)、集群用到ruby命令，因此安装ruby，方式一
+    (1)、【yum install ruby】
+	(2)、【yum install rubygems】
+	(3)、【gem install redis】,安装redis和ruby接口,redis版本要2.2.x以上
+	
+  4.2)、集群用到ruby命令，因此安装ruby，方式二
+    (1)、安装rvm
+	  1]、切换到root目录下：【cd /】
+	  2]、【gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB】
+      3]、【curl -sSL https://get.rvm.io | bash -s stable】
+      4]、【source /etc/profile.d/rvm.sh】
+      5]、查看是否安装成功：【rvm -v】
+	(2)、安装ruby：【rvm install 2.4.2】
+	(3)、【gem install redis】,安装redis和ruby接口,redis版本要2.2.x以上
+	
+  5)、逐个启动6个redis实例：【/usr/local/redis/bin/redis-server /usr/local/redis-cluster/700*/redis.conf】
+  
+  6)、检查是否启动成功：【ps -ef | grep redis】,查看是否已存在对应进程
+  
+  7)、在redis的安装目录下，执行集群脚本，启动集群：【/usr/local/redis-3.0.7/src/redis-trib.rb create --replicas 1 192.168.56.101:7001 192.168.56.101:7002 192.168.56.101:7003 192.168.56.101:7004 192.168.56.101:7005 192.168.56.101:7006】，下次重启机器不需要此操作
+  注：其中的 1 为主节点与从节点的比值(1 = 主节点数量/从节点数量),主节点排完，接着排从节点，一一对应，例如，7001为master1，则7004为slave1
+  
+  8)、连接任意客户端：【/usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7001】(./redis-cli -c -h -p),[-c 表示集群模式，-h指定ip,-p指定端口号]
+  
+  9)、验证集群是否搭建成功：查看集群信息【cluster info】，查看集群节点【cluster nodes】
+  
+  10)、关闭集群：【/usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 700* shutdown】，需要逐个关闭
+  
+  11)、注意：出现集群无法启动时，删除临时的数据文件，再次重新启动每个redis服务，然后重新构建集群环境
+  
+  12)、启动成功时返回的信息：
+[root@localhost src]# /usr/local/redis-3.0.7/src/redis-trib.rb create --replicas 1 192.168.56.101:7001 192.168.56.101:7002 192.168.56.101:7003 192.168.56.101:7004 192.168.56.101:7005 192.168.56.101:7006
+>>> Creating cluster
+>>> Performing hash slots allocation on 6 nodes...
+Using 3 masters:
+192.168.56.101:7001
+192.168.56.101:7002
+192.168.56.101:7003
+Adding replica 192.168.56.101:7004 to 192.168.56.101:7001
+Adding replica 192.168.56.101:7005 to 192.168.56.101:7002
+Adding replica 192.168.56.101:7006 to 192.168.56.101:7003
+M: dbad2a94ae14569188a0ea2a0a645d8fcd023486 192.168.56.101:7001
+   slots:0-5460 (5461 slots) master
+M: f668dbe36e0af1aca1242659b8f4ad561257f9d8 192.168.56.101:7002
+   slots:5461-10922 (5462 slots) master
+M: b7e323d03ec1eab723c563125a19606039b6da8f 192.168.56.101:7003
+   slots:10923-16383 (5461 slots) master
+S: 242f06fa14821f7d5ff698e7459b8138b96b0161 192.168.56.101:7004
+   replicates dbad2a94ae14569188a0ea2a0a645d8fcd023486
+S: ba721da0c5da588b834fe4525e0c1860aaa44bb0 192.168.56.101:7005
+   replicates f668dbe36e0af1aca1242659b8f4ad561257f9d8
+S: d5082dbe9ab6c70e2592864dd814bb3ac72920ac 192.168.56.101:7006
+   replicates b7e323d03ec1eab723c563125a19606039b6da8f
+Can I set the above configuration? (type 'yes' to accept): yes
+>>> Nodes configuration updated
+>>> Assign a different config epoch to each node
+>>> Sending CLUSTER MEET messages to join the cluster
+Waiting for the cluster to join....
+>>> Performing Cluster Check (using node 192.168.56.101:7001)
+M: dbad2a94ae14569188a0ea2a0a645d8fcd023486 192.168.56.101:7001
+   slots:0-5460 (5461 slots) master
+M: f668dbe36e0af1aca1242659b8f4ad561257f9d8 192.168.56.101:7002
+   slots:5461-10922 (5462 slots) master
+M: b7e323d03ec1eab723c563125a19606039b6da8f 192.168.56.101:7003
+   slots:10923-16383 (5461 slots) master
+M: 242f06fa14821f7d5ff698e7459b8138b96b0161 192.168.56.101:7004
+   slots: (0 slots) master
+   replicates dbad2a94ae14569188a0ea2a0a645d8fcd023486
+M: ba721da0c5da588b834fe4525e0c1860aaa44bb0 192.168.56.101:7005
+   slots: (0 slots) master
+   replicates f668dbe36e0af1aca1242659b8f4ad561257f9d8
+M: d5082dbe9ab6c70e2592864dd814bb3ac72920ac 192.168.56.101:7006
+   slots: (0 slots) master
+   replicates b7e323d03ec1eab723c563125a19606039b6da8f
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+  
+============ Redis 发布与订阅 ============
+
+1、发布：【PUBLISH cctv hello_tiger】，PUBLISH 频道 发布内容
+
+2、订阅：【SUBSCRIBE cctv】，SUBSCRIBE 频道
 
