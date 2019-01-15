@@ -1,0 +1,12 @@
+
+1、java里的运算（比如自增）并不是原子性的。
+
+  1)、线程不安全：
+    public static int count = 0;
+    count++;
+	
+  2)、线程安全： 
+    public static AtomicInteger count = new AtomicInteger(0);
+    count.incrementAndGet();
+	
+2、

@@ -1,2 +1,152 @@
 
-1、
+============ 基本术语及其概念 ============
+
+1、Authentication：身份认证/登录，验证用户是否拥有相应的身份。
+
+2、Authorization：授权，权限验证，验证某个已认证的用户是否拥有某个权限。（粗粒度：验证某个用户是否拥有某个角色，细粒度：验证用户是否拥有对某个资源的访问权限）
+
+3、Session Manager：会话管理，用户登录后就是一次会话，在没退出之前，所有的信息都在会话中；可以是javaSE环境，也可以是Web环境。
+
+4、Cryptography：加密，保护数据的安全性，如密码加密存储到数据，而不是明文存储。
+
+5、Web Support：Web支持,可以非常容易集成到Web环境。
+
+6、Caching：缓存，比如用户登录后，其用户信息、拥有的权限不必每次都去查，可以提高效率。
+
+7、Concurrency：shiro支持多行程，在一个线程中开启另外一个线程，能把权限自动传播过去。
+
+8、Testing：提供测试支持。
+
+9、Run As：允许一个假装为另一个用户(如果他们允许)，的身份进行访问。
+
+10、Remember Me：记住我，登录一次后，下次再来就不需登录了。
+
+
+============ 注意点 ============ 
+
+1、Shiro不会维护用户和权限，这些需要我们自己去设计提供，然后通过对应的接口注入到Shiro即可。
+
+2、执行流程：Application Code --> Subject(the current user) --> Shiro SecurityManager(manages all Subjects) --> Realm(access your security data)
+  1)、Subject：主体，任何与应用交互的‘用户‘，是一个抽象概念，可以理解为一个门面，SecurityManager才是真正的执行者。
+  2)、SecurityManager：安全管理器，所有与安全有关的操作都会与值交互，管理着所有的Subject，是Shiro的心脏，可以理解为SpringMVC中的前端控制器。
+  3)、Realm：域，Shiro从Realm获取安全数据(用户、角色、权限)，就是说SecurityManager要验证哟胡身份，那么就需要从Realm获取相应的数据进行比较确认是否合法。
+  
+3、Authenticator 的职责是验证用户帐号，是 Shiro API 中身份验证核心的入口点：
+			
+  1)、如果验证成功，将返回 AuthenticationInfo 验证信息；此信息中包含了身份及凭证；如果验证失败将抛出相应的 AuthenticationException 实现。
+
+  2)、SecurityManager 接口继承了 Authenticator，另外还有一个 ModularRealmAuthenticator 实现，其委托给多个 Realm 进行验证，验证规则通过 AuthenticationStrategy 接口指定，默认提供的实现：
+
+  3)、FirstSuccessfulStrategy：只要有一个 Realm 验证成功即可，只返回第一个 Realm 身份验证成功的认证信息，其他的忽略；
+
+  4)、AtLeastOneSuccessfulStrategy：只要有一个 Realm 验证成功即可，和 FirstSuccessfulStrategy 不同，返回所有 Realm 身份验证成功的认证信息；
+
+  5)、AllSuccessfulStrategy：所有 Realm 验证成功才算成功，且返回所有 Realm 身份验证成功的认证信息，如果有一个失败就失败了。
+
+  6)、ModularRealmAuthenticator 默认使用 AtLeastOneSuccessfulStrategy 策略。
+
+  假设我们有三个 realm：
+  myRealm1： 用户名 / 密码为 zhang/123 时成功，且返回身份/凭据为 zhang/123；
+  myRealm2： 用户名 / 密码为 wang/123 时成功，且返回身份/凭据为 wang/123；
+  myRealm3： 用户名 / 密码为 zhang/123 时成功，且返回身份/凭据为 zhang@163.com/123，和 myRealm1 不同的是返回时的身份变了；
+
+4、密码要加密/生成不可逆的摘要方式存储
+
+5、编码支持，CodecSupport，提供了 toBytes(str,"utf-8") / toString(bytes,"utf-8") 用于在 byte 数组 /String 之间转换。
+  byte[] bytes = CodecSupport.toBytes(str, "UTF-8");
+  String str2 = CodecSupport.toString(bytes, "UTF-8");
+
+============ 登录流程 ============
+
+1、首先通过 new IniSecurityManagerFactory 并指定一个 ini 配置文件来创建一个 Factory<org.apache.shiro.mgt.SecurityManager> 工厂；
+
+2、接着获取 SecurityManager 并绑定到 SecurityUtils，这是一个全局设置，设置一次即可；
+
+3、通过 SecurityUtils 得到 Subject，其会自动绑定到当前线程；如果在 web 环境在请求结束时需要解除绑定；然后获取身份验证的 Token，如用户名 / 密码；
+
+4、调用 subject.login 方法进行登录，其会自动委托给 SecurityManager.login 方法进行登录；
+
+5、如果身份验证失败请捕获 AuthenticationException 或其子类，常见的如：
+  1)、LockedAccountException(锁定的帐号)
+  2)、DisabledAccountException(禁用的帐号)
+  3)、UnknownAccountException(错误的帐号)
+  4)、ExcessiveAttemptsException(登录失败次数过多)
+  5)、IncorrectCredentialsException(错误的凭证)
+  6)、ExpiredCredentialsException(过期的凭证)
+  具体请查看其继承关系；对于页面的错误消息展示，最好使用如 “用户名 / 密码错误” 而不是 “用户名错误”/“密码错误”，防止一些恶意用户非法扫描帐号库；
+
+6、最后可以调用 subject.logout 退出，其会自动委托给 SecurityManager.logout 方法退出。
+
+
+============ 认证流程 ============
+
+1、首先调用 Subject.login(token) 进行登录，其会自动委托给 Security Manager，调用之前必须通过 SecurityUtils.setSecurityManager() 设置；
+
+2、SecurityManager 负责真正的身份验证逻辑；它会委托给 Authenticator 进行身份验证；
+
+3、Authenticator 才是真正的身份验证者，Shiro API 中核心的身份认证入口点，此处可以自定义插入自己的实现；
+
+4、Authenticator 可能会委托给相应的 AuthenticationStrategy 进行多 Realm 身份验证，默认 ModularRealmAuthenticator 会调用 AuthenticationStrategy 进行多 Realm 身份验证；
+  1)、FirstSuccessfulStrategy：只要有一个 Realm 验证成功即可，只返回第一个 Realm 身份验证成功的认证信息，其他的忽略；
+  2)、AtLeastOneSuccessfulStrategy：只要有一个 Realm 验证成功即可，和 FirstSuccessfulStrategy 不同，返回所有 Realm 身份验证成功的认证信息；
+  3)、AllSuccessfulStrategy：所有 Realm 验证成功才算成功，且返回所有 Realm 身份验证成功的认证信息，如果有一个失败就失败了；
+  4)、OnlyOneAuthenticatorStrategy：只能存在唯一一个正确的realm，不能同时存在多个正确的realm。
+
+5、Authenticator 会把相应的 token 传入 Realm，从 Realm 获取身份验证信息，如果没有返回 / 抛出异常表示身份验证失败了。此处可以配置多个 Realm，将按照相应的顺序及策略进行访问。
+
+
+============ 授权流程============
+
+1、首先调用 Subject.isPermitted*/hasRole* 接口，其会委托给SecurityManager，而SecurityManager接着委托给Authorizer。
+
+2、Authorizer 是真正的授权者，如果我们调用如 isPermitted(“user:view”)，其首先会通过 PermissionResolver 把字符串转换成相应的 Permission 实例。
+
+3、在进行授权之前，其会调用相应的 Realm 获取 Subject 相应的角色/权限用于匹配传入的角色/权限。
+
+4、Authorizer 会判断 Realm 的角色/权限是否和传入的匹配，如果有多个 Realm，会委托给 ModularRealmAuthorizer 进行循环判断。
+
+
+============ 授权============
+
+1、授权即访问控制，在应用中控制着谁能访问哪些资源(如访问页面、编辑数据、页面操作等)，在授权中需要了解的几个关键对象
+  1)、主体(Subject)：任何与应用交互的‘用户‘，在 Shiro 中使用 Subject 代表该用户。用户只有授权后才允许访问相应的资源。
+  2)、资源(Resource)：在应用中用户可以访问的任何东西，比如JSP页面、查看/编辑某些数据、访问某个业务方法、打印文本等等都是资源。
+  3)、权限(Permission)：安全策略中的原子授权单位，表示在应用中用户能不能访问某个资源，
+  4)、角色(Role)：角色代表了操作集合(一组权限)，一般是赋予用户角色而不是权限，如：项目经理、技术总监、CTO、开发工程师等都是角色，他们有一组不同的权限。
+  
+2、角色配置 role=
+  1)、对资源 user 拥有create、update权限:【role1=user:create,user:update】
+  2)、对资源system:user拥有create、update、delete、view权限：【role="system:user:create,update,delete,view"】
+  3)、对资源system:user拥有所有权限：【role=system:user:*】(推荐这种写法)、【role=system:user】
+  4)、对资源拥有所有权限（如匹配user:view）：【role=*:view】
+  5)、对资源拥有所有权限（如匹配system:user:view，即和之上的不等价）：【role62=*:*:view】
+  6)、对资源user的1实例拥有view权限：【role=user:view:1】
+  7)、对资源user的1实例拥有所有权限：【role=user:*:1】
+  8)、对资源user的所有实例拥有auth权限：【role=user:auth:*】
+  9)、对资源user的所有实例拥有所有权限：【role=user:*:*】
+  10)、【role=menu:*:*】、【role=menu:*】
+
+3、 实现位移方式的权限(BitPermission)：
+  1)、权限字符串格式：【+资源字符串+权限位+实例ID】，以 + 开头中间通过 + 分割。
+  2)、【0】：表示所有权限、【1】：新增(二进制：0001)、【2】：修改(二进制：0010)、【4】：删除(二进制：0100)、【8】：查看(二进制：1000)
+  例如：【+user+10】表示对资源 user 拥有修改/查看权限。
+
+============ 字符串通配符权限============
+
+1、规则：【“资源标识符:操作:对象实例ID”】，即对哪个资源的哪个实例可以进行什么操作。
+
+2、其默认支持通配符权限字符串：【:】表示资源/操作/实例的分割；【,】表示操作的分割；【*】表示任意资源/操作/实例。
+
+
+============ 性能问题============
+
+通配符匹配方式比字符串相等匹配来说是更复杂的，因此需要花费更长时间，但是一般系统的权限不会太多，且可以配合缓存来提供其性能，如果这样性能还达不到要求我们可以实现位操作算法实现性能更好的权限匹配。另外实例级别的权限验证如果数据量太大也不建议使用，可能造成查询权限及匹配变慢。可以考虑比如在sql查询时加上权限字符串之类的方式在查询时就完成了权限匹配。
+
+
+
+
+
+
+
+
+

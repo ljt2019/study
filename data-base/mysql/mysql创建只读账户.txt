@@ -1,0 +1,11 @@
+
+
+1、创建用户，并授权SELECT查询权限，授权远程访问权限，注意，命令中username/password指用户名密码，请自己指定。若要限制仅指定IP可以使用此用户访问Mysql，将%改为具IP即可。执行【】中的命令：【GRANT SElECT ON *.* TO 'hyyd'@'%' IDENTIFIED BY "hyyd123456";】
+
+2、刷新mysql权限，使用户创建、授权生效。执行【】中的命令：【flush privileges;】
+
+GRANT SElECT ON *.* TO 'username'@'%' IDENTIFIED BY "password";flush privileges;
+
+
+
+mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=12.1.0.1.0 -Dpackaging=jar -Dfile=C:\AAAAA\ojdbc6-12.1.0.1.0.jar

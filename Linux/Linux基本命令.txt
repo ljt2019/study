@@ -112,6 +112,8 @@
 
 13、建立软连接：【ln -s /usr/java/jdk1.8.0_60/ /usr/jdk】
 
+14、显示隐藏文件：【ls -a】
+
 ======== 查看进程 ========
  
 1、关键字查看：【ps -ef | grep redis】 ps -ef | grep 6379】
@@ -250,8 +252,8 @@ export PATH JAVA_HOME CLASSPATH
 
 2、解压到目录：【tar -zxvf apache-tomcat-8.5.35.tar.gz -C /usr/local/】
 
-3、
-
+3、启动tomcat并查看日志信息：【sh /opt/tomcat-8321/bin/catalina.sh start && tail -f /opt/tomcat-8321/logs/catalina.out】
+   停止tomcat：【sh /opt/tomcat-8321/bin/catalina.sh stop】
 
 
 ======== &的一些含义 ======== 
@@ -280,8 +282,15 @@ export PATH JAVA_HOME CLASSPATH
 6、查该软件包会向系统里面写入哪些文件：【rpm -qpl rpm包名】
 
 
+【iptables -t nat -A PREROUTING -d 10.250.170.247 -p tcp ?--dport 2222 -j DNAT --to-destination 192.168.10.102:22】
+【iptables -t nat -A PREROUTING -d 10.250.170.247 -p tcp ?--dport 8383 -j DNAT --to-destination 192.168.10.102:8383】
+
+
 5.4、添加指定端口到防火墙中：【iptables -I INPUT -p 协议 --dport 端口号 -j ACCEPT】例如：
-	1 iptables -I INPUT -p udp --dport 161 -j ACCEPT
-	2 iptables -I INPUT -p tcp --dport 8080 -j ACCEPT        
+	1【iptables -I INPUT -p udp --dport 161 -j ACCEPT】
+	2【iptables -I INPUT -p tcp --dport 8080 -j ACCEPT】      
 
 7、开放防火墙80端口，指令是【firewall-cmd --permanent --add-port=80/tcp】【firewall-cmd --reload】
+
+1、修改网卡配置文件 /etc/sysconfig/network-scripts/ifcfg-enp0s3 此处我虚拟机网卡是enp0s3，其它虚拟机可能是别的名字。
+2、重启网卡生效：【service network restart】

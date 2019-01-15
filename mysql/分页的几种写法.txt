@@ -1,5 +1,4 @@
 
-1°¢–¥∑®1£∫°æ∫√”√°ø
 
 	PageParameter pageParameter = new PageParameter(
 		param.getPage() == null ? 0 : param.getPage()
