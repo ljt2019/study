@@ -1,0 +1,43 @@
+
+// doLast 替换 <<
+//task task1 {
+//   doLast{
+//     println 'task1...'
+//   }
+//}
+//task task2(dependsOn:task1) {
+//   doLast{
+//     println 'task2...'
+//   }
+//}
+////task2.dependsOn task1  //或者
+//
+//task copyFile(type: Copy) {
+//   from 'xml'
+//   into 'destination'
+//}
+//
+//task showTasks {
+//   println tasks.class
+//   println tasks.size()
+//}
+
+task hello8 {
+	doLast{
+		println description
+	}
+}
+
+//设置属性值
+//hello8 {
+//	description = "this is hello8"
+//}
+
+//通过configure设置属性值
+hello8.configure {
+   description = "this is 老虎"
+}
+
+
+
+

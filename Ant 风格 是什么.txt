@@ -1,0 +1,23 @@
+
+1、Ant通配符有三种：
+
+  1)、匹配任何单字符：【?】
+  
+  2)、匹配0或者任意数量的字符：【*】
+  
+  3)、匹配0或者更多的目录：【**】
+  
+2、例子：
+
+  1)、【/app/*.x】：匹配(Matches)所有在app路径下的.x文件
+  
+  2)、【/app/p?ttern】：匹配(Matches) /app/pattern 和 /app/pXttern,但是不包括/app/pttern
+  
+  3)、【/**/example】：匹配(Matches)项目根路径下 /project/example, /project/foow/example, 和 /example
+  
+  4)、【/app/**/dir/file.*】：匹配(Matches) /app/dir/file.jsp, /app/foo/dir/file.html,/app/foo/bar/dir/file.pdf, 和 /app/dir/file.java
+  
+  5)、【/**/*.jsp】：匹配(Matches)项目根路径下的任何 .jsp 文件
+  
+  6)、最长匹配原则：URL请求【/app/dir/file.jsp】，现在存在两个路径匹配模式/**/*.jsp和/app/dir/*.jsp，那么会根据模式【/app/dir/*.jsp】来匹配
+	

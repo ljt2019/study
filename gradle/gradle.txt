@@ -1,0 +1,29 @@
+
+============= gradle基本概念 =============
+
+1、什么是gradle：Gradle是一种声明式的构建工具。在执行时，Gradle并不会一开始便顺序执行build.gradle文件中的内容，而是分为两个阶段，第一个阶段是配置阶段，然后才是实际的执行阶段。在配置阶段，Gradle将读取所有build.gradle文件的所有内容来配置Project和Task等，比如设置Project和Task的Property，处理Task之间的依赖关系等。
+
+2、Gradle在执行Task时分为两个阶段：配置阶段 --> 实际执行阶段
+
+3、Project 额外属性的添加：
+  1)、ext.properties = ''
+  2)、闭包的方式：ext {property = 'this is property2'}
+  3)、-P命令行参数来设置：gradle -P property3="通过-P命令行参数设置属性"  showCommandLieProperties
+  4)、通过-D方式声明：gradle -D org.gradle.project.property3="this is another property3" showCommandLieProperties
+ 
+============= 创建Task的多种方法 =============
+
+1、task helloWorld {
+       doLast {
+       }
+       println "Hello World!"
+   }
+
+//拷贝文件
+2、task copyFile(type: Copy) {
+      from 'xml'
+      into 'destination'
+   }
+
+
+

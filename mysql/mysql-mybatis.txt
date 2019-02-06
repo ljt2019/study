@@ -238,7 +238,8 @@
 		ORDER BY a.startTime DESC
 	</select>
 
-14、查询条件 方式1
+14、查询条件 
+		//方式1
         List<Criteria> lists = new ArrayList<>();
         lists.add(Activity_.deleteFlag.equal(0));
         lists.add(Query.and);
@@ -254,8 +255,7 @@
         lists.add(Query.orderby);
         lists.add(Activity_.releaseTime.desc());
 		List<Activity> activityList = baseMapper.query(new Query().where(lists), pageParameter);
-		
-		方式2
+		//方式2
 		List<ArBigOperatingRecord> arBigOperatingRecords = arBigOperatingRecordService
 				.query(new Query().where(ArBigOperatingRecord_.mallId.equal(mallId), Query.and,
 						ArBigOperatingRecord_.deleteFlag.equal(CommonConstant.NOT_DELETE), Query.orderby,
@@ -263,3 +263,11 @@
 	
 	
 15、inert into [key存在的就报错] / replace into [key存在的就更新]
+
+16、创建索引：【create unique index idx_sys_users_username on sys_users(username);】，频繁查询的字段创建索引来提交性能。
+
+17、布尔类型：available bool default false, <-sql-> `available` tinyint(1) DEFAULT '0', <-实体类-> private Boolean available = Boolean.FALSE;
+
+18、
+
+

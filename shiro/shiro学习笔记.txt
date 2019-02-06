@@ -95,7 +95,7 @@
 5、Authenticator 会把相应的 token 传入 Realm，从 Realm 获取身份验证信息，如果没有返回 / 抛出异常表示身份验证失败了。此处可以配置多个 Realm，将按照相应的顺序及策略进行访问。
 
 
-============ 授权流程============
+============ 授权流程 ============
 
 1、首先调用 Subject.isPermitted*/hasRole* 接口，其会委托给SecurityManager，而SecurityManager接着委托给Authorizer。
 
@@ -106,7 +106,7 @@
 4、Authorizer 会判断 Realm 的角色/权限是否和传入的匹配，如果有多个 Realm，会委托给 ModularRealmAuthorizer 进行循环判断。
 
 
-============ 授权============
+============ 授权 ============
 
 1、授权即访问控制，在应用中控制着谁能访问哪些资源(如访问页面、编辑数据、页面操作等)，在授权中需要了解的几个关键对象
   1)、主体(Subject)：任何与应用交互的‘用户‘，在 Shiro 中使用 Subject 代表该用户。用户只有授权后才允许访问相应的资源。
@@ -131,21 +131,121 @@
   2)、【0】：表示所有权限、【1】：新增(二进制：0001)、【2】：修改(二进制：0010)、【4】：删除(二进制：0100)、【8】：查看(二进制：1000)
   例如：【+user+10】表示对资源 user 拥有修改/查看权限。
 
-============ 字符串通配符权限============
+============ 字符串通配符权限 ============
 
 1、规则：【“资源标识符:操作:对象实例ID”】，即对哪个资源的哪个实例可以进行什么操作。
 
 2、其默认支持通配符权限字符串：【:】表示资源/操作/实例的分割；【,】表示操作的分割；【*】表示任意资源/操作/实例。
 
 
-============ 性能问题============
+============ 性能问题 ============
 
 通配符匹配方式比字符串相等匹配来说是更复杂的，因此需要花费更长时间，但是一般系统的权限不会太多，且可以配合缓存来提供其性能，如果这样性能还达不到要求我们可以实现位操作算法实现性能更好的权限匹配。另外实例级别的权限验证如果数据量太大也不建议使用，可能造成查询权限及匹配变慢。可以考虑比如在sql查询时加上权限字符串之类的方式在查询时就完成了权限匹配。
 
+sql = "select role from sys_users u, sys_roles r,sys_users_roles ur where u.username=? and u.id=ur.user_id and r.id=ur.role_id";
 
 
+============ shiro拦截器机制 ============
+
+1、NameableFilter：给 Filter 起个名字，如果没有设置默认就是 FilterName；
+
+2、OncePerRequestFilter：用于防止多次执行 Filter 的(一次请求只会走一次拦截器链), enabled=true 表示开启,false表示不开启。
+
+3、ShiroFilter：整个 Shiro 的入口点，用于拦截需要安全控制的请求进行处理，这个之前已经用过了。
+
+4、AdviceFilter：提供了 AOP 风格的支持，类似于 SpringMVC 中的 Interceptor：
+  1)、preHandler：在拦截器链执行之前执行；如果返回true则继续拦截器链；否则中断后续的拦截器链的执行直接返回；进行预处理（如基于表单的身份验证、授权）
+  2)、postHandle；在拦截器链执行完成后执行；进行后处理（如记录执行时间之类的）；
+  3)、afterCompletion：不管有没有异常都会执行，可以进行清理资源（如解除 Subject 与线程的绑定之类的）。
+  
+5、PathMatchingFilter：基于Ant的请求路径匹配功能及拦截器参数解析的功能，如"roles[admin,user]"自动根据"，"分割解析到一个路径参数配置并绑定到相应的路径。
+  1)、pathsMatch：该方法用于 path 与请求路径进行匹配的方法；如果匹配返回 true；
+  2)、onPreHandle：在 preHandle 中，当 pathsMatch 匹配一个路径后，会调用 opPreHandler 方法并将路径绑定参数配置传给 mappedValue；然后可以在这个方法中进行一些验证（如角色授权），如果验证失败可以返回 false 中断流程；默认返回 true；也就是说子类可以只实现 onPreHandle 即可，无须实现 preHandle。如果没有 path 与请求路径匹配，默认是通过的（即 preHandle 返回 true）。
+
+6、AccessControlFilter：提供了访问控制的基础功能；比如是否允许访问/当访问拒绝时如何处理等
+  1)、isAccessAllowed：表示是否允许访问；mappedValue 就是[urls]配置中拦截器参数部分，如果允许访问返回 true，否则 false；
+  2)、onAccessDenied：表示当访问拒绝时是否已经处理了；如果返回 true 表示需要继续处理；如果返回 false 表示该拦截器实例已经处理了，将直接返回即可；
+  3)、onPreHandle：会自动调用这两个方法决定是否继续处理。
+  
+7、拦截器链：1、先执行 Shiro 自己的 Filter 链；2、再执行 Servlet 容器的 Filter 链（即原始的 Filter）。
 
 
+============ shiro会话管理 ============
+
+1、Subject.getSession()等价Subject.getSession(true)，没有创建Session则返回null，默认如果启用会话存储则在创建Subject时会主动创建一个Session。
+  1)、获取当前会话的唯一标识：【session.getId();】
+  2)、获取当前 Subject 的主机地址：【session.getHost();】  HostAuthenticationToken.getHost() 提供
+  3)、获取 / 设置当前 Session 的过期时间；如果不设置默认是会话管理器的全局过期时间:【session.getTimeout();】、【 session.setTimeout(seconds);】
+  4)、启动时间及最后访问时间；【session.getStartTimestamp();】、【session.getLastAccessTime();】
+    (1)、JavaSE环境：需要自己定期调用 session.touch() 去更新最后访问时间。
+    (2)、Web环境：每次进入 ShiroFilter 都会自动调用 session.touch() 来更新最后访问时间。
+  5)、销毁会话：当 Subject.logout() 时会自动调用 stop 方法来销毁会话。如果在 web 中，调用 javax.servlet.http.HttpSession. invalidate() 也会自动调用 Shiro Session.stop 方法进行销毁 Shiro 的会话。
+  
+2、设置 / 获取 / 删除会话属性；在整个会话范围内都可以对这些属性进行操作
+  session.setAttribute("key", "123");
+  Assert.assertEquals("123", session.getAttribute("key"));
+  session.removeAttribute("key");
+  
+3、Shiro 提供了三个默认实现：
+  1)、DefaultSessionManager：DefaultSecurityManager 使用的默认实现，用于 JavaSE 环境；
+    (1)、ini 配置：【sessionManager=org.apache.shiro.session.mgt.DefaultSessionManager】
+    (2)、设置会话的全局过期时间（毫秒为单位），默认 30 分钟：【sessionManager.globalSessionTimeout=1800000】
+  2)、ServletContainerSessionManager：DefaultWebSecurityManager 使用的默认实现，用于 Web 环境，其直接使用 Servlet 容器的会话；
+    (1)、ini 配置：【sessionManager=org.apache.shiro.web.session.mgt.ServletContainerSessionManager】
+  3)、DefaultWebSessionManager：用于 Web 环境的实现，可以替代 ServletContainerSessionManager，自己维护着会话，直接废弃了 Servlet 容器的会话管理。
+    (1)、ini 配置：【sessionManager=org.apache.shiro.web.session.mgt.ServletContainerSessionManager】
+    (2)、sessionIdCookie.name：设置 Cookie 名字，默认为 JSESSIONID；
+    (3)、sessionIdCookie.domain：设置 Cookie 的域名，默认空，即当前访问的域名；
+    (4)、sessionIdCookie.path：设置 Cookie 的路径，默认空，即存储在域名根下；
+    (5)、sessionIdCookie.maxAge：设置 Cookie 的过期时间，秒为单位，默认 - 1 表示关闭浏览器时过期 Cookie；
+    (6)、sessionIdCookie.httpOnly：如果设置为 true，则客户端不会暴露给客户端脚本代码，使用 HttpOnly cookie 有助于减少某些类型的跨站点脚本攻击；此特性需要实现了 Servlet 2.5 MR6 及以上版本的规范的 Servlet 容器支持；
+    (7)、sessionManager.sessionIdCookieEnabled：是否启用 / 禁用 Session Id Cookie，默认是启用的；如果禁用后将不会设置 Session Id Cookie，即默认使用了 Servlet 容器的 JSESSIONID，且通过 URL 重写（URL 中的 “;JSESSIONID=id” 部分）保存 Session Id。
+    (8)、sessionIdCookie 是 sessionManager 创建会话 Cookie 的模板：
+
+4、会话监听器：用于监听会话创建、过期及停止事件：实现 SessionListener 接口，如果只想监听某一个事件，可以继承 SessionListenerAdapter。
+  1)、ini 配置：
+    (1)、【sessionListener1=com.github.zhangkaitao.shiro.chapter10.web.listener.MySessionListener1】
+    (2)、【sessionListener2=com.github.zhangkaitao.shiro.chapter10.web.listener.MySessionListener2】
+    (3)、【sessionManager.sessionListeners=$sessionListener1,$sessionListener2】
+
+5、会话存储/持久化：
+  1)、pom.xml 配置文件，添加缓存api
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-ehcache</artifactId>
+      <version>1.2.2</version>
+    </dependency>
+  2)、ini 配置：
+    sessionDAO=org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO
+	#设置会话 ID 生成器
+	sessionIdGenerator=org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator
+    sessionDAO.sessionIdGenerator=$sessionIdGenerator 
+	#设置 Session 缓存名字，默认就是 shiro-activeSessionCache
+    sessionDAO.activeSessionsCacheName=shiro-activeSessionCache
+    sessionManager.sessionDAO=$sessionDAO
+	#缓存管理器，用于管理缓存的，此处使用 Ehcache 实现
+    cacheManager=org.apache.shiro.cache.ehcache.EhCacheManager
+	#设置 ehcache 缓存的配置文件
+    cacheManager.cacheManagerConfigFile=classpath:ehcache.xml
+    securityManager.cacheManager=$cacheManager 
+
+  3)、ehcache.xml配置
+    <cache name="shiro-activeSessionCache"
+         maxEntriesLocalHeap="10000"
+         overflowToDisk="false"
+         eternal="false"
+         diskPersistent="false"
+         timeToLiveSeconds="0"
+         timeToIdleSeconds="0"
+         statistics="true"/> 
+
+6、会话验证：定期的检测会话是否过期，Shiro 提供了会话验证调度器 SessionValidationScheduler 来做这件事情。
+  1)、sessionValidationScheduler：会话验证调度器，sessionManager 默认就是使用 ExecutorServiceSessionValidationScheduler，其使用 JDK 的 ScheduledExecutorService 进行定期调度并验证会话是否过期；
+  2)、sessionValidationScheduler.interval：设置调度时间间隔，单位毫秒，默认就是 1 小时；
+  3)、sessionValidationScheduler.sessionManager：设置会话验证调度器进行会话验证时的会话管理器；
+  4)、sessionManager.globalSessionTimeout：设置全局会话超时时间，默认 30 分钟，即如果 30 分钟内没有访问会话将过期；
+  5)、sessionManager.sessionValidationSchedulerEnabled：是否开启会话验证器，默认是开启的；
+  6)、sessionManager.sessionValidationScheduler：设置会话验证调度器，默认就是使用 ExecutorServiceSessionValidationScheduler。
 
 
 

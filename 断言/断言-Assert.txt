@@ -1,0 +1,7 @@
+
+1、【Assert.assertTrue("假的",false);】
+
+2、【Assert.assertEquals( "两对象的值不相等", object_expected, object_actual);】
+
+3、【assertSame("两个对象引用的不是同一个对象", object_expected, object_actual);】
+
