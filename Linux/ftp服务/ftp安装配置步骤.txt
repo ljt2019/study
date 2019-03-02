@@ -1,0 +1,48 @@
+
+1、安装ftp服务端：【yum install vsftpd】
+
+2、安装ftp客户端：【yum install ftp】
+
+3、清空ipables防护墙的默认策略：【iptables -F】
+
+4、保存当前防火墙策略状态：【service iptables save】
+
+5、三种认证模式登陆到ftp服务
+  1)、匿名开放模式：任何用户都可以无需密码登陆
+  2)、本地用户模式：通过linux系统本地的账户密码进行认证，但如果被黑客破解账户信息，则存在危险。
+  3)、虚拟用户模式：虚拟出来进行口令认证的账户信息，仅供ftp服务程序认证，即便黑客破解账户信息也无法登陆ftp服务
+	  
+7、启动ftp服务器：【systemctl restart vsftpd & systemctl enable vsftpd】,开启服务之前配置服务模式
+
+8、客户端连接到ftp服务：【ftp 192.168.43.211】，默认账户名为 anonmous,密码为空。默认访问的目录是 /var/ftp
+
+9、修改权限：【chown -Rf ftp /var/ftp/pub/】
+
+10、修改ftp相关的SELinux域策略：【setsebool -P ftp_full_access=on】
+
+11、ftp常用的命令操作：
+  1)、修改文件名：【rename files database】
+  2)、删除文件：【rmdir database】
+  
+  
+=============== 三种认证登陆模式的配置 ===============
+1、匿名开放模式：
+  1)、进入编辑配置文件【vim /etc/vsftpd/vsftpd.conf】
+  2)、允许匿名用户访问：【anonymous_enable=YES】
+      匿名用户上传文件的umask值：【anon_umask=022】
+	  允许匿名用户上传文件：【anon_upload_enable=YES】
+	  允许匿名用户创建目录：【anon_mkdir_write_enable=YES】
+	  允许匿名用户修改目录名称或删除目录：【anon_other_write_enable=YES】
+
+2、本地用户模式：
+  1)、进入编辑配置文件【vim /etc/vsftpd/vsftpd.conf】
+  2)、禁止匿名用户访问：【anonymous_enable=NO】
+      允许本地用户访问：【local_enable=NO】
+      本地用户上传文件的umask值：【local_umask=022】
+	  设置可写权限：【write_enable=YES】
+	  启用禁止用户名单，名单文件为ftpusers和user_list：【userlist_enable=YES】
+	  开启用户作用名单文件功能：【userlist_deny=YES】
+  3)、修改文件：【vim /etc/vsftpd/user_list】，将root注释
+  4)、修改文件：【vim /etc/vsftpd/ftpusers】，将root注释
+	  
+3、 虚拟用户模式:
