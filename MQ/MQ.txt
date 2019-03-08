@@ -1,0 +1,160 @@
+
+1、背景：在互联网架构中，MQ是一种非常常见的上下游“逻辑解耦+物理解耦”的消息通信服务。
+
+2、概念：消息中间件主要用于组件之间的解耦，消息的发送者无需知道消息使用者的存在，反之亦然。
+
+3、常见MQ的类型：
+
+  1)、activeMQ 对java支持良好，缺点是对其他语言支持不够友好，适合中小企业系统
+  
+  2)、rabbitMQ 对java支持良好，对其他语言也支持良好，跨平台，语言无关
+  
+  3)、kaffka 日志消息中间件 支持大数据场景
+
+4、不应使用MQ的场景：调用方实时依赖执行结果(上游需要关注执行结果)的业务场景，也就是上游实时关注执行结果
+
+5、MQ使用场景：
+
+  1)、数据驱动的任务依赖
+  
+  2)、上游不关心多下游执行结果
+  
+  3)、异步返回执行时间长
+  
+
+============ RabbitMQ简介 ============
+
+1、Connection是RabbitMQ的socket链接，它封装了socket协议相关部分逻辑
+
+2、ConnectionFactory为Connection的制造工厂。 
+
+3、Channel是我们与RabbitMQ打交道的最重要的一个接口，我们大部分的业务操作是在Channel这个接口中完成的，包括定义Queue、定义Exchange、绑定Queue与Exchange、发布消息等。
+
+4、Message acknowledgment：消息确认，消费者再消费完一条消息后会发送一个回执确认已经消费的信息到MQ，MQ则将该消息从队列中移除。
+
+5、Message durability：消息持久化，到MQ服务宕机时保证未被消费的消息不丢失。
+
+6、Prefetch count：预取计数，消息一条一条推送，消费完一条再推送一条。
+
+7、Exchange：交换器，生产者将消息发送到Exchange（交换器，下图中的X），由Exchange将消息路由到一个或多个Queue中（或者丢弃）。
+
+8、routing key：路由选择键，在发送消息给Exchange时，通过指定routing key来决定消息流向哪里，与Exchange Type及binding key联合使用才能最终生效
+
+9、Binding：RabbitMQ中通过Binding将Exchange与Queue关联起来，这样RabbitMQ就知道如何正确地将消息路由到指定的Queue了。
+
+10、
+
+
+============ JMS认识 ============
+
+1、MQ实现参照了jms规范，（规范就是一种约定）该规范中包括
+
+2、提供者：实现jms规范的中间件服务器
+
+3、客户端：发送或者接受消息的应用程序
+
+4、生产者/发布者:创建并发送消息的客户端
+
+5、消费者/订阅者:接受并处理消息的客户端
+
+6、消息：应用程序之间传递的内容
+
+7、消息模式：在客户端之间传递消息的方式，jms中定义了主题和队列两种模式
+
+  1)、主题模式：假如发布者发布了100条消息，那么如果有n个订阅者，每个订阅者都可以获取到100条消息。
+  
+  2)、队列模式：假如生产者发送了100条消息，如果有n个消费者，那么每个消费者加起来获取到的消息总数是100，一个消息只能被一个消费者消费。
+  
+  
+============ 优点，为什么要使用消息队列 ============
+
+1、解耦：上下游逻辑+物理解耦，除了与MQ有物理连接，模块之间都不相互依赖；将消息写入消息队列，新增一个下游消息关注方，上游不需要修改任何代码
+
+2、异步：上游执行时间短，将消息写入消息队列，非必要的业务逻辑以异步的方式运行，加快响应速度
+
+3、削峰：系统A慢慢的按照数据库能处理的并发量，从消息队列中慢慢拉取消息。在生产中，这个短暂的高峰期积压是允许的。
+
+
+============ 缺点，为什么要使用消息队列 ============
+
+1、系统可用性降低:系统更复杂，多了一个MQ组件
+
+2、消息传递路径更长，延时会增加
+
+3、消息可靠性和重复性互为矛盾，消息不丢不重难以同时保证
+
+4、上游无法知道下游的执行结果，这一点是很致命的
+  
+  
+============ 什么叫消息队列 ============
+消息（Message）是指在应用间传送的数据。消息可以非常简单，比如只包含文本字符串，也可以更复杂，可能包含嵌入对象。 消息队列（Message Queue）是一种应用间的通信方式，消息发送后可以立即返回，由消息系统来确保消息的可靠传递。消息发布者只管把消息发布到 MQ 中而不用管谁来取，消息使用者只管从 MQ 中取消息而不管是谁发布的。这样发布者和使用者都不用知道对方的存在。
+
+
+============ RabbitMQ的安装 - window环境 ============
+
+1、安装 Erlang for Windows 程序。下载地址http://www.erlang.org/downloads
+
+2、Erlang环境变量配置：
+  1)、新增变量：ERLANG_HOME=【C:\Program Files\erl9.2】
+  2)、在Path中加入：【%ERLANG_HOME%\bin;】
+  3)、测试erl配置是否正确，开始-运行-cmd，输入erl，显示 Eshell V9.2  (abort with ^G)，说明成功。
+
+3、安装RabbitMQ，http://www.erlang.org/downloads
+
+4、RabbitMQ环境变量配置
+  1)、新增变量：RABBITMQ_SERVER=【C:\Program Files\RabbitMQ Server\rabbitmq_server-3.7.3】
+  2)、在Path中加入：【%RABBITMQ_SERVER%\sbin;】
+  
+5、激活rabbitmq_management，在CMD中键入如下命令：【C:\Program Files\RabbitMQ Server\rabbitmq_server-3.7.3\sbin\rabbitmq-plugins.bat" enable rabbitmq_management】
+
+6、启动RabbitMQ和启动服务：【net start RabbitMQ】、【net stop RabbitMQ】
+
+7、RabbitMQ测试：测试地址 【 http://localhost:15672/ 】，默认账户密码：guest/guest
+
+8、Java客户端测试：
+
+
+============ RabbitMQ的安装 - Linux环境 ============
+
+1、安装 Erlang：
+  方式1：	【wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm】
+			【rpm -Uvh erlang-solutions-1.0-1.noarch.rpm 】
+			
+方式2：# 启动EPEL源
+			【sudo yum install epel-release】
+			【sudo yum install erlang】
+			
+2、先下载rpm：【wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.6.6/rabbitmq-server-3.6.6-1.el7.noarch.rpm】
+   安装：【yum install rabbitmq-server-3.6.6-1.el7.noarch.rpm】
+
+3、开放端口：
+【/sbin/iptables -I INPUT -p tcp --dport 5672 -j ACCEPT】
+【/sbin/iptables -I INPUT -p tcp --dport 15672 -j ACCEPT】
+
+4、复制配置文件：【cp /usr/share/doc/rabbitmq-server-3.6.6/rabbitmq.config.example /etc/rabbitmq/rabbitmq.config】
+
+5、进入rabbitmq.config：将%% 和后面的，删除
+
+6、接下来安装插件，执行命令：【/sbin/rabbitmq-plugins enable rabbitmq_management】
+
+7、重启服务：【service rabbitmq-server restart】
+
+8、关闭防火墙：【systemctl stop firewalld.service】 端口是15672，账号和密码默认都是guest
+
+9、进入管理页面：【http://192.168.56.101:15672】
+
+10、通过命令授权：【rabbitmqctl set permissions -p / admin .* .* .*】，完成对admin的授权,然后启动项目就正常了
+
+============ 关于RabbitMQ的一些基本操作 - Linux环境 ============
+1、sudo chkconfig rabbitmq-server on  # 添加开机启动RabbitMQ服务
+2、sudo /sbin/service rabbitmq-server start # 启动服务
+3、sudo /sbin/service rabbitmq-server status  # 查看服务状态
+4、sudo /sbin/service rabbitmq-server stop   # 停止服务
+5、查看当前所有用户 sudo rabbitmqctl list_users
+6、查看默认guest用户的权限 sudo rabbitmqctl list_user_permissions guest
+7、由于RabbitMQ默认的账号用户名和密码都是guest。为了安全起见, 先删掉默认用户 sudo rabbitmqctl delete_user guest
+8、添加新用户 sudo rabbitmqctl add_user username password
+9、设置用户tag sudo rabbitmqctl set_user_tags username administrator
+10、赋予用户默认vhost的全部操作权限 sudo rabbitmqctl set_permissions -p / username ".*" ".*" ".*"
+11、查看用户的权限 sudo rabbitmqctl list_user_permissions username
+

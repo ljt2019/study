@@ -1,0 +1,31 @@
+
+1、引入jar：
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>provided</scope>
+            <!-- optional=true, 依赖不会传递, 该项目依赖devtools;
+                之后依赖boot项目的项目如果想要使用devtools, 需要重新引入 -->
+            <optional>true</optional>
+        </dependency>
+		
+		
+2、在yml文件上配如下：
+spring: 
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+	  
+3、设置idea运行前自动编译：【ctrl + shift + alt + /,选择Registry,勾上 Compiler autoMake allow when app running】
+
+4、编译插件：设置 fork 为 true
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!--fork :  如果没有该项配置，肯定devtools不会起作用，即应用不会restart -->
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+        </plugins>

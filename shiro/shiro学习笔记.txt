@@ -37,24 +37,39 @@
 
   2)、SecurityManager 接口继承了 Authenticator，另外还有一个 ModularRealmAuthenticator 实现，其委托给多个 Realm 进行验证，验证规则通过 AuthenticationStrategy 接口指定，默认提供的实现：
 
-  3)、FirstSuccessfulStrategy：只要有一个 Realm 验证成功即可，只返回第一个 Realm 身份验证成功的认证信息，其他的忽略；
-
-  4)、AtLeastOneSuccessfulStrategy：只要有一个 Realm 验证成功即可，和 FirstSuccessfulStrategy 不同，返回所有 Realm 身份验证成功的认证信息；
-
-  5)、AllSuccessfulStrategy：所有 Realm 验证成功才算成功，且返回所有 Realm 身份验证成功的认证信息，如果有一个失败就失败了。
-
-  6)、ModularRealmAuthenticator 默认使用 AtLeastOneSuccessfulStrategy 策略。
-
-  假设我们有三个 realm：
-  myRealm1： 用户名 / 密码为 zhang/123 时成功，且返回身份/凭据为 zhang/123；
-  myRealm2： 用户名 / 密码为 wang/123 时成功，且返回身份/凭据为 wang/123；
-  myRealm3： 用户名 / 密码为 zhang/123 时成功，且返回身份/凭据为 zhang@163.com/123，和 myRealm1 不同的是返回时的身份变了；
-
 4、密码要加密/生成不可逆的摘要方式存储
 
 5、编码支持，CodecSupport，提供了 toBytes(str,"utf-8") / toString(bytes,"utf-8") 用于在 byte 数组 /String 之间转换。
   byte[] bytes = CodecSupport.toBytes(str, "UTF-8");
   String str2 = CodecSupport.toString(bytes, "UTF-8");
+
+
+============ 认证时 .ini 文件中需要指定的几个实现 ============
+
+1、认证器(authenticator),默认ModularRealmAuthenticator可以不需要指定
+
+2、认证策略(authenticationStrategy),默认AtLeastOneSuccessfulStrategy可以不需要指定，提供以下3种认证策略，可以自己实现认证策略逻辑
+
+3、指定 realm 的实现：在里边编写校验逻辑
+
+
+============ 验证策略 ============
+
+1、 AtLeastOneSuccessfulStrategy 只要有一个 Realm 验证成功即可，和 FirstSuccessfulStrategy 不同，返回所有 Realm 身份验证成功的认证信息
+
+2、 FirstSuccessfulStrategy 只要有一个 Realm 验证成功即可，只返回第一个 Realm 身份验证成功的认证信息，其他的忽略
+
+3、 AllSuccessfulStrategy 所有 Realm 验证成功才算成功，且返回所有 Realm 身份验证成功的认证信息，如果有一个失败就失败了
+
+注1：ModularRealmAuthenticator默认使用的认证器
+
+注2：验证顺序：securityManager.realms=$myRealm1,$myRealm4,$myRealm3,$myRealm2，这里边配置的顺序验证
+
+假设我们有三个 realm：
+myRealm1： 用户名 / 密码为 zhang/123 时成功，且返回身份/凭据为 zhang/123；
+myRealm2： 用户名 / 密码为 wang/123 时成功，且返回身份/凭据为 wang/123；
+myRealm3： 用户名 / 密码为 zhang/123 时成功，且返回身份/凭据为 zhang@163.com/123，和 myRealm1 不同的是返回时的身份变了；
+
 
 ============ 登录流程 ============
 
@@ -78,7 +93,7 @@
 6、最后可以调用 subject.logout 退出，其会自动委托给 SecurityManager.logout 方法退出。
 
 
-============ 认证流程 ============
+============ 认证流程 Authentication ============
 
 1、首先调用 Subject.login(token) 进行登录，其会自动委托给 Security Manager，调用之前必须通过 SecurityUtils.setSecurityManager() 设置；
 
@@ -86,16 +101,12 @@
 
 3、Authenticator 才是真正的身份验证者，Shiro API 中核心的身份认证入口点，此处可以自定义插入自己的实现；
 
-4、Authenticator 可能会委托给相应的 AuthenticationStrategy 进行多 Realm 身份验证，默认 ModularRealmAuthenticator 会调用 AuthenticationStrategy 进行多 Realm 身份验证；
-  1)、FirstSuccessfulStrategy：只要有一个 Realm 验证成功即可，只返回第一个 Realm 身份验证成功的认证信息，其他的忽略；
-  2)、AtLeastOneSuccessfulStrategy：只要有一个 Realm 验证成功即可，和 FirstSuccessfulStrategy 不同，返回所有 Realm 身份验证成功的认证信息；
-  3)、AllSuccessfulStrategy：所有 Realm 验证成功才算成功，且返回所有 Realm 身份验证成功的认证信息，如果有一个失败就失败了；
-  4)、OnlyOneAuthenticatorStrategy：只能存在唯一一个正确的realm，不能同时存在多个正确的realm。
+4、Authenticator 可能会委托给相应的 AuthenticationStrategy 进行多 Realm 身份验证，默认 ModularRealmAuthenticator 
 
 5、Authenticator 会把相应的 token 传入 Realm，从 Realm 获取身份验证信息，如果没有返回 / 抛出异常表示身份验证失败了。此处可以配置多个 Realm，将按照相应的顺序及策略进行访问。
 
 
-============ 授权流程 ============
+============ 授权流程 authorization ============
 
 1、首先调用 Subject.isPermitted*/hasRole* 接口，其会委托给SecurityManager，而SecurityManager接着委托给Authorizer。
 
@@ -114,7 +125,9 @@
   3)、权限(Permission)：安全策略中的原子授权单位，表示在应用中用户能不能访问某个资源，
   4)、角色(Role)：角色代表了操作集合(一组权限)，一般是赋予用户角色而不是权限，如：项目经理、技术总监、CTO、开发工程师等都是角色，他们有一组不同的权限。
   
-2、角色配置 role=
+2、角色配置：规则即：“用户名=密码,角色1，角色2”，如果需要在应用中判断用户是否有相应角色，就需要在相应的 Realm 中返回角色信息，也就是说 Shiro 不负责维护用户-角色信息，需要应用提供，Shiro 只是提供相应的接口方便验证，后续会介绍如何动态的获取用户角色。
+  
+2、权限配置
   1)、对资源 user 拥有create、update权限:【role1=user:create,user:update】
   2)、对资源system:user拥有create、update、delete、view权限：【role="system:user:create,update,delete,view"】
   3)、对资源system:user拥有所有权限：【role=system:user:*】(推荐这种写法)、【role=system:user】
@@ -130,6 +143,7 @@
   1)、权限字符串格式：【+资源字符串+权限位+实例ID】，以 + 开头中间通过 + 分割。
   2)、【0】：表示所有权限、【1】：新增(二进制：0001)、【2】：修改(二进制：0010)、【4】：删除(二进制：0100)、【8】：查看(二进制：1000)
   例如：【+user+10】表示对资源 user 拥有修改/查看权限。
+
 
 ============ 字符串通配符权限 ============
 
