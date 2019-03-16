@@ -1,0 +1,16 @@
+
+======== rz和sz的安装 ========
+ 
+1、wget下载lrzsz安装包：【wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz】，wget如果未安装，则需要【yum install wget】进行安装
+
+2、解压：【tar -zxvf lrzsz-0.12.20.tar.gz -C /usr/local/】
+
+3、进入解压后的目录：【cd /usr/local/lrzsz-0.12.20】
+
+4、配置安装路径：【./configure】
+
+5、编译&安装：【make && make install】
+
+6、创建软链接，上面安装过程默认把lsz和lrz安装到了/usr/local/bin/目录下，进入目录：【cd /usr/local/bin】
+  1)、创建rz的软链接，并命名rz：【ln -s /usr/local/bin/lrz rz】
+  2)、创建sz的软链接，并命名sz：【ln -s /usr/local/bin/lsz sz】

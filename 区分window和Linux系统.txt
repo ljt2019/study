@@ -1,0 +1,13 @@
+
+	public static String getSystemRoot() {
+	    String osName = System.getProperty("os.name");
+        System.out.println(osName);
+        if (osName.toLowerCase().startsWith("mac")) {
+            return "/usr/local/xx/";
+        } else if (osName.toLowerCase().startsWith("windows")) {
+            return "C:\\tiger\\xx\\";
+        } else {
+            return "/User/local/xx/";
+        }
+    }
+	

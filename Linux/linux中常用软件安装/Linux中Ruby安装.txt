@@ -1,0 +1,20 @@
+
+======== Ruby安装 ========  
+
+1、下载最新版的 Ruby 压缩文件：【http://www.ruby-lang.org/en/downloads/】
+
+2、解压到目录;【tar -xvzf ruby-2.5.3.tgz -C /usr/local/】
+
+3、进入目录【cd /usr/local/ruby-2.5.3】
+
+4、配置安装路径：【./configure】
+
+5、编译：【make】
+
+6、安装;【sudo make install】
+
+7、查看是否安装成功：【ruby -v】
+
+========用RVM安装Ruby ======== 
+
+1、【rvm install 2.4.2】

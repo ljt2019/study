@@ -4,16 +4,16 @@
     <!-- appender是configuration的子节点，是负责写日志的组件。 -->
 
     <!-- 日志存储路径 -->
-    <property name="LOG_HOME" value="/apps/logs/hyyd" />
+    <property name="LOG_HOME" value="/logs/demo" />
 	
     <!-- 文件输出配置 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_HOME}/hyyd-robot-api.log</File>
+        <File>${LOG_HOME}/demo-api.log</File>
         <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
         <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover 保存历史记录到这个文件夹一日起为后缀 -->
-            <FileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/hyyd-robot-api.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/demo-api.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
             <!-- keep 30 days' worth of history 保存天数-->
             <maxHistory>90</maxHistory>
             <!-- 日志大小 -->
@@ -45,9 +45,9 @@
         <appender-ref ref="STDOUT"></appender-ref>
     </root>
 	
-    <!-- com.hyyd.robot为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
+    <!-- com.tiger.demo为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
     <!-- 级别依次为【从高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
-    <logger name="com.hyyd.robot" level="DEBUG" additivity="false">
+    <logger name="com.tiger.demo" level="DEBUG" additivity="false">
     	<appender-ref ref="FILE"></appender-ref>
         <appender-ref ref="STDOUT"></appender-ref>
     </logger>

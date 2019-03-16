@@ -1,0 +1,8 @@
+======== tomcat安装========
+
+1、下载：【wget https://mirrors.cnnic.cn/apache/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.tar.gz】
+
+2、解压到目录：【tar -zxvf apache-tomcat-8.5.35.tar.gz -C /usr/local/】
+
+3、启动tomcat并查看日志信息：【sh /opt/tomcat-8321/bin/catalina.sh start && tail -f /opt/tomcat-8321/logs/catalina.out】
+   停止tomcat：【sh /opt/tomcat-8321/bin/catalina.sh stop】

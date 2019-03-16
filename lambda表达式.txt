@@ -1,5 +1,4 @@
 
-1¡¢¼¯ºÏ×ª»»
 			List<BodyReportViewAppOutDTO> collect = bodyReportViewList.stream().map(bodyReportView -> {
 				 BodyReportViewAppOutDTO bodyReportViewAppOutDTO = new BodyReportViewAppOutDTO(
 						bodyReportView.getName(),bodyReportView.getScore(),bodyReportView.getBirthYear()
@@ -18,4 +17,3 @@
 				return bodyReportViewAppOutDTO;
 			}).collect(Collectors.toList());
 			
-2¡¢

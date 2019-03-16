@@ -1,0 +1,26 @@
+select @tiger :=98,@haha :=100；
+
+## 排名，sort相同的rank一样
+SELECT
+	t.sort,
+	cast(t.rank AS signed) rank
+FROM
+	(
+		SELECT
+			_sys.sort,
+
+		IF (
+			_sys.sort =@p ,@rank ,@rank :=@rank + 1
+		) AS rank,
+		@p := _sys.sort
+	FROM
+		(
+			SELECT
+				temp.sort
+			FROM
+				sys_config temp
+			ORDER BY
+				sort DESC
+		) _sys,
+		(SELECT @rank := 0 ,@p := NULL) a #给变量初始化值，也可以在前边set @rank := 0;set @p := NULL;
+	) as t;

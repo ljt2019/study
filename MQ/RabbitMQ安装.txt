@@ -1,0 +1,72 @@
+============ RabbitMQ的安装 - window环境 ============
+
+1、安装 Erlang for Windows 程序。下载地址http://www.erlang.org/downloads
+
+2、Erlang环境变量配置：
+  1)、新增变量：ERLANG_HOME=【C:\Program Files\erl9.2】
+  2)、在Path中加入：【%ERLANG_HOME%\bin;】
+  3)、测试erl配置是否正确，开始-运行-cmd，输入erl，显示 Eshell V9.2  (abort with ^G)，说明成功。
+
+3、安装RabbitMQ，http://www.erlang.org/downloads
+
+4、RabbitMQ环境变量配置
+  1)、新增变量：RABBITMQ_SERVER=【C:\Program Files\RabbitMQ Server\rabbitmq_server-3.7.3】
+  2)、在Path中加入：【%RABBITMQ_SERVER%\sbin;】
+  
+5、激活管控台rabbitmq_management，在CMD中键入如下命令：【C:\Program Files\RabbitMQ Server\rabbitmq_server-3.7.3\sbin\rabbitmq-plugins.bat" enable rabbitmq_management】
+
+6、启动RabbitMQ和启动服务：【net start RabbitMQ】、【net stop RabbitMQ】
+
+7、RabbitMQ测试：测试地址 【 http://localhost:15672/ 】，默认账户密码：guest/guest
+
+8、Java客户端测试：
+
+
+============ RabbitMQ的安装-单机 - Linux环境 ============
+
+1、安装 Erlang：
+  方式1：	【wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm】
+			【rpm -Uvh erlang-solutions-1.0-1.noarch.rpm 】
+			
+方式2：# 启动EPEL源
+			【sudo yum install epel-release】
+			【sudo yum install erlang】
+			
+2、先下载rpm：【wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.6.6/rabbitmq-server-3.6.6-1.el7.noarch.rpm】
+   安装：【yum install rabbitmq-server-3.6.6-1.el7.noarch.rpm】
+
+3、开放端口：
+【/sbin/iptables -I INPUT -p tcp --dport 5672 -j ACCEPT】
+【/sbin/iptables -I INPUT -p tcp --dport 15672 -j ACCEPT】
+
+4、复制配置文件：【cp /usr/share/doc/rabbitmq-server-3.6.6/rabbitmq.config.example /etc/rabbitmq/rabbitmq.config】
+
+5、进入rabbitmq.config：将%% 和后面的，删除
+
+6、安装管控台插件：【/sbin/rabbitmq-plugins enable rabbitmq_management】
+
+7、重启服务：【service rabbitmq-server restart】
+
+8、关闭防火墙：【systemctl stop firewalld.service】 端口是15672，账号和密码默认都是guest
+
+9、进入管控台：【http://192.168.56.101:15672】
+
+10、赋予用户默认vhost的全部操作权限：【rabbitmqctl set_permissions -p / username ".*" ".*" ".*"】
+
+11、添加开机启动RabbitMQ服务：【sudo chkconfig rabbitmq-server on】
+
+12、启动服务：【/sbin/service rabbitmq-server start &】、【/sbin/service rabbitmq-server restart &】
+
+13、查看服务状态：【/sbin/service rabbitmq-server status】
+
+14、停止服务：【sudo /sbin/service rabbitmq-server stop】
+
+15、查看所有用户：【rabbitmqctl list_users】
+
+16、查看用户权限：【rabbitmqctl list_user_permissions username】
+
+17、删除用户：【rabbitmqctl delete_user guest】
+
+18、添加用户：【sudo rabbitmqctl add_user username password】
+
+19、设置用户tag【rabbitmqctl set_user_tags username administrator】

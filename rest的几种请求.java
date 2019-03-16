@@ -38,6 +38,9 @@ public class QrCodeCircuitRentServiceImpl extends BaseServiceImpl<QrCodeCircuitR
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Value("${httpclient.devMgmt.arStartUrl}")
+	private String startUrl;
 
 	@Override
 	public IBaseMapper<QrCodeCircuitRent, QrCodeCircuitRentExample> getBaseMapper() {
@@ -119,52 +122,6 @@ public class QrCodeCircuitRentServiceImpl extends BaseServiceImpl<QrCodeCircuitR
 
 			AppResultObj ret = restTemplate.getForObject(url, AppResultObj.class);
 
-			String json = JsonUtils.toJson(ret.getData()).replace("A", "a").replace("Z", "z")
-					.replace("IPVPN_per_month_fee", "iPVPN_per_month_fee")
-					.replace("IP_per_month_fee", "iP_per_month_fee");
-
-			QrCodeCircuitRentOutDTO out = JsonUtils.fromJson(json, QrCodeCircuitRentOutDTO.class);
-			
-			//实体类
-			QrCodeCircuitRent qrCodeCircuitRent = new QrCodeCircuitRent();
-
-			// 协议
-			BeanUtils.copyProperties(out, qrCodeCircuitRent);
-
-			// 产品
-			ProductList product = out.getProductList().get(0);
-			logger.info("========= get请求成功product！ ：【{}】", JsonUtils.toJson(product));
-			qrCodeCircuitRent.setProduct_id(product.getId());
-			qrCodeCircuitRent.setProduct_business_note(product.getBusiness());
-			qrCodeCircuitRent.setProduct_business_note(product.getBusiness_note());
-			qrCodeCircuitRent.setProduct_count(product.getCount());
-			qrCodeCircuitRent.setProduct_accept_type(product.getAccept_type());
-			qrCodeCircuitRent.setProduct_accept_type_note(product.getAccept_type_note());
-			qrCodeCircuitRent.setProduct_usage(product.getUsage());
-			qrCodeCircuitRent.setProduct_ip_count(product.getIp_count());
-			qrCodeCircuitRent.setProduct_type(product.getType());
-			qrCodeCircuitRent.setProduct_contract_id(product.getContract_id());
-
-			// 接口
-			InterfaceTypeA a = out.getProductList().get(0).getInterfaceList().get(0).getA();
-			InterfaceTypeA z = out.getProductList().get(0).getInterfaceList().get(0).getZ();
-			qrCodeCircuitRent.setInterface_id(a.getId()+"|"+z.getId());
-			qrCodeCircuitRent.setInterfacet_entry_name(a.getEntry_name()+"|"+z.getEntry_name());
-			qrCodeCircuitRent.setInterface_entry_address(a.getEntry_address()+"|"+z.getEntry_address());
-			qrCodeCircuitRent.setInterface_entry_way(a.getEntry_way()+"|"+z.getEntry_way());
-			qrCodeCircuitRent.setInterface_entry_way_note(a.getEntry_way_note()+"|"+z.getEntry_way_note());
-			qrCodeCircuitRent.setInterface_entry_type(a.getEntry_type()+"|"+z.getEntry_type());
-			qrCodeCircuitRent.setInterface_entry_type_note(a.getEntry_type_note()+"|"+z.getEntry_type_note());
-			qrCodeCircuitRent.setInterface_entry_contact(a.getEntry_contact()+"|"+z.getEntry_contact());
-			qrCodeCircuitRent.setInterface_entry_phone(a.getEntry_phone()+"|"+z.getEntry_phone());
-			qrCodeCircuitRent.setInterface_entry_fee(a.getEntry_fee()+"|"+z.getEntry_fee());
-			qrCodeCircuitRent.setInterface_entry_rate(a.getEntry_rate()+"|"+z.getEntry_rate());
-			qrCodeCircuitRent.setInterface_port_type(a.getPort_type()+"|"+z.getPort_type());
-			qrCodeCircuitRent.setInterface_product_id(a.getProduct_id()+"|"+z.getProduct_id());
-			qrCodeCircuitRent.setInterface_group_id(a.getGroup_id()+"|"+z.getGroup_id());
-			qrCodeCircuitRent.setInterface_extra_info(a.getExtra_info()+"|"+z.getExtra_info());
-			
-			baseMapper.insert(qrCodeCircuitRent);
 
 			logger.info("========= get请求成功！ ：【{}】", JsonUtils.toJson(ret));
 			return ret;
