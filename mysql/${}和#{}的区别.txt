@@ -1,0 +1,19 @@
+
+delete from ups_role_permission_dataparams where role_id = #{roleId,jdbcType=INTEGER}
+在这里用到了#{},使用#时：
+
+1、用来传入参数，sql在解析的时候会加上" ",当成字符串来解析 ，如这里 role_id = "roleid";
+
+2、#{}能够很大程度上防止sql注入;
+
+延伸：
+
+1、用${}传入数据直接显示在生成的sql中，如上面的语句，用role_id = ${roleId,jdbcType=INTEGER},那么sql在解析的时候值为role_id = roleid，执行时会报错;
+
+2、${}方式无法防止sql注入;
+
+3、$一般用入传入数据库对象，比如数据库表名;
+
+4、能用#{}时尽量用#{};
+
+注意：mybaties排序时使用order by 动态参数时需要注意，使用${}而不用#{};
