@@ -1,0 +1,41 @@
+
+没有主键，则会生成一个rowID
+
+====== AM Study ======
+
+1、将方法发布成接口：
+  1)、public interface HrAM extends ApplicationModule {String query();}
+  2)、public class HrAMImpl extends ApplicationModuleImpl implements HrAM {public String query() {return "测试接口发布！";}}
+  3)、public class HrAMClient extends ApplicationModuleImpl implements HrAM { 
+		 public String query() { 
+			Object _ret = this.riInvokeExportedMethod(this,"query",null,null);
+			return "queryTest";
+		 }
+	  }
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

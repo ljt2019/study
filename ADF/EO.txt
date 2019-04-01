@@ -1,0 +1,83 @@
+
+转换为代码，复制粘贴代码即可
+
+没有主键，则会生成一个rowID
+
+====== EO Study ======
+
+1、Attribute属性说明：
+  1)、Name：为在工具创建EO时根据数据库字段自动生成。
+  2)、Type：对应于数据库字段类型转换为开发工具中相应的类型。
+  3)、Value Type 和Value：这两个属性联合来用，如果勾选Literal（为默认选项），那么Value可以对该字段给一个默认的初始值，当进行新增的时候，该字段就会显示该默认值。如果勾选Expression，那么Value值可以使用groovy 表达式，比如主键使用序列自动增长
+  
+2、属性配置说明：
+  1)、Persistent: 该字段是否持久化。
+  2)、Primary Key ：是否为主键。
+  3)、Mandatory : 是否为必填。
+  4)、Unique：是否唯一主键。
+  5)、Queryable：是否用于查询。
+  
+3、Updatable说明：
+  1)、Always：该属性总是处于可编辑状态。为默认勾选项。
+  2)、While New: 当用户进行新增操作时，并且是未进行数据库提交，该属性为可编辑状态的。当执行数据库提交后，就变为只读状态，即不可进行编辑。
+  3)、Never: 该属性用于都处于不可更新状态，即不可进行编辑操作。
+
+4、Refresh After 说明：
+  1)、Update：框架中如果Table 执行存储过程或者触发器更新到数据库时，EO的属性也同时执行刷新。
+  2)、Insert：框架执行插入时，刷新EO属性。
+  
+5、EO的验证规则有两个级别：Business Rules （业务规则设置）
+  1)、属性级别验证规则(在属性值变化的时候触发)。
+  2)、实体级别验证规则(在事务提交的时候触发)。
+  1)、自动生成相对应于数据库中对于字段所建立的约束。例如Mandatory(必填)，Precision(精度/长度)，字段类型、主外键约束...。
+  2)、自己创建约束条件。
+
+6、Control Hints  UI常用属性：
+  1)、Label Text：在界面Label显示信息。
+  2)、Display width:  显示宽度。
+  3)、Display Height: 显示高度。
+  4)、Auto Submit: 自动提交（默认值：false）。但做关联的时候需要选择true。
+
+7、Business Events：
+  1)、EO的约束必须是表中存在才可以使用，比如外键约束，如果数据库表没有建立外键则在EO中建立外键不会产生效果。
+
+8、创建关联关系：Association(一对一,一对多,多对一,多对多系)
+
+9、EO的状态:
+  Entity-state和Post-state:根本区别在于Entity-state是EO在事务提交前的状态而Post-state是事务提交后Entity的状态
+
+10、Entity 实体各个状态的默认值：
+  1)、STATUS_NEW  新增状态，默认值为0
+  2)、STATUS_UNMODIFIED  不可修改状态，默认值为1
+  3)、STATUS_MODIFIED  修改状态，默认值为2
+  4)、STATUS_DELETED  删除状态，默认值为3
+  5)、STATUS_DEAD  执行删除，并且执行Commit之后的状态，默认值为4
+  6)、STATUS_INITIALIZED  初始化状态，默认值为-1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

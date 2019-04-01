@@ -1,0 +1,20 @@
+
+1、创建空的ADF工程
+  1)、File -》New -》Generate -》Application -》Fusion Web Application -》ok
+  2)、Application Name -》Directory -》Application Package Prefix
+  3)、Project 1 Name(创建Model层) -》Default Package(model层包命名) -》Project 2 Name(创建ViewController层) -》Default Package(VM层包命名)
+  
+2、给Model层添加数据：
+  1)、右击Model层 -》New -》Business Tier -》ADF Business Components -》Business Components from Tables -》OK
+  2)、创建数据库连接 -》填写连接数据库的信息 -》ok 	注明：创建数据库连接时会创建一个jpx文件
+  2)、生成EO -》生成VO -》生成AM
+  
+3、创建视图查询组件
+  1)、双击视图对象(xxView) -》Query -》View Criteria + -》在Criteria Definition中设置相关属性 -》在Criteria UI Hits勾选 Query AutoMotically
+  
+4、生成一个 ADF TASK FLOW
+  1)、右击在ViewController下的Page Flows -》New -》Web Tier -》-》JSF -》ADF TASK FLOW -》ok -》
+  
+5、拖拽数据、组件、布局，跳转关系
+
+6、创建一个JSF Page 页面
