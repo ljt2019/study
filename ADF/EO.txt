@@ -8,7 +8,8 @@
 1、Attribute属性说明：
   1)、Name：为在工具创建EO时根据数据库字段自动生成。
   2)、Type：对应于数据库字段类型转换为开发工具中相应的类型。
-  3)、Value Type 和Value：这两个属性联合来用，如果勾选Literal（为默认选项），那么Value可以对该字段给一个默认的初始值，当进行新增的时候，该字段就会显示该默认值。如果勾选Expression，那么Value值可以使用groovy 表达式，比如主键使用序列自动增长
+  3)、Value Type 和Value：这两个属性联合来用，
+  如果勾选Literal（为默认选项），那么Value可以对该字段给一个默认的初始值，当进行新增的时候，该字段就会显示该默认值。如果勾选Expression，那么Value值可以使用groovy 表达式，比如主键使用序列自动增长
   
 2、属性配置说明：
   1)、Persistent: 该字段是否持久化。
@@ -49,12 +50,12 @@
 10、Entity 实体各个状态的默认值：
   1)、STATUS_NEW  新增状态，默认值为0
   2)、STATUS_UNMODIFIED  不可修改状态，默认值为1
-  3)、STATUS_MODIFIED  修改状态，默认值为2
+  3)、STATUS_MODIFIED  修改状态，默认值为2，未执行commit动作，数据库数据还在
   4)、STATUS_DELETED  删除状态，默认值为3
   5)、STATUS_DEAD  执行删除，并且执行Commit之后的状态，默认值为4
   6)、STATUS_INITIALIZED  初始化状态，默认值为-1
 
-
+11、给主键添加序列：【(new oracle.jbo.server.SequenceImpl("XTGL_YHB_SEQ",adf.object.getDBTransaction())).getSequenceNumber()】
 
 
 

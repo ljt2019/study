@@ -1,0 +1,67 @@
+
+====== TaskFlow ====== 业务容器单元的一个最小独立单元
+
+1、ADF task flow是ADF框架Controller层的重要技术，它提供一种模块化的方式来定义application中的页面控制流，扩展了JSF page flow的功能。
+
+2、TaskFlow 的种类：一个taskflow中的jsp:root下只能存在一个根元素，例如一般是【<af:panelGroupLayout layout="vertical" id="pgl1"></af:panelGroupLayout>】
+  1)、Bounded task flow
+    (1)、作为局部、分支的页面流程
+    (2)、有一个唯一入口和零到多个出口。
+    (3)、拥有自己私有的Control flow rules，Activities,Managed bean,Transactions.
+    (4)、可以调用与被调用
+    (5)、可以传递参数和接受返回值
+
+  1)、Unbounded task flow
+    (1)、作为顶级的页面流程。
+    (2)、可以有多个入口点，每个入口点都可以独立运行
+    (3)、只能调用不能被调用
+    (4)、不可以传递参数和接受返回值
+
+3、TaskFlow的Activity
+  1)、View
+  显示一个JSF页面或页面片段。多视图活动可以表示同一页或相同的页片段。View可分成jsff和jsf两种，jsff属于片段页面，jsf是完整的页面。从Components中拖View到taskflow生成下图双击view弹出窗口，可以创建jsff片段页面，用于嵌套中使用。
+
+  2)、MethodCall
+  
+  
+4、jsff与jsf(jspx)之间的转换：在taskflow的xml页面右击点Concert To Task Flow With Pages...
+
+5、为taskflow绑定bean：进入xx-taskflow.xml，选中 overview —> Managed Bean —> 添加xxBean
+    <managed-bean id="__19">
+      <managed-bean-name id="__21">mainBean</managed-bean-name>
+      <managed-bean-class id="__20">com.ly.model.bean.Main</managed-bean-class>
+      <managed-bean-scope id="__18">request</managed-bean-scope>
+    </managed-bean>
+
+6、taskflow事务格式：不需要事务，使用隔离级别，保证各个用户之间操作的数据不受影响
+  1)、页面操作流程：【Overview --> Behavior --> (Name -> Class,不能是接口类型，必须是可以序列化的java类 -> Value ->  Required)】
+  2)、代码如下：
+    <data-control-scope id="__4">
+      <isolated/>
+    </data-control-scope>
+
+7、taskflow页面之间的参数传递：
+参数设置：【Overview --> Parameters --> Tansaction --> 取消默认勾选框(Share data controller with calling task flow)】
+
+  
+====== 参数作用域 ======
+1、定义接收参数：【#{pageFlowScope.fromPro}】，在此taskflow下边的所有组件都可以拿到在该taskflow下定义的参数
+    /**
+     *设置参数，参数传递
+     * @return
+     */
+    public String passPro() {
+        // Add event code here...
+        System.out.print("=========passPro==========");
+        ADFContext aDFContext = ADFContext.getCurrent();
+        aDFContext.getPageFlowScope().put("fromPro", "ADF培训测试");
+        return "convert_params";//对应自己在页面定义的返回方法
+    }
+  
+  
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,37 @@
+
+====== 目录结构 ======
+Model
+  Application Sources
+  	com.ly.model.xx				自定义package，一般有(eo/vo/am)
+	xxModel.jpx
+	xxModelBundle.properties	
+ViewController
+  Application Sources
+  	com.ly.view.xx				自定义package，存放一些java类
+  	com.ly.view.pages			自定义package，存放【xxPageDef.xml】等文件
+  	com.ly.view
+  		DataBindings.cpx			
+  	MEIA-INF
+  		adfm.xml				绑定注册xml	
+  Web Content
+  	pages						自定义，存放【.jsff】等页面，页面数据双向绑定
+  	WEB-INF
+  		taskflows				自定义，存放【xx_taskflow.xml】文件
+  		adf-config.xml			?
+  		faces-config.xml		?
+  		trinidad-config.xml 	?
+  		web.xml					web工程配置文件
+  	Pages Flows					【会根据id(<task-flow-definition id="department-taskFlow">)自动生成】
+  		taskflows				在该文件夹下创建 taskflow
+  		adf-config				
+		
+
+====== ADF命名规范 ======	
+1、Model包的命名以com.ly为前缀，各模块以独立包的形式分布在com.ly下，各模块以中文汉语拼音首字母小写字母命名包名（例如系统管理xtgl），各模块下再定义EO、VO和AM，分别对应包
+entities、queries、services;	
+2、命名EO的时候，最好使用其表名的单数形式， EO相关的association, events, formatters, validators等都作为entities的子package，分别保存起来;
+3、EO间的关联使用association，命名以Assoc结尾并放入单独文件夹下;
+4、VO间的关联使用View Link，命名以Link结尾并放入单独文件夹下;
+5、Model中除了包名外的所有文件命名首字母都要大写；
+
+
