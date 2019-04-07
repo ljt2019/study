@@ -60,8 +60,6 @@ http://www.open-open.com/lib/view/open1417612091323.html
 	1、启动HBase【 bin/start-hbase.sh】 
 
 	2、停用HBase【bin/stop-hbase.sh】
-	
-	
 
 	3、进入HBase客户端命令操作界面【/opt/hbase-1.2.7/bin/hbase shell】
 

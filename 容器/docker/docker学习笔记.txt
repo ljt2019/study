@@ -1,0 +1,53 @@
+
+====== 基本命令操作 ======
+
+1、停止关闭容器进程id：【docker stop eb1dfeec7fbb】
+
+2、保存改动为新images：【docker commit -m "tiger-nginx" 1c1af7a4c777 tiger-nignx】
+
+3、获取images：【docker pull】
+
+4、创建images：【docker build】
+
+5、列出images：【docker images】
+
+6、运行container：【docker run -p 8080:80 -d nginx】, -p端口映射，将nginx本身80的端口映射到本地8080,-d允许直接返回，作为守护进程来执行
+
+7、列出正在运行的container：【docker ps】，列出运行过的历史记录【docker ps -a】
+
+8、删除正在运行的container：【docker rm】，删除前得先停掉正在运行的container
+
+9、删除images：【docker rmi】,docker rmi eb1dfeec7fbb，删除前得删除掉所有历史记录以及正在运行的container
+
+10、在host与container之间拷贝文件：【docker cp】,docker cp indexdocker.html eb1dfeec7fbb://usr/share/nginx/html
+
+
+====== Dockerfile ======编写文件自创 docker images
+
+1、打包成镜像命令：【docker build -t tiger/hello-nginx .】
+
+2、Dockerfile语法
+  1)、FROM：基础镜像
+  2)、RUN：执行命令
+  3)、ADD：添加文件
+  4)、COPY：拷贝文件
+  5)、CMD：执行命令
+  6)、EXPOSE：暴露端口
+  7)、WORKDIR：指定路径
+  8)、MAINTAINER：维护者
+  9)、ENV：设定环境变量
+  10)、ENTRYPOINT：容器入口
+  11)、USER：指定用户
+  12)、VOLUME：mountpoint，挂载点
+  
+3、进入容器中看：【docker exec -it nginx /bin/bash】
+  
+  
+
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+
+Get https://registry-1.docker.io/v2/library/apline/manifests/latest: net/http: TLS handshake timeout
+
+1、安装dig工具：【yum install bind-utils】
+
+2、查找可用映射：【dig @114.114.114.114 registry-1.docker.io】
+;; ANSWER SECTION:
+registry-1.docker.io.	48	IN	A	52.87.94.70
+registry-1.docker.io.	48	IN	A	54.165.149.19
+
+
+3、添加映射：【vim /etc/hosts】
+54.165.149.19 registry-1.docker.io

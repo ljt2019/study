@@ -1,5 +1,5 @@
 
-1、定义时间规则：Cron表达式由6或7个空格分隔的时间字段组成：秒 分钟 小时 日期 月份 星期 年（可选）
+1、定义时间规则：Cron表达式由6或7个空格分隔的时间字段组成：【秒 分钟 小时 日期 月份 星期 年（可选）】
 
 2、
 	字段　　允许值　　		允许的特殊字符
@@ -12,7 +12,7 @@
 	年 		1970-2099 		, - * /
 	
 3、解析：
-  【0/5 * * * * ?】： 每5秒执行一次
+  【0/5 * * * * ?】： 每5秒执行一次，【秒 钟 时 日 月 星期 年（可选）】
 
   1)、【“”】：用来指定所有的值。如：""在分钟的字段域里表示“每分钟”。
   
@@ -56,5 +56,22 @@
 “0 15 10 ? * 6L 2002-2005” 2002年至2005年的每月的最后一个星期五上午10:15触发
 “0 15 10 ? * 6#3” 每月的第三个星期五上午10:15触发 **
 
-python   /home/cw/code
-/OBD/obd_detect_cpu.py
+
+
+====== linux中配置定时任务 ======
+1、cron服务
+  cron是一个linux下 的定时执行工具，可以在无需人工干预的情况下运行作业。
+  service crond start    //启动服务
+  service crond stop     //关闭服务
+  service crond restart  //重启服务
+  service crond reload   //重新载入配置
+  service crond status   //查看服务状态
+2、基本语法
+  crontab [选项]
+  选项： 
+    -e:编辑crontab定时任务 
+    -l:查询crontab任务 
+    -r:删除当前用户所有的crontab任务
+  
+每一分钟写入"hello world"进log.txt中：【*/1 * * * * echo "hello world">>/var/test/log.txt】
+重新启动定时任务：【service crond restart】

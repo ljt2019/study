@@ -1,0 +1,3 @@
+FROM apline:latest
+MAINTAINER tiger
+CMD echo 'hello docker'

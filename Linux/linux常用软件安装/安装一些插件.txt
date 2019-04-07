@@ -1,0 +1,15 @@
+
+======== 安装一些插件 ========
+ 
+1、文件下载工具：【yum -y install wget】
+
+2、gcc编译插件：【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
+	
+3、vim编辑器：【yum -y install wget httpd-tools vim】
+	
+4、网络工具：【yum install net-tools】
+
+5、安装iptables-services：【yum install iptables-services】
+
+yum provides '*/applydeltarpm'
+yum install deltarpm

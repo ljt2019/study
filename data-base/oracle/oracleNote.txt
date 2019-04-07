@@ -1,5 +1,7 @@
 
-默认端口号【1512】
+默认端口号【1512】，sqldeveloper中美化sql：1、Ctrl+A 全选需要格式化的sql；2、Ctrl+F7 格式化
+
+ALTER SESSION SET NLS_DATE_LANGUAGE='AMERICAN';
 
 1、Oracle数据库：相关的操作系统文件（即存储在计算机硬盘上的文件）集合，这些文件组织在一起，成为一个逻辑整体，即Oracle数据库。
 
@@ -11,7 +13,7 @@
 4、oracle的7个服务：
 	1)、OracleVssWriterORCL:拷贝写入服务，非必需启动项
 	
-	2)、OracleDBConsoleorcl:基于web的控制台服务，在web端管理oracle时需要启动
+	2)、OracleDBConsoleorcl:基于web的控制台服务，在web端管理oracle时需要启动，非必需启动项
 	
 	3)、OracleJobSchedulerORCL：oracle调用定时器服务
 	
@@ -163,7 +165,8 @@ alter table student modify id varchar(32);
 1、grant：将权限或角色授予用户或其他角色（授予访问权限）
 2、revoke：从用户或数据库角色回收权限（撤销访问权限）
 3、lock：对数据库特定部分进行锁定
-4、unlock：解锁数据库
+4、unlock：解锁数据库，	
+使用管理者system身份登录，登陆成功后输入 alter user hr identified by hr(默认密码为hr) account unlock;就可以用了；
 	
 ======================= TCL =======================
 
@@ -195,5 +198,105 @@ alter table student modify id varchar(32);
 	2)、blob二进制lob，可以存储较大的二进制对象，如图形、视频剪辑、声音文件等
 	
 	
-	
-	
+====== select ======
+
+1、定义列别名
+  列别名具有以下特征和用途：
+  • 可重命名列标题
+  • 有助于计算
+  • 紧跟在列名后（列名和别名之间也可以加上可选
+  关键字 AS）
+  • 如果别名包含空格或特殊字符，或者区分大小写，
+  则需要使用双引号
+  
+2、连接运算符：select last_name,job_id, last_name || ' is a '|| job_id as "Employees" from employees;
+  连接运算符具有以下特征和用途：
+  • 将列或字符串链接到其它列
+  • 由两条竖线 (||) 表示
+  • 创建一个由字符表达式生成的列
+
+3、文字字符串
+  • 文字是指 SELECT 语句中包含的字符、数字或日期。
+  • 日期和字符文字值必须放在单引号内。
+  • 每个字符串在每个返回行中输出一次。
+
+4、其它引号 (q) 运算符：可以添加特殊字符
+  • 指定您自己的引号分隔符。
+  • 选择任一分隔符。
+  • 提高可读性和易用性。
+
+5、比较运算符
+  <> 不等于，与mysql中有所区别【!=】
+  IS NULL 为空值
+
+6、使用 LIKE 运算符执行模式匹配
+  • 使用 LIKE 运算符可执行通配符搜索，查找有效搜索
+  字符串值。
+  • 搜索条件可包含文字字符或数字：
+  % 表示零个或多个字符。
+  _ 表示一个字符。
+
+7、替代变量
+  • 使用替代变量：
+  – 使用单与号 (&) 及双与号 (&&) 替代变量可临时存储值
+  • 可将替代变量作为以下项的补充：
+  – WHERE 条件
+  – ORDER BY 子句
+  – 列表达式
+  – 表名
+  – 整个 SELECT 语句
+  使用替代变量指定数值：【SELECT * FROM employees WHERE employee_id = &employee_num;】
+  使用替代变量指定字符值和日期值：【SELECT * FROM employees WHERE job_id = '&job_title';】
+  指定列名、表达式和文本：【SELECT employee_id, last_name, job_id,&column_name FROM employees WHERE &condition ORDER BY &order_column;】
+  使用双与号替代变量,双与号 (&&)可以将变量保存起来，而不必每次都输入
+
+8、使用 DEFINE 命令
+  创建变量：【DEFINE employee_num = 200;】
+  删除变量：【UNDEFINE employee_num;】
+
+9、使用 VERIFY 命令
+
+10、SQL函数
+  单行函数：
+  • 处理数据项
+  • 接受参数并返回一个值
+  • 对每个返回行进行处理
+  • 为每行返回一个结果
+  • 可能会修改数据类型
+  • 可以嵌套
+  • 接受参数，这些参数可以是列或表达式
+
+11、大小写转换函数
+  LOWER('SQL Course') sql course
+  UPPER('SQL Course') SQL COURSE
+  INITCAP('SQL Course') Sql Course
+
+12、字符处理函数
+  CONCAT('Hello', 'World') HelloWorld
+  SUBSTR('HelloWorld',1,5) Hello
+  LENGTH('HelloWorld') 10 
+  INSTR('HelloWorld', 'W') 6
+  LPAD(salary,10,'*') *****24000
+  RPAD(salary, 10, '*') 24000***** 
+  REPLACE ('JACK and JUE','J','BL') BLACK and BLUE 
+  TRIM('H' FROM 'HelloWorld') elloWorld
+
+13、数字函数,DUAL 是可用于查看函数和计算结果的公用表。
+  • ROUND：将值舍入到指定的小数位【select ROUND(45.926, 2) from DUAL --> 45.93】
+  • TRUNC：将值截断到指定的小数位【select TRUNC(45.926, 2) from DUAL --> 45.92】
+  • MOD：返回除法运算的余数【select MOD(1600, 300) from DUAL --> 100】
+
+14、处理日期，默认的日期显示格式为 DD-MON-RR
+  MONTHS_BETWEEN 两个日期之间的月数，计算工作年数和月数：【SELECT hire_date,trunc(months_between(SYSDATE,hire_date)/12) FROM employees;】
+
+P148
+
+
+
+
+
+
+
+
+
+

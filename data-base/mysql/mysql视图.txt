@@ -1,0 +1,41 @@
+
+1、什么是视图：通俗的讲，视图就是一条SELECT语句执行后返回的结果集。所以我们在创建视图的时候，主要的工作就落在创建这条SQL查询语句上
+
+2、视图的特性：
+  1)、视图是对若干张基本表的引用，一张虚表，查询语句执行的结果，不存储具体的数据（基本表数据发生了改变，视图也会跟着改变）；
+  2)、可以跟基本表一样，进行增删改查操作(ps:增删改操作有条件限制)；
+
+3、视图的作用：
+  1)、方便操作，特别是查询操作，减少复杂的SQL语句，增强可读性；
+  2)、更加安全，数据库授权命令不能限定到特定行和特定列，但是通过合理创建视图，可以把权限限定到行列级别；
+
+
+====== 关键字解析 ======
+
+1、 ALGORITHM=UNDEFINED：指定视图的处理算法；
+2、 DEFINER=`root`@`localhost`：指定视图创建者；
+3、 SQL SECURITY DEFINER：指定视图查询数据时的安全验证方式；
+
+
+====== 案例 ======
+DROP VIEW IF EXISTS `view_user_course`;
+CREATE ALGORITHM = UNDEFINED DEFINER = `root`@`localhost` SQL SECURITY DEFINER VIEW `view_user_course` AS (
+	SELECT
+		`uc`.`id` AS `id`,
+		`u`.`name` AS `username`,
+		`c`.`name` AS `coursename`
+	FROM
+		`user` u
+	LEFT JOIN user_course uc ON u.id = uc.userid
+	LEFT JOIN course c ON uc.courseid = c.id
+);
+
+## 利用视图查询数据
+SELECT
+	vuc.username,
+	vuc.coursename
+FROM
+	view_user_course vuc
+WHERE
+	vuc.username = '小张'
+

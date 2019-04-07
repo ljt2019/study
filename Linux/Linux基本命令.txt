@@ -20,6 +20,20 @@
 　　上面这些命令都是最最常用的，一定要把基本用法记牢。事实上，每人能记住全部命令或一个命令的全部参数，记住几个常用的就行了。其他的查书
 
 
+======== 关机命令 ========
+
+[root@www ~]# shutdown -h now 【立刻关机，其中 now 相当于时间为 0 的状态】
+[root@www ~]# shutdown -h 20:25 【系统在今天的 20:25 分会关机，若在 21:25 才下达此挃令，则隑天才关机】
+[root@www ~]# shutdown -h +10 【系统再过十分钟后自劢关机】
+[root@www ~]# shutdown -r now 【系统立刻重新启劢】
+[root@www ~]# shutdown -r +30 'The system will reboot' 【再过三十分钟系统会重新启劢，幵显示后面的讯息给所有在在线的使用者】
+[root@www ~]# shutdown -k now 'This system will reboot' 【仅发出警告信件的参数！系统并不会关机啦！吓唬人！】
+
+
+重新启动时下达的命令
+sync; sync; sync; reboot
+
+
 ======== 基本命令 ========
  
 1、日期：date 
@@ -68,6 +82,10 @@
 
 17、发送命令道全部终端：[查看 --> 撰写 --> 撰写栏]，在撰写栏下面勾选全部Xshell
 
+18、解压：【tar -xvzf ruby-2.5.3.tar.gz -C /usr/local/】
+
+19、压缩：【tar -cvzf jpg.tar.gz *.jpg】，将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz
+
 ======== 文件的 创建/编辑/复制/移动/删除 ========
  
 1、将档案的所以特性都一起复制过来:【cp -a /var/log/wtmp wtmp_2】
@@ -108,11 +126,32 @@
 	
 	7)、把编辑处理后的结果写到指定的文件中保存【:w filename】
 
-12、远程复制：【scp -r redis-3.0.7/ 192.168.56.102:/usr/local/】
+12、远程复制：【scp -r redis-3.0.7/ 192.168.56.102:/usr/local/】、【scp -r jdk-8u131-linux-x64.rpm 192.168.240.128:/root/software】
 
 13、建立软连接：【ln -s /usr/java/jdk1.8.0_60/ /usr/jdk】
 
 14、显示隐藏文件：【ls -a】
+
+15、设置ip地址为静态地址：最简单方式：【sudo ifconfig ens33 192.168.240.102】
+本实验为 ifcfg-ens33【vim /etc/sysconfig/network-scripts/ifcfg-ens33】
+修改如下5项内容：，之后重启网卡【service network restart】
+ONBOOT="yes"
+BOOTPROTO="static"
+IPADDR="192.168.240.100"
+GATEWAY="192.168.240.2"
+DNS1="192.168.240.2"
+ 	   
+16、修改主机名：最简单的方法【sudo hostnamectl set-hostname hadoop101】
+  1)、【vim /etc/sysconfig/network】，添加如下内容
+NETWORKING=yes
+HOSTNAME=hadoop102
+
+
+17、分布式配置映射：【vim /etc/hosts】，添加如下内容
+192.168.11.101 hadoop101
+192.168.11.102 hadoop102
+192.168.11.103 hadoop103
+
 
 ======== 查看进程 ========
  
@@ -122,17 +161,6 @@
 
 3、查看所有进程：【netstat -ntlp】 
  
-
-======== 安装一些插件 ========
- 
-1、文件下载工具：【yum -y install wget】
-
-2、gcc编译插件：【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
-	
-3、vim编辑器：【yum -y install wget httpd-tools vim】
-	
-4、网络工具：【yum install net-tools】
-
 
 ======== 修改连接名 ========
  
@@ -157,6 +185,16 @@ HOSTNAME=redis101
 
 5、查看防火墙状态 ：【systemctl status firewalld】
 
+6、添加指定端口到防火墙中：【iptables -I INPUT -p 协议 --dport 端口号 -j ACCEPT】例如：
+	1)、【iptables -I INPUT -p udp --dport 8321 -j ACCEPT】
+	2)、【iptables -I INPUT -p tcp --dport 8080 -j ACCEPT】  
+
+7、开放防火墙8321端口：【firewall-cmd --permanent --add-port=8321/tcp && firewall-cmd --reload】
+
+1、修改网卡配置文件 /etc/sysconfig/network-scripts/ifcfg-enp0s3 此处我虚拟机网卡是enp0s3，其它虚拟机可能是别的名字。
+2、重启网卡生效：【service network restart】
+
+
 ======== SELinux ========
  
 1、临时关闭SELinux：【setenforce 0】
@@ -172,9 +210,9 @@ HOSTNAME=redis101
 
 1、三个命令同时执行：【command1 & command2 & command3】
 
-2、不管前面命令执行成功没有，后面的命令继续执行：【command1; command2; command3】 ? ? ??
+2、不管前面命令执行成功没有，后面的命令继续执行：【command1; command2; command3】
 
-3、只有前面命令执行成功，后面命令才继续执行：【command1 && command2】 ? ? ? ? ? ? ? ? ? ? ??
+3、只有前面命令执行成功，后面命令才继续执行：【command1 && command2】 
 
 
 ======== rpm的一些含义 ======== 
@@ -191,16 +229,3 @@ HOSTNAME=redis101
 
 6、查该软件包会向系统里面写入哪些文件：【rpm -qpl rpm包名】
 
-
-【iptables -t nat -A PREROUTING -d 10.250.170.247 -p tcp ?--dport 2222 -j DNAT --to-destination 192.168.10.102:22】
-【iptables -t nat -A PREROUTING -d 10.250.170.247 -p tcp ?--dport 8383 -j DNAT --to-destination 192.168.10.102:8383】
-
-
-5.4、添加指定端口到防火墙中：【iptables -I INPUT -p 协议 --dport 端口号 -j ACCEPT】例如：
-	1【iptables -I INPUT -p udp --dport 161 -j ACCEPT】
-	2【iptables -I INPUT -p tcp --dport 8080 -j ACCEPT】      
-
-7、开放防火墙80端口，指令是【firewall-cmd --permanent --add-port=80/tcp】【firewall-cmd --reload】
-
-1、修改网卡配置文件 /etc/sysconfig/network-scripts/ifcfg-enp0s3 此处我虚拟机网卡是enp0s3，其它虚拟机可能是别的名字。
-2、重启网卡生效：【service network restart】
