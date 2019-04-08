@@ -1,0 +1,6 @@
+
+1、panelFormLayout：用于表单的布局组件。将输入框、下拉框等表单元素放进去，可以达到label右对齐，content左对齐的效果。默认居左上角，一列布局。
+
+2、 panelCollection：表格（和树？）的布局组件。自带三个<f:facet>。把<af:table>放在此布局组件中，表格会有更好的展示效果，并附加了部分功能。使用styleClass="AFStretchWidth"设置子组件table自适应。
+
+3、panelGroupLayout：

@@ -1,0 +1,10 @@
+
+    /**
+     *获取当前行数据
+     * @return
+     */
+    public String getCurrentRow() {
+        Row row =  ADFUtils.findIterator("CountriesView1Iterator").getCurrentRow();
+        LOGGER.info("====== 获取当前行数据 ======" + row.getAttribute("CountryName"));
+        return null;
+    }

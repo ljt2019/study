@@ -2,3 +2,5 @@
 1、左上边搜索条件，追加一些action按钮，紧接着下边一个table
 
 2、添加自适应框架：<af:panelCollection id="pc1" styleClass="AFStretchWith">
+
+3、事务隔离级别的理解
