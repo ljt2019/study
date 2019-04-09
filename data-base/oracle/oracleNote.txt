@@ -11,20 +11,20 @@ ALTER SESSION SET NLS_DATE_LANGUAGE='AMERICAN';
 3、系统默认用户：1、sys/system; sysman; scott(普通用户)
 
 4、oracle的7个服务：
-	1)、OracleVssWriterORCL:拷贝写入服务，非必需启动项
+
+	1)、OracleServiceORCL：数据库基础服务，必须启动项
 	
-	2)、OracleDBConsoleorcl:基于web的控制台服务，在web端管理oracle时需要启动，非必需启动项
+	2)、OracleOraDb11g_home1TNSListener：数据库监听服务，在数据库远程访问时使用，sqldeveloper图形界面开发工具时，需要打开此服务（建议为启动）
 	
-	3)、OracleJobSchedulerORCL：oracle调用定时器服务
+	3)、OracleJobSchedulerORCL：Oracle调用定时器服务
 	
 	4)、OracleMTSRecoveryService：服务端控制服务
 	
 	5)、OracleOraDb11g_home1ClrAgent：
 	
-	6)、OracleOraDb11g_home1TNSListener：数据库监听服务，在数据库远程访问时使用
-	注意：在使用sqldeveloper图形界面开发工具时，需要打开此服务
+	6)、OracleDBConsoleorcl:基于web的控制台服务，在web端管理oracle时需要启动，非必需启动项
 	
-	7)、OracleServiceORCL：数据库基础服务，必须启动项
+	7)、OracleVssWriterORCL:拷贝写入服务，非必需启动项
 	
 ======================= 表空间 =======================
 	
@@ -290,6 +290,37 @@ alter table student modify id varchar(32);
   MONTHS_BETWEEN 两个日期之间的月数，计算工作年数和月数：【SELECT hire_date,trunc(months_between(SYSDATE,hire_date)/12) FROM employees;】
 
 P148
+
+
+激活hr账户：alter user hr identified by hr(默认密码为hr) account unlock;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

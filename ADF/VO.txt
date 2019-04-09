@@ -9,7 +9,7 @@
 
   1)、Name(命名)：
 
-  2)、Entity Object(选择实体类)：
+  2)、Entity Object(选择实体类)：创建多表关联VO
     (1)、第一个EO默认选中Updatable：表示可以通过视图对象（VO）修改实体对象（EO）属性，即可更新。其他EO默认选中“Reference”，表示通过该EO的VO属性值只可读。
     (2)、Participate in Row Delete：表示在视图对象（VO）中移除行会导致视图对象行中的实体实例（EO）中行的删除。
     (3)、Join Type：表示可选择合适的连接类型，如内部连接，左外连接，或右外连接。
@@ -38,7 +38,8 @@
     (3)、找到“Attributes|Attributes”，双击属性，得到如图（2.8），检查“Updatable”的值是否为“Always”，如果不是，则选择“Always”。
 	注意：将所有字段转换为可更新后，该VO与基于实体对象创建的VO有区别，不能等同。
 
-
+3、创建静态字段：
+静态字段的使用场景：
 
 
 

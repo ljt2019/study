@@ -1,0 +1,2 @@
+
+主键使用序列自动增长，【(new oracle.jbo.server.SequenceImpl("EMPLOYEES_SEQ",adf.object.getDBTransaction())).getSequenceNumber()】

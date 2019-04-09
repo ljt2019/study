@@ -3,8 +3,8 @@
 Model
   Application Sources
   	com.ly.model.xx				自定义package，一般有(eo/vo/am)
-	xxModel.jpx
-	xxModelBundle.properties	
+	xxModel.jpx					数据库连接信息，创建数据库连接时会创建一个jpx文件
+	xxModelBundle.properties	业务规则的设置，一些校验规则等...
 ViewController
   Application Sources
   	com.ly.view.xx				自定义package，存放一些java类
@@ -22,7 +22,7 @@ ViewController
   		trinidad-config.xml 	?
   		web.xml					web工程配置文件
   	Pages Flows					【会根据id(<task-flow-definition id="department-taskFlow">)自动生成】
-  		taskflows				在该文件夹下创建 taskflow
+  		taskflows				
   		adf-config				
 		
 
