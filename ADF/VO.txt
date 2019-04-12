@@ -57,7 +57,7 @@
   2)、Combo Box with List of Values（级联下拉数据少于100时使用，自带搜索功能）
   3)、Input Text with List of Values（级联下拉数据较多时使用，自带搜索功能）
 
-
+6、弹出框：<af:popup id="p1">，对话框：<af:dialog id="d1">，在behavior中添加监听事件绑定相关的bean
 
 
 

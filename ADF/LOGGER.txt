@@ -1,0 +1,4 @@
+
+
+1、public static final ADFLogger LOGGER = ADFLogger.createADFLogger(xx.class);
+
