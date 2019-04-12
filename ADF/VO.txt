@@ -33,17 +33,29 @@
 	  Declarative(声明SQL模式（保证SQL语句的独立性），不需要了解SQL语句，可以创建一个基于实体对象（VO）的不包含SQL语句的视图对象（VO）去替代之前创建的基于指定SQL语句的视图对象（VO），在运行时才生成SQL语句，编辑Where和Order By子句，点击右边“Edit)
 
 2、转换只读视图对象允许属性更新
-    (1)、打开操作VO，找到“Entity Objects”属性框，如图（2.6），将视图需要更新属性对应的属性的实体移入右方选定列表中
-    (2)、找到“Query|Query”，点击修改图标，找到“Query|Attribute Mapping”，如图（2.7），将需要更新的属性与实体属性一一对应
-    (3)、找到“Attributes|Attributes”，双击属性，得到如图（2.8），检查“Updatable”的值是否为“Always”，如果不是，则选择“Always”。
-	注意：将所有字段转换为可更新后，该VO与基于实体对象创建的VO有区别，不能等同。
+
+  1)、打开操作VO，找到“Entity Objects”属性框，如图（2.6），将视图需要更新属性对应的属性的实体移入右方选定列表中
+  2)、找到“Query|Query”，点击修改图标，找到“Query|Attribute Mapping”，如图（2.7），将需要更新的属性与实体属性一一对应
+  3)、找到“Attributes|Attributes”，双击属性，得到如图（2.8），检查“Updatable”的值是否为“Always”，如果不是，则选择“Always”。
+  注意：将所有字段转换为可更新后，该VO与基于实体对象创建的VO有区别，不能等同。
 
 3、创建静态字段：
-静态字段的使用场景：
 
+  1)、静态字段的使用场景：
+  
+4、VO中定义临时字段
 
+  1)、VO新增临时变量在界面显示
+    (1)、修改xxpageDef.xml文件，在<AttrNames> 下追加相应的属性
+    (2)、修改xx.jsff文件，添加相应的<af:outputText value="#{row.tempParam}" id="ot6"/>
 
+  2)、VO新增基于实体对象的临时字段
 
+5、创建级联LOV详细步骤
+  常用的3种下拉：Default List Type
+  1)、Choice List（级联下拉数据较少时适用）
+  2)、Combo Box with List of Values（级联下拉数据少于100时使用，自带搜索功能）
+  3)、Input Text with List of Values（级联下拉数据较多时使用，自带搜索功能）
 
 
 
