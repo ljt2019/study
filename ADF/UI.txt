@@ -1,6 +1,38 @@
 
 1、panelFormLayout：用于表单的布局组件。将输入框、下拉框等表单元素放进去，可以达到label右对齐，content左对齐的效果。默认居左上角，一列布局。
 
-2、 panelCollection：表格（和树？）的布局组件。自带三个<f:facet>。把<af:table>放在此布局组件中，表格会有更好的展示效果，并附加了部分功能。使用styleClass="AFStretchWidth"设置子组件table自适应。
+2、panelCollection：包装table。自带三个<f:facet>。表格会有更好的展示效果，使用【styleClass="AFStretchWidth"】设置子组件table自适应。
 
-3、panelGroupLayout：
+3、panelGroupLayout：位置布局组件。常用于居中、居右、横向排列、纵向排列等，也常和其他布局组件配合使用。【layout="vertical"】
+
+4、panelSplitter：自适应，Orientation指定是下下还是左右显示区域。【dimensionsFrom="children"】设置子区域根据子组件内容自适应扩展。
+
+5、panelTabbed：自适应，至少包含一个showDetailItem，当存在多个showDetailItem必须指定默认的disclosed。【childCreation="lazyUncached" 】和【imensionsFrom="disclosedChild"】必须指定。
+
+6、panelStretchLayout：自适应，适合于做主页。dimensionsFrom="children"。
+
+7、popup：弹出层，不是自适应
+  1)、【contentDelivery="lazyUncached"】
+  2)、【childCreation="deferred" 】
+  3)、【autoCancel="disabled"】
+  4)、如果是提示类的弹出层，则默认设置即可
+  5)、如果是表单数据添加或修改则不需要设置【autoCancel="disabled"】，其它类型都要设置这三个属性
+  6)、关闭时执行的动作：【popupCanceledListener="#{StudentBean.cancel}"】
+
+8、dialog：不自适应，只能放在弹出层组件里面
+  1)、TYPE：设置对话框的事件类型。
+  2)、Title:对话框的标题。
+  3)、closeIconVisible：是否需要自带的关闭图标。如果存在取消事件并且有逻辑代码即尽量关闭。实验发现X一样会触发代码逻辑
+  4)、Modal：是否以模态显示。默认即可。
+  5)、Resize：是否可以拖动方式调整大小。必须设置为【on】。
+  6)、contentWidth, contentHeight:设置对话框内容的宽度和高度。
+  7)、dialogListener：点击对话框的确认按纽时触发对应的方法。也可以自定义按钮进行action触发
+
+9、query：查询组件，是根据vo定义的VC生成的。默认是和panelFormLayout一样从上往下排
+  1)、maxColumns:指定可以存在多少列的查询条件。一般最多存放6列的查询条件
+  2)、row:每行显示多少个查询条件。
+  3)、【saveQueryMode="hidden" modeChangeVisible="false"】必须设置。
+
+10、按钮放在toolbar中，<af:table>放在toolbar和statusbar之间。table中的RangeSize表示每次加载的记录条数
+
+11、注意：必须要清楚哪些布局组件是可扩展的，哪些不是自适应扩展的。对于自适应扩展的组件不允许使用样式设置高或宽。

@@ -57,7 +57,12 @@
   2)、Combo Box with List of Values（级联下拉数据少于100时使用，自带搜索功能）
   3)、Input Text with List of Values（级联下拉数据较多时使用，自带搜索功能）
 
-6、弹出框：<af:popup id="p1">，对话框：<af:dialog id="d1">，在behavior中添加监听事件绑定相关的bean
+6、弹出框，不自适应：<af:popup id="p1">，对话框：<af:dialog id="d1">，在behavior中添加监听事件绑定相关的bean
+  1)、contentDelivery="lazyUncached"
+  2)、childCreation="deferred
+  3)、autoCancel="disabled"
+  4)、如果是提示类的弹出层，则默认设置即可不需要设置。如果是表单数据添加或修改则不需要设置autoCancel="disabled"。其它类型都要设置这三个属性。
+
 
 
 
