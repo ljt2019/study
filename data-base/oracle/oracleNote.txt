@@ -108,11 +108,11 @@
 
 6、查看当前账户下的所有表信息:【select table_name from user_tables;】，针对普通用户的数据字典，查看当前连接用户的用户信息
 
-7、解锁用户：【alter user 用户名 identified by 用户密码(自定义指定) account unlock;】；锁定某用户：【alter user 用户名 account lock;】
+7、解锁用户：【alter user 用户名 identified by 用户密码 account unlock;】；锁定某用户：【alter user 用户名 account lock;】
 
 8、更改用户密码：【alter user 用户名 identified by 新密码;】
 
-9、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间[USERS/TEMP])：
+9、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间[USERS/TEMP])：一般创建之后赋予权限：【grant connect resource to 用户名】
 
 	【create user 用户名 identified by 密码 default tablespace 表空间名 temporary tablespace 临时表空间名;】
 
@@ -174,30 +174,49 @@
 	     例如：【revoke all on scott.emp from user01】
 
 
-====== DML ======
+====== 数据定义语言(DDL) ======
 
-
-	
-====== DDL ======
-
-1、create table：创建数据库表
+1、create table：创建数据库表【create table tiger_test (id number,name varchar2(50))】
 
 2、create index：创建数据库索引
 
-3、drop table：删除数据库表
+3、drop index：删除数据库索引  
 
-4、drop index：删除数据库索引  
+4、drop table：删除数据库表结构【drop table student;】
 
-5、truncate：删除表中的所有行
+5、truncate：删除表中的所有数据，比delete删除要快【truncate table student;】
 
-6、alter table：更改表的结构，增加、修改、删除列 ：【alter table student modify id varchar(32);】
+6、alter table：更改表的结构，增加、修改、删除列
 
-7、alter table add constraint:在已有的表上增加约束
+  1)、修改列：【alter table student modify id varchar(32);】
+  
+  2)、删除列：【alter table student drop column name;】
+  
+  3)、修改列名：【alter table student rename cloumn 旧列名 to 新列名】
+
+7、添加表级约束：【alter table student add [constraint student_pk] primary key(id);】
+   添加列级约束：【alter table student modify clounm_name datatype not null;】
+   
+8、删除约束：
+
+  1)、禁用或激活约束：【alter table table_name disable|enable constraint constraint_nam】
+  
+  2)、彻底删除约束【alter table table_name drop constraint constraint_nam】
+  
+  3)、彻底删除主键约束：【alter table table_name drop priamry key】
+  
+  4)、彻底删除非空约束：【alter table table_name modify clounm_name [datatype] null;】
+   
+
+  
+  
+====== 数据操纵语言(DML) ======
    
    
-====== DCL ======
+   
+====== 数据控制语言(DCL) ======
 
-1、grant：将权限或角色授予用户或其他角色（授予访问权限）
+1、grant：将权限或角色授予用户或其他角色（授予访问权限），一般创建之后赋予权限：【grant connect resource to 用户名】
 
 2、revoke：从用户或数据库角色回收权限（撤销访问权限）
 
@@ -206,18 +225,81 @@
 4、unlock：解锁数据库，使用管理者system身份登录：【alter user hr identified by hr(默认密码为hr) account unlock;】
 	
 	
-====== TCL ======
+====== 事务控制语言(TCL) ======
+
+1、什么是事物：由数据库的若干操作组成的一个单元，这些操作要么都完成，要么全都取消，从而保证数据满足一致性要求。
+
+2、为什么要使用事物：保证数据安全有效，当执行事物操作(DML语句)时，oracle会在被作用的表上加表锁，以防止其他用户改变表结构，同时会在被作用的行上加行锁，以防止其他事物在相应的行行执行DML操作
 
 1、commit：提交事务处理
-2、rellback：回滚
-3、savepoint：设置保存点
+
+2、rollback：回滚
+
+3、savepoint：设置保存点【savepoint a】【rollback to a】
 
 
-====== Oracle中常见的数据类型 ======
+====== 约束 ======
+
+1、约束的概念：自动保持数据库完整性的一种方法，通过限制字段中的数据、记录中的数据和表之间的数据来保证数据的完整性
+
+2、语法格式：【[constraint constraint_name(约束段名)] <约束类型>】，约束不指定名，系统会给定一个名称
+
+3、常见的约束：
+
+  1)、主键约束(primary key)：它是唯一确定表中每条记录的标识，不能为空不能重复，只能有一个，可以由2多列组成，例如：【primary key(id,code)】
+  
+  2)、唯一约束：unique | constraint unique
+  
+    (1)、用于指定一个或多个列组合值具有唯一性，以防止在列中输入重复值。例如身份证号的唯一性
+	
+    (2)、唯一约束的列允许为空
+	
+    (3)、一个表汇总允许有多个唯一约束
+	
+    (4)、可以把唯一约束定义在多个列上
+	
+  3)、默认约束：【default constraint】
+  
+  4)、非空约束(not null)：确保列不能为null,属于列级约束
+  
+  5)、检查约束：对输入列或整个表中的值设置检查条件，以限制输入值，保证数据的完整性【check constraint】
+      例如：【alter table student add constraint student_sex_ck check(sex='男' or sex='女');】
+  
+  6)、外键键约束：用于建立和加强两个表数据之间的链接的一列或多列
+  
+    (1)、列级约束(从表中定义)：【depID varchar2(20) references department(depID)】
+	
+    (2)、表级约束：【alter table student constraint student_dep_fk foreign key(depID) references department(depID) on delete cascade】
+	
+	(3)、主表的字段必须是主键列或唯一列
+	
+	(4)、从表中外键字段的值必须来自主表相应字段的值，或者为null
+	
+	(5)、主从表相应字段必须是同一数据类型
+	
+
+4、表级约束与列级约束定义上的区别
+
+  1)、表级约束：可以单独定义
+  
+  2)、列级约束：【column [contraint constraint_nam] constraint_type】必须跟在列后边定义
+
+
+====== Oracle中常见的数据字段 ======
+
+  1、查看当前下的用户信息：【user_users】
+  
+  2、查看当前有权限访问的用户信息：【all_users】
+  
+  3、查看数据库所有用户信息：【dba_users】
+
+
+
+====== Oracle中常见的数据类型 ====== oracle中一个汉字占3个字节
 
 1、字符类型：
 
-	1)、char：表示固定长度类型，列长度在1到200个字节之间
+	1)、char：表示固定长度类型，列长度在1到2000个字节之间
 	
 	2)、varchar2：表示可变长度字符串，最大长度为4000字节
 	
@@ -229,6 +311,12 @@
 		例如：number(5,2):表示可存储999.99的浮点数
 
 3、日期类型：主要存储日期和时间值 ，包括年月日时分秒，主要的日期类型是 date
+
+  1)、按特定格式显示日期：【alter session set nls_date_format='YYYY-MM-DD';】
+  
+  2)、简体中文显示日期：【alter session set nls_language='SIMPLIFIED CHINESE';】
+  
+  3)、美国英文显示日期：【alter session set nls_language='AMERICAN';】
 
 4、LOB类型：
 
@@ -328,7 +416,81 @@
 14、处理日期，默认的日期显示格式为 DD-MON-RR
   MONTHS_BETWEEN 两个日期之间的月数，计算工作年数和月数：【SELECT hire_date,trunc(months_between(SYSDATE,hire_date)/12) FROM employees;】
 
-P148
+15、条件表达式：
+  1)、CASE 表达式：【CASE expr WHEN comparison_expr1 THEN return_expr1 [WHEN comparison_expr2 THEN return_expr2 WHEN comparison_exprn THEN return_exprn ELSE else_expr] END】
+  【SELECT
+      last_name,
+      job_id,
+      salary,
+      CASE job_id
+          WHEN 'IT_PROG'    THEN 1.10 * salary
+          WHEN 'ST_CLERK'   THEN 1.15 * salary
+          WHEN 'SA_REP'     THEN 1.20 * salary
+          ELSE salary
+      END "REVISED_SALARY"
+  FROM
+      employees;】
+
+  2)、DECODE 函数：【DECODE(col|expression, search1, result1 [, search2, result2,...,] [, default])】
+  【SELECT
+      last_name,
+      job_id,
+      salary,
+      DECODE(job_id,'IT_PROG',1.10 * salary,'ST_CLERK',1.15 * salary,'SA_REP',1.20 * salary,salary) revised_salary
+  FROM
+      employees;】
+  
+16、何谓组函数：组函数会对行集进行计算，为每个组提供一个结果。
+
+  1)、语法：【SELECT group_function(column), ... FROM table [WHERE condition] [ORDER BY column];】
+  
+  2)、可以对数字数据使用 AVG 和 SUM 函数。
+  
+  3)、可以对数字、字符和日期数据类型使用 MIN 和 MAX 函数
+  
+  4)、COUNT(*) 将返回表中的行数
+  
+  5)、COUNT(expr) 将返回 expr 为非空值的行的数量
+  
+17、组函数和空值
+  
+  1)、组函数将忽略列中的空值：【SELECT AVG(commission_pct) FROM employees; 】
+
+  2)、NVL 函数会强制组函数包括空值：【SELECT AVG(NVL(commission_pct, 0)) 2 FROM employees;】
+  
+18、SELECT 列表中未出现在组函数中的所有列都必须包含在GROUP BY 子句中
+   【SELECT department_id, AVG(salary) FROM employees GROUP BY department_id ;】
+
+19、按多个列进行分组：将 EMPLOYEES 表中每种职务的薪金相加，并按部门进行分组
+   【SELECT department_id, job_id, SUM(salary) FROM employees WHERE department_id > 40 GROUP BY department_id, job_id;】
+
+20、使用 HAVING 子句限定组结果：【SELECT department_id, MAX(salary) FROM employees GROUP BY department_id HAVING MAX(salary)>10000 ;】
+
+21、嵌套组函数：【】
+
+22、自然连接（NATURAL JOIN）是一种特殊的等值连接，将表中具有相同名称的列自动进行匹配。自然连接不必指定任何连接条件。
+
+23、使用非等值联接检索记录
+   【SELECT e.last_name, e.salary, j.grade_level FROM employees e JOIN job_grades j ON e.salary BETWEEN j.lowest_sal AND j.highest_sal;】
+
+24、笛卡尔积，以下情况时将形成笛卡尔积
+  
+  1)、联接条件被忽略
+  
+  2)、联接条件无效
+  
+  3)、第一个表中的所有行被联接到第二个表中的所有行
+  
+25、子查询
+
+  1)、先执行子查询（内部查询），再执行主查询（外部查询）
+
+  2)、主查询会使用子查询的结果
+
+
+
+
+P229
 
 
 
