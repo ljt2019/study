@@ -23,7 +23,11 @@
 
 ====== 引用model层的jar包实现EO、VO、class类等文件的重用 ======	
 
-备注：ADF Library JAR File 的jar包可以实现跨模块的重用
-注意事项：把系统管理的model引到学籍管理的model，必须要保持数据源一致。
+1、备注：ADF Library JAR File 的jar包可以实现跨模块的重用
+
+2、注意事项：把系统管理的model引到学籍管理的model，必须要保持数据源一致。
 
 	
+	
+1、第三方jar包在 vc层
+2、公共包在model层

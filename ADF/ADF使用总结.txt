@@ -1,0 +1,60 @@
+
+====== java后台代码 ======
+
+1、组件刷新
+  JSFUtils.refresh(bjxbTable);//例如 bjxbTable 为组件 table 的ID 
+  JSFUtils.refresh(JSFUtils.findComponentInRoot("ot68"));//教学班总人数，刷新属性
+  
+2、服务器信息返回
+  Noty.success(ErrorStringKey.ADD_SCUUESS);//返回成功信息
+  Noty.error(ErrorStringKey.ADD_ERROR);//返回失败信息
+  JSFUtils.addFacesInformationMessage(reMsg);//返回服务器信息
+  
+3、获取页面返回的多行信息
+  List<Row> rows = new ArrayList<Row>();
+  rows = ADFUtils.getTableSelectedRows(this.getCxTable());
+
+4、代码筛选过滤
+  1)、JxjhglXsjbxxVoImpl 该类需要设置绑定变量的set和get方法，生成java类时自动生成
+  2)、对应vo需要添加绑定变量,与sql中的相对应
+  3)、vo中的绑定变量controller Hit属性设置为不可见
+  4)、代码如下：
+    public void filterStudentList(ItemEvent itemEvent) {
+        try {
+            DCIteratorBinding kcdc =
+                ADFUtils.findIterator("Jxjhgl_xsjbxxVo1Iterator"); //页面绑定迭代器
+            String kkxn = (String)ADFUtils.getBoundAttributeValue("Kckkxn");
+            String jxbh = (String)ADFUtils.getBoundAttributeValue("Jxbh");
+            JxjhglXsjbxxVoImpl xsVo = (JxjhglXsjbxxVoImpl)kcdc.getViewObject();
+            xsVo.setNamedWhereClauseParam("p_kkxn", kkxn);
+            xsVo.setNamedWhereClauseParam("p_jxbh", jxbh);
+            xsVo.executeQuery();
+            log.info("====== sql！！！ ======"+xsVo.getQuery());
+            log.info("====== 过滤筛选学生 ======");
+        } catch (Exception e) {
+            Noty.error(ErrorStringKey.OPERATOR_ERROR);
+        }
+    }
+
+5、关闭弹窗：addXsPop.hide();//addXsPop 为组件的绑定值：<af:popup id="addxsPop" binding="#{jxjhJxrwBean.addXsPop}" />
+
+6、获取表达式的值：String value = JSFUtils.resolveExpressionAsString("#{sessionScope.jwxtUser.yhxm}"); //角色名称
+				   String value = (String)JSFUtils.getElExpression("#{sessionScope.jwxtUser.yhzh}");
+
+7、获取当前行绑定变量的值：String p_dqxkxq = (String)ADFUtils.getBoundAttributeValue("Kckkxq");//Kckkxq需要在对应页面中有绑定
+
+8、
+
+====== 页面 ======
+
+1、总行数
+  <f:facet name="statusbar">
+      <af:toolbar id="t28">
+        <af:outputText value="#{common.total}" id="ot73"/>
+        <af:outputText value="#{bindings.Jxjhgl_CxxsxxVo1.estimatedRowCount}"
+                       id="ot74"
+                       inlineStyle="color:Red; font-weight:800;"
+                       partialTriggers="::qryId4"/>
+        <af:outputText value="#{common.records}" id="ot75"/>
+      </af:toolbar>
+   </f:facet>
