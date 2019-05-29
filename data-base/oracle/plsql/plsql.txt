@@ -22,9 +22,9 @@
 3、变量的命名方法
   1)、程序变量：v_name
   2)、程序常量：c_name
-  3)、游标变量：name_curror
-  4)、异常标识：e_name
-  5)、记录类型：name_record
+  3)、游标变量：name_cursor
+  4)、异常标识：e_name_error
+  5)、记录类型：name_record【emp_record】
   
 4、变量类型
   1)、数值类型：NUMBER(P,S)以及子类型INT、FLOAT等
@@ -44,3 +44,112 @@
   2)、引用型变量：是指其数据类型与已经定义的某个数据变量类型相同，或与数据库表某个列的数据类型相同。例如：v_name emp.ename%TYPE;
   3)、记录类型变量：PL/SQL提供%ROWTYPE操作符，返回一个记录类型，其数据类型和数据库表的数据结构相一致。例如：emp_record emp%ROWTYPE;
   4)、记录型变量分量的引用：emp_record.ename := 'ROSE'
+  
+7、循环语句：
+--基本循环
+declare
+  v_cnt int := 1;
+begin
+  loop
+    dbms_output.put_line(v_cnt);
+    exit when v_cnt = 110;
+    v_cnt := v_cnt + 1;
+  end loop;
+end;
+
+--while循环
+declare
+  v_cnt int := 1;
+begin
+  while v_cnt <= 20 loop
+    dbms_output.put_line(v_cnt);
+    v_cnt := v_cnt + 1;
+  end loop;
+end;
+
+--for循环,reverse可以反向循环
+begin
+  for i in 1 .. 10 loop
+    dbms_output.put_line(i);
+  end loop;
+end;
+
+--嵌套循环
+declare
+  v_result int;
+begin
+  <<outter>>
+  for i in 1 .. 5 loop
+    <<inter>>
+    for j in 1 .. 5 loop
+      v_result := i;
+      exit outter when i = 4;
+    end loop inter;
+    dbms_output.put_line('内结束，' || v_result);
+  end loop outter;
+  dbms_output.put_line('外结束，' || v_result);
+end;
+
+--continue,跳出当前循环
+declare
+  v_cnt int := 0;
+begin
+  loop
+    v_cnt := v_cnt + 1;
+    continue when v_cnt = 5;
+    dbms_output.put_line(v_cnt);
+    exit when v_cnt = 10;
+  end loop;
+end;
+
+8、goto语句：用于跳到特定标号处执行语句
+  1)、语法格式：【goto label_name】
+  2)、注意：当使用goto语句时，标号后边至少需要包含一条执行语句。
+declare
+  v_cnt int := 1;
+begin
+  loop
+    dbms_output.put_line(v_cnt);
+    if v_cnt = 10 then
+      --exit;
+      goto end_loop;
+    end if;
+    v_cnt := v_cnt + 1;
+  end loop;
+  <<end_loop>>
+  dbms_output.put_line('跳出循环');
+end;
+
+9、游标：sql的一个内存工作区，由系统或以变量的形式定义。通俗来说就是一个结果集。
+  1)、显示游标：
+  定义游标：【cursor cursor_name[(paramter_name datatype)] is seelct_statment;】
+  打开游标：【open cursor_name】
+  提取数据：【fetch cursor_name into var1[,var2,...]】,每次只能提取一行
+  关闭游标：【close cursor_name】
+  2)、游标的属性：
+  %found：检测游标结果集是否存在数据，存在则返回true
+  %notfound：结果集不存在数据，则返回true
+  %isopen：检测是否打开，打开返回true
+  %rowcount：返回实际提取的行数
+  
+declare
+  --定义游标
+  cursor emp_cursor is
+    select emp.empno, emp.ename, emp.job from emp;
+  v_empno emp.empno%type;
+  v_ename emp.ename%type;
+  v_job   emp.job%type;
+begin
+  --打开游标
+  open emp_cursor;
+  --提取数据
+  loop
+    fetch emp_cursor
+      into v_empno, v_ename, v_job;
+    dbms_output.put_line('员工编号：' || v_empno || ';员工姓名' || v_ename ||
+                         ';员工职位：' || v_job);
+    exit when emp_cursor%notfound;
+  end loop;
+  close emp_cursor;
+end;
+
