@@ -1,0 +1,4 @@
+
+
+1、private static final ADFLogger log = ADFLogger.createADFLogger(xx.class);
+

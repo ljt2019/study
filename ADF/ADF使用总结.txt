@@ -21,29 +21,98 @@
   4)、代码如下：
     public void filterStudentList(ItemEvent itemEvent) {
         try {
-            DCIteratorBinding kcdc =
+            DCIteratorBinding dc =
                 ADFUtils.findIterator("Jxjhgl_xsjbxxVo1Iterator"); //页面绑定迭代器
             String kkxn = (String)ADFUtils.getBoundAttributeValue("Kckkxn");
             String jxbh = (String)ADFUtils.getBoundAttributeValue("Jxbh");
-            JxjhglXsjbxxVoImpl xsVo = (JxjhglXsjbxxVoImpl)kcdc.getViewObject();
-            xsVo.setNamedWhereClauseParam("p_kkxn", kkxn);
-            xsVo.setNamedWhereClauseParam("p_jxbh", jxbh);
-            xsVo.executeQuery();
-            log.info("====== sql！！！ ======"+xsVo.getQuery());
+            JxjhglXsjbxxVoImpl vo = (JxjhglXsjbxxVoImpl)dc.getViewObject();
+            vo.setNamedWhereClauseParam("p_kkxn", kkxn);
+            vo.setNamedWhereClauseParam("p_jxbh", jxbh);
+            vo.executeQuery();
+            log.info("====== sql！！！ ======"+vo.getQuery());
             log.info("====== 过滤筛选学生 ======");
         } catch (Exception e) {
             Noty.error(ErrorStringKey.OPERATOR_ERROR);
         }
     }
+	
+  自定义查询
+  DCIteratorBinding dc =
+      ADFUtils.findIterator("JcglJcckbView1Iterator"); //页面绑定迭代器
+  JcglJcckbViewImpl jcVo =
+      (JcglJcckbViewImpl)dc.getViewObject();
+  jcVo.setWhereClause("bjh =:p_bjh");
+  jcVo.defineNamedWhereClauseParam("p_bjh", null, null);
+  jcVo.setNamedWhereClauseParam("p_bjh", bjh);
+  jcVo.executeQuery(); //查询
+  jcVo.setWhereClauseParams(null); //删除定义的绑定变量
+  RowSetIterator rsi = jcVo.createRowSetIterator(null);
+  oracle.jbo.Row row = null;
+  int k = 0;
+  while (rsi.hasNext()) {
+      row = rsi.next();
+      Object ckdh = row.getAttribute("Ckdh");
+      String ckdhStr = ckdh.toString();
+      ckdhArr[k] = ckdhStr;
+      log.info("====== 出库单号：" + ckdhStr);
+      k++;
+  }
+  rsi.closeRowSetIterator();
+
 
 5、关闭弹窗：addXsPop.hide();//addXsPop 为组件的绑定值：<af:popup id="addxsPop" binding="#{jxjhJxrwBean.addXsPop}" />
 
-6、获取表达式的值：String value = JSFUtils.resolveExpressionAsString("#{sessionScope.jwxtUser.yhxm}"); //角色名称
+6、获取表达式的值：String value = JSFUtils.resolveExpressionAsString("#{pageFlowScope.yhxm}"); //角色名称
 				   String value = (String)JSFUtils.getElExpression("#{sessionScope.jwxtUser.yhzh}");
+				   
+7、设置表达式的值，这种方式比表达式方式好
+  ADFContext aDFContext = ADFContext.getCurrent();
+  Map attrMap=aDFContext.getPageFlowScope();
+  attrMap.put("jxbh", row.getAttribute("Jxbh"));
 
 7、获取当前行绑定变量的值：String p_dqxkxq = (String)ADFUtils.getBoundAttributeValue("Kckkxq");//Kckkxq需要在对应页面中有绑定
+  
+8、绑定变量的使用：value="#{bindings.Truesxrs.inputValue}"，在页面绑定对应的属性
 
-8、
+9、查看sql打印日志：xsVo.getQuery()
+
+10、判空处理：CollectionUtils.isEmpty(cdList) && cdList.size() == 0
+
+11、actionListener中获取组件id名称，【String id = actionEvent.getComponent().getId();】
+
+12、获取所有属性值：【row.getAttributeNames()】
+
+13、获取当前行：
+            ViewObjectImpl jcckbVo =
+                (ViewObjectImpl)ADFUtils.findIterator("JcglBjJczdxxVo1Iterator").getViewObject();
+            Row jcRow = jcckbVo.getCurrentRow();
+            String bjh = bjh = (String)jcRow.getAttribute("Bjdm");
+			
+14、遍历：
+            DCIteratorBinding kcdc =
+                ADFUtils.findIterator("JcglJcckbView1Iterator"); //页面绑定迭代器
+            JcglJcckbViewImpl jcVo = (JcglJcckbViewImpl)kcdc.getViewObject();
+            jcVo.setv_bjh(bjh);
+            jcVo.executeQuery();
+            Row[] cjRows = jcVo.getAllRowsInRange();
+            for (int i = 0; i < cjRows.length; i++) {
+                Row cjRow = cjRows[i];
+                Object ckdh = cjRow.getAttribute("Ckdh");
+                String ckdhStr = ckdh.toString();
+                log.info("====== 出库单号：" + ckdhStr);
+                String[] ckdhArr = new String[1];
+                ckdhArr[0] = ckdhStr;
+                ckdhArray = ckdhArr;
+            }
+			
+
+	
+it.insertRow(newrow);
+
+15、获取组件id：【String id = actionEvent.getComponent().getId();】，在监听动作时使用，actionListener="#{CbsxxBean.showPopupListener}"
+
+16、主键使用序列自动增长，【(new oracle.jbo.server.SequenceImpl("EMPLOYEES_SEQ",adf.object.getDBTransaction())).getSequenceNumber()】
+(new oracle.jbo.server.SequenceImpl("CBSXX_SEQ",adf.object.getDBTransaction())).getSequenceNumber()
 
 ====== 页面 ======
 
@@ -58,3 +127,36 @@
         <af:outputText value="#{common.records}" id="ot75"/>
       </af:toolbar>
    </f:facet>
+   
+2、查询条件：【rendered="#{pageFlowScope.willDo eq 'cxzdjc' ? true : false}"】，是否显示
+
+3、页面传递参数到后台：
+  <af:commandLink text="#{row.Truesxrs}" id="cl1"
+                  rendered="#{row.Shzt eq '9'}"
+                  actionListener="#{jxjhJxrwBean.toEditJxbMdAction}">
+    <af:clientAttribute name="jxbh"
+                        value="#{row.bindings.Jxbh.inputValue}"/>
+    <af:showPopupBehavior popupId=":::addxsPop" triggerType="action"/>
+    <af:clientAttribute/>
+  </af:commandLink>
+  
+4、查询条件排序在vo.xml UI Categories中拖动排序。
+
+5、弹框自定义提示：
+  <af:popup id="p3" contentDelivery="lazyUncached" autoCancel="disabled"
+            binding="#{viewScope.jclyBean.popup3}">
+    <af:dialog id="d3" title="提示" type="ok">
+      <af:outputText value="outputText3" id="ot5" binding="#{viewScope.jclyBean.outputTest3}" escape="false"/>
+    </af:dialog>
+  </af:popup>
+  
+6、文本输入框：
+  <af:panelBox text="休学、复学日期及原因" id="pb6">
+    <af:inputText value="#{bindings.Xjydxq.inputValue}"
+                  required="#{bindings.Xjydxq.hints.mandatory}"
+                  maximumLength="#{bindings.Xjydxq.hints.precision}"
+                  shortDesc="#{bindings.Xjydxq.hints.tooltip}"
+                  id="it20" rows="3" columns="100">
+      <f:validator binding="#{bindings.Xjydxq.validator}"/>
+    </af:inputText>
+  </af:panelBox>

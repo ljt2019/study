@@ -1,17 +1,34 @@
 
 快捷键jdeveloper
-  alt+home:定位文件
-  alt+/:代码提示
-  alt+enter:自动导包
+  
   alt+up:上一个函数
+  
   ctrl+alt+R:批量重命名
+  
   ctrl+alt+space:代码自动提示
+  
   ctrl+x:删除
-  ctrl+-:类搜索
+  
   ctrl+=:弹出当前打开列表
+  
   ctrl+shift+back:最后一次修改
+  
   ctrl+shift+s:类结构
+  
   ctrl+f:查找 f3:查找下一个 shift+f3:查找上一个
-  ctrl+shift+f:全局搜索
+  
   ctrl+e:向前查找 ctrl+shift+e:向后查找
+  
   ctrl+shift+加:扩大选择区域 ctrl+shift+减:减小选择区域
+  
+  查找文件：【ctrl + alt + -】
+  
+  类搜索：【ctrl + -:】
+
+  全局搜索：【ctrl + shift + f】
+  
+  定位文件：【alt + home】
+  
+  代码提示：【alt + /】
+  
+  自动导包：【alt + enter】
