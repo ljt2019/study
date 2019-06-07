@@ -1,2 +1,0 @@
-
-1、单独本地安装jar包到maven仓库：【mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=12.1.0.1.0 -Dpackaging=jar -Dfile=C:\AAAAA\ojdbc6-12.1.0.1.0.jar】

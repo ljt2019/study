@@ -1,0 +1,16 @@
+
+====== 安装jar到本地仓库步骤 ======
+
+1、明确jar目录位置，切换到需要安装的jar包目录下
+
+2、确定一下三要素：例如我现在需要安装
+  <dependency>
+      <groupId>com.aspose.words</groupId>
+      <artifactId>aspose-words-jdk16</artifactId>
+      <version>14.6.0.0</version>
+  </dependency>
+  1)、【-DgroupId=com.aspose.words】
+  2)、【-DartifactId=aspose-words-jdk16】
+  3)、【-Dversion=14.6.0.0】
+
+mvn install:install-file -DgroupId=com.aspose.words -DartifactId=aspose-words-jdk16 -Dversion=14.6.0.0 -Dpackaging=jar -Dfile=aspose-words-16.6.0-jdk16.jar
