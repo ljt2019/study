@@ -1,0 +1,44 @@
+
+1、建立com.lowagie.text.Document对象的实例：【Document document = new Document();】
+
+2、建立一个书写器(Writer)与document对象关联，通过书写器(Writer)可以将文档写入到磁盘中
+  【PDFWriter.getInstance(document, new FileOutputStream("Helloworld.PDF"));】
+
+3、打开文档：【document.open();】
+
+4、向文档中添加内容：【document.add(new Paragraph("Hello World"));】
+
+5、关闭文档：【document.close();】
+
+6、在打开文档之前可以设置：addHeader对于PDF文档无效
+  public boolean addTitle(String title);				//标题
+  public boolean addSubject(String subject);			//主题
+  public boolean addKeywords(String keywords);			//关键字
+  public boolean addAuthor(String author);				//作者
+  public boolean addCreator(String creator);			//创建者
+  public boolean addProducer();							//生产者
+  public boolean addCreationDate();						//创建日期
+  public boolean addHeader(String name, String content);//
+  
+  public boolean setPageSize(Rectangle pageSize);		//页面的大小
+  public boolean add(Watermark watermark);				//添加水印
+  public void removeWatermark();						//移除水印
+  public void setHeader(HeaderFooter header);			//脚注
+  public void resetHeader();							//
+  public void setFooter(HeaderFooter footer)
+  public void resetFooter();							//脚注
+  public void resetPageCount();							//
+  public void setPageCount(int pageN);					//
+  如果要设定第一页的页面属性，这些方法必须在文档打开之前调用。
+
+7、iText中用文本块(Chunk)、短语(Phrase)和段落(paragraph)处理文本。
+  1)、文本块(Chunk)：理文本的最小单位，有一串带格式（包括字体、颜色、大小）的字符串组成。
+  【Chunk chunk1 = new Chunk("This text is underlined", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.UNDERLINE));】
+  2)、短语(Phrase)由一个或多个文本块(Chunk)组成，短语(Phrase)也可以设定字体，但对于其中以设定过字体的文本块 (Chunk)无效。通过短语(Phrase)成员函数add可以将一个文本块(Chunk)加到短语(Phrase)中， 如：
+  【Phrase phrase = Phrase.getInstance(2, "哈哈", font);】，【phrase.add(chunk);】
+  3)、段落(paragraph)由一个或多个文本块(Chunk)或短语(Phrase)组成，相当于WORD文档中的段落概念。
+  【Paragraph paragraph = new Paragraph("");】
+  
+8、
+  
+  

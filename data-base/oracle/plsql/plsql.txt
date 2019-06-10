@@ -1,5 +1,6 @@
 
-1、PL/SQL块的基本结构
+====== PL/SQL块的基本结构 以及分类 ======
+1、基本结构：
   DECLARE
   	/**
   	 * 声明部分，声明变量、常量、复杂数据类型、游标等
@@ -19,34 +20,34 @@
   2)、子程序：存储在数据库中的存储过程、函数及包等。当在数据库上建立好后可以在其他程序中调用他们。
   3)、触发器：当数据发生操作时，会触发一些事件，从而自动执行相应的程序。
   
-3、变量的命名方法
+====== 变量 ======
+1、变量的命名方法
   1)、程序变量：v_name
   2)、程序常量：c_name
   3)、游标变量：name_cursor
-  4)、异常标识：e_name_error
+  4)、异常标识：e_name
   5)、记录类型：name_record【emp_record】
   
-4、变量类型
+2、变量类型
   1)、数值类型：NUMBER(P,S)以及子类型INT、FLOAT等
   2)、字符类型：CHAER(n)、VARCHAR2(n)
   3)、日期类型：DATE
   4)、布尔类型：BOOLEAN
   
-5、变量的大小写规则
+3、变量的大小写规则
   1)、SQL关键字采用大写，如:SELECT,UPDATE等
   2)、PL/SQL关键字采用大写格式，如：DECLARE,BEGIN,END等
   3)、数据类型采用大写格式：，如：INT、DATE等
   4)、标识符和参数采用小写格式：，如：v_sal等
   5)、数据库对象和列采用小写格式，如：emp(表名),sal(列字段名)等
 
-6、引用型变量和记录型变量
-  1)、为什么要使用他们？？：在许多情况下，PL/SQL变量可以用来存储在数据表中的数据，在这种情况下，变量应该拥有与表列相同的类型。这种情况下建议使用引用型变量(使用%TYPE)或记录型变量(使用%ROWTYPE)而不是将变量类型硬性编码
-  2)、引用型变量：是指其数据类型与已经定义的某个数据变量类型相同，或与数据库表某个列的数据类型相同。例如：v_name emp.ename%TYPE;
-  3)、记录类型变量：PL/SQL提供%ROWTYPE操作符，返回一个记录类型，其数据类型和数据库表的数据结构相一致。例如：emp_record emp%ROWTYPE;
-  4)、记录型变量分量的引用：emp_record.ename := 'ROSE'
+4、引用型变量(%TYPE)和记录型变量(%ROWTYPE)，将变量类型动态编码
+  2)、引用型变量：列的数据类型一致,例如：【v_name emp.ename%TYPE;】
+  3)、记录类型变量：表的数据结构一致,例如：【emp_record emp%ROWTYPE;】
+  4)、记录型变量分量的引用：【emp_record.ename := 'ROSE'】
   
-7、循环语句：
---基本循环
+====== 循环结构 ======
+1、基本循环
 declare
   v_cnt int := 1;
 begin
@@ -57,7 +58,7 @@ begin
   end loop;
 end;
 
---while循环
+2、while循环
 declare
   v_cnt int := 1;
 begin
@@ -67,14 +68,14 @@ begin
   end loop;
 end;
 
---for循环,reverse可以反向循环
+--for循环,reverse可以反向循环，隐含地打开游标提取数据并关闭游标
 begin
   for i in 1 .. 10 loop
     dbms_output.put_line(i);
   end loop;
 end;
 
---嵌套循环
+3、嵌套循环
 declare
   v_result int;
 begin
@@ -90,7 +91,7 @@ begin
   dbms_output.put_line('外结束，' || v_result);
 end;
 
---continue,跳出当前循环
+4、continue,跳出当前循环
 declare
   v_cnt int := 0;
 begin
@@ -120,7 +121,8 @@ begin
   dbms_output.put_line('跳出循环');
 end;
 
-9、游标：sql的一个内存工作区，由系统或以变量的形式定义。通俗来说就是一个结果集。
+====== 游标 ======
+1、游标：sql的一个内存工作区，由系统或以变量的形式定义。通俗来说就是一个结果集。
   1)、显示游标：
   定义游标：【cursor cursor_name[(paramter_name datatype)] is seelct_statment;】
   打开游标：【open cursor_name】
@@ -132,24 +134,165 @@ end;
   %isopen：检测是否打开，打开返回true
   %rowcount：返回实际提取的行数
   
-declare
-  --定义游标
-  cursor emp_cursor is
-    select emp.empno, emp.ename, emp.job from emp;
-  v_empno emp.empno%type;
-  v_ename emp.ename%type;
-  v_job   emp.job%type;
-begin
-  --打开游标
-  open emp_cursor;
-  --提取数据
-  loop
-    fetch emp_cursor
-      into v_empno, v_ename, v_job;
-    dbms_output.put_line('员工编号：' || v_empno || ';员工姓名' || v_ename ||
-                         ';员工职位：' || v_job);
-    exit when emp_cursor%notfound;
-  end loop;
-  close emp_cursor;
-end;
+  declare
+    --定义游标
+    cursor emp_cursor is
+      select emp.empno, emp.ename, emp.job from emp;
+    v_empno emp.empno%type;
+    v_ename emp.ename%type;
+    v_job   emp.job%type;
+  begin
+    --打开游标
+    open emp_cursor;
+    --提取数据
+    loop
+      fetch emp_cursor
+        into v_empno, v_ename, v_job;
+      dbms_output.put_line('员工编号：' || v_empno || ';员工姓名' || v_ename ||
+                           ';员工职位：' || v_job);
+      exit when emp_cursor%notfound;
+    end loop;
+    close emp_cursor;
+  end;
 
+2、游标的for循环 1
+  DECLARE
+    CURSOR EMP_CURSOR IS
+      SELECT EMPNO, ENAME, JOB FROM EMP;
+  
+  BEGIN
+    FOR EMP_RECORD IN EMP_CURSOR LOOP
+      DBMS_OUTPUT.PUT_LINE('员工编号：' || EMP_RECORD.EMPNO || ';员工姓名' ||
+                           EMP_RECORD.ENAME || ';员工33333职位：' ||
+                           EMP_RECORD.JOB);
+    END LOOP;
+  END;
+
+--游标的for循环 2
+  BEGIN
+    FOR EMP_RECORD IN (SELECT EMPNO, ENAME, JOB FROM EMP) LOOP
+      DBMS_OUTPUT.PUT_LINE('员工编号：' || EMP_RECORD.EMPNO || ';员工姓名' ||
+                           EMP_RECORD.ENAME || ';员工职位：' ||
+                           EMP_RECORD.JOB);
+    END LOOP;
+  END;
+
+3、参数游标
+  1)、概念：参数游标是指带有参数的游标，通过使用参数游标，是不同的参数可以生成不同的游标结果集。
+  2)、代码示例如下：
+  --参数游标的for循环 
+  DECLARE
+    CURSOR EMP_CURSOR(PARA NUMBER) IS
+      SELECT EMPNO, ENAME, JOB FROM EMP WHERE EMPNO = PARA;
+  BEGIN
+    FOR EMP_RECORD IN EMP_CURSOR( &va ) LOOP
+      DBMS_OUTPUT.PUT_LINE('员工编号：' || EMP_RECORD.EMPNO || ';员工姓名' ||
+                           EMP_RECORD.ENAME || ';员工33333职位：' ||
+                           EMP_RECORD.JOB);
+    END LOOP;
+  END;
+
+4、显示游标和隐式游标的区别
+  1)、显示游标：用户自定义的显示创建，主要用于查询语句的处理。
+  2)、隐式游标：由系统隐含创建，主要用于非查询语句，如修改，删除等操作，由oracle系统自动地为这些操作设置游标并创建工作区，其定义、打开、取值以及关闭操作都由系统自动完成，无需用户处理。
+  3)、隐式游标的名称为【SQL】,有oracle系统定义。
+  4)、DML操作和select语句会使用隐式游标：insert(插入操作)、update(更新操作)、delete(删除操作)、select ... into(单行查询操作)
+
+5、隐式游标的属性：可以通过隐式游标的属性来了解操作的状态和结果，进而控制程序的流程。
+  1)、通过sql游标名总是只能访问一个DML操作或单行select操作的游标属性。
+  2)、SQL%FOUND 值为true表示执行成功，false表示失败
+  3)、SQL%NOTFOUND 与FOUND相反
+  4)、SQL%ISOPEN ROWCOUNT  返回成功执行后的数据的行数 
+  5)、代码示例如下
+  BEGIN
+    UPDATE EMP SET SAL = SAL + 100 WHERE EMPNO = &NO1;
+    IF (SQL%FOUND) THEN --判断该更新是否执行成功
+      DBMS_OUTPUT.PUT_LINE('更新员工工资成功!');
+      COMMIT;
+    ELSE
+      DBMS_OUTPUT.PUT_LINE('更新员工工资失败!');
+      ROLLBACK;
+    END IF;
+  END;
+
+6、使用游标修改或删除数据：
+  1)、如果创建的游标需要执行更新或删除操作必须带有for update子句。
+  2)、for update子句会对提取出的数据进行行级锁定，这样在本会话更新期间，其他用户就不能对当前游标中的数据进行更新操作，从而保证数据完整性。
+  3)、语法格式：
+  【CURSOR cursor_name IS select_statement FOR UPDATE [OF column_reference] [NOWAIT];】
+  【UPDATE table_name SET column=..WHERE CURSSOR OF cursor_name;】
+  【DELETE FROM table_name WHERE CURSOR OF cursor_name;】
+
+7、NOWAIT 子句，避免死锁
+
+8、使用 of 子句在特定表上加共享锁
+  1)、当游标子查询涉及多张表时，如果在特定表上加共享锁，那么需要使用of子句。
+
+  
+====== 异常处理 ======
+1、概念：是程序在正常执行过程中发生的为预料的事件。
+
+2、异常处理提高程序的健壮性，可以有效解决程序正常执行过程中出现的各种错误，使程序正常运行。
+
+3、语法格式：
+EXCEPTION 
+	WHEN first_exception THEN -- 例如 【no_data_found】 未查到数据
+		 statment1;
+		 ......
+    WHEN second_exception THEN
+	     statment2;
+		 ......
+    [WHEN OTHERS THEN --必须放在最后
+         statment3;
+         ......]
+		 
+4、异常的分类：
+  1)、预定义异常：无需用户定义，直接引用相应的异常情况名称
+    select into 没有找到数据：【NO_DATA_FOUND】
+    select into 返回多行数据：【TOO_MANY_ROWS】
+	代码示例：
+  【DECLARE
+    v_name     emp.ename%TYPE;
+    v_sal      emp.sal%TYPE;
+  BEGIN
+    SELECT ename, sal
+      INTO v_name, v_sal
+      FROM emp
+     WHERE empno = &no1;
+    IF v_sal> 3000 THEN
+      DBMS_OUTPUT.PUT_LINE(v_name||'的工资大于3000：'||v_sal);
+     ELSE 
+       DBMS_OUTPUT.PUT_LINE('不符合查询条件！'); 
+    END IF;
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('没有该员工！');
+      WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('其他异常');
+  END;】
+  
+  2)、非预定义异常:处理与预定异常无关的其他标准的oracle错误，需要在程序中定义。
+    (1)、在定义部分定义异常情况：【<异常情况> EXCEPTION】
+    (2)、将其定义好的异常情况与标准的oracle错误关联起来：【PRAGMA EXCEPTION_INIT(<异常情况>,<错误代码>)】
+    (3)、在异常情况处理部分对异常情况做相应的处理；
+	(4)、代码示例：
+    【DECLARE
+      e_fk EXCEPTION;--1、定义异常情况
+      PRAGMA EXCEPTION_INIT(e_fk,-2292);--2、将其定义好的异常情况与标准的oracle错误关联起来
+    BEGIN
+      DELETE FROM dept WHERE deptno = &deptno1;
+      EXCEPTION
+        --3、在异常情况处理部分对异常情况做相应的处理
+        WHEN e_fk THEN
+          DBMS_OUTPUT.PUT_LINE('此部门下有员工，不能删除！');
+        WHEN OTHERS THEN
+          DBMS_OUTPUT.PUT_LINE('其他异常');
+    END;】
+  
+  3)、自定义异常：用户在程序中自己定义的异常
+  
+  
+  
+  
+  
+  

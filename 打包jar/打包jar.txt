@@ -1,0 +1,2 @@
+
+jar cvf iTextAsian_1.5.2.jar com/itextpdf/text/pdf/fonts/*
