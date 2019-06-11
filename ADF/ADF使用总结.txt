@@ -114,6 +114,10 @@ it.insertRow(newrow);
 16、主键使用序列自动增长，【(new oracle.jbo.server.SequenceImpl("EMPLOYEES_SEQ",adf.object.getDBTransaction())).getSequenceNumber()】
 (new oracle.jbo.server.SequenceImpl("CBSXX_SEQ",adf.object.getDBTransaction())).getSequenceNumber()
 
+17、删除一行：r.remove();
+
+
+
 ====== 页面 ======
 
 1、总行数
@@ -160,3 +164,17 @@ it.insertRow(newrow);
       <f:validator binding="#{bindings.Xjydxq.validator}"/>
     </af:inputText>
   </af:panelBox>
+  
+7、框架自带导出:【 table的id exportedId="resId1" 】
+ <af:commandToolbarButton text="导出明细" id="ctb1" >
+    <af:exportCollectionActionListener type="excelHTML"
+      exportedId="resId1" 
+	  filename="征订教材信息明细.xls" 
+	  title="征订教材信息明细"/>
+ </af:commandToolbarButton>
+  自定义导出：	  
+ <af:commandToolbarButton text="导出明细" id="ctb1">
+    <af:fileDownloadActionListener contentType="text/html; charset=utf-8"
+      filename="征订教材信息明细.xls" 
+	  method="#{zdjcxxBean.printZdjcxxXsLsByExcel}"/>
+  </af:commandToolbarButton>
