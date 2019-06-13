@@ -116,7 +116,106 @@ it.insertRow(newrow);
 
 17、删除一行：r.remove();
 
+18、动态sql查询
+        XscjVoImpl xscjVoImpl =
+            (XscjVoImpl)ADFUtils.findIterator("XscjVo1Iterator").getViewObject();
+        StringBuilder builder = new StringBuilder();
+        builder.append("Xh=:v_xh");
+        if (((Boolean)bhwtgkcVal).booleanValue()) {
+            builder.append(" and  (nvl(cj,0)>nvl(CJJGX,60) or nvl(bkcj,0)>nvl(CJJGX,60) or nvl(cxcj,0)>nvl(CJJGX,60) ) ");
+        }
+        if (((Boolean)bhrxkVal).booleanValue()) {
+            //去掉不及格的任选课
+            builder.append(" and ((nvl(cj,0)>nvl(CJJGX,60) or nvl(bkcj,0)>nvl(CJJGX,60) or nvl(cxcj,0)>nvl(CJJGX,60) ) or KCXZ<>3)");
+        }
+        if (((Boolean)bhlfVal).booleanValue()) {
+            //不含无成绩的选项去掉成绩为0的学生
+            builder.append(" and ( nvl(cj,0)=0 and nvl(bkcj,0)=0  and nvl(cxcj,0)=0  )");
+        }
+        xscjVoImpl.setWhereClause(builder.toString());
+        xscjVoImpl.defineNamedWhereClauseParam("v_xh", null, null);
+        xscjVoImpl.setNamedWhereClauseParam("v_xh", row.getAttribute("Xh"));
+        xscjVoImpl.executeQuery();
+        xscjVoImpl.setRangeSize(-1);
+        Row[] allRow = xscjVoImpl.getAllRowsInRange();
 
+19、获取AM中的方法：【 OperationBinding op = ADFUtils.findOperation("jcsfyjczPro");】
+                OperationBinding op =
+                    ADFUtils.findOperation(" "); //JcglServiceAMImpl
+                if (op.isOperationEnabled()) {
+                    Map map = op.getParamsMap();
+                    map.put("jxbhList", jxbhList);
+                    map.put("jcbmList", isbnList);
+                    op.execute();
+                    if (op.getErrors().size() == 0) {
+                        String hhf = "<br>";
+                        retInfo = (String)op.getResult();
+                        //如果存在教学班已指定过某本教材，就弹出popup提示用户重新选择教学班及征订教材信息
+                        if (!"OK".equals(retInfo) && retInfo != null) {
+                            retInfo = retInfo.replace(".", hhf);
+                            retInfo =
+                                    retInfo + "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该门课已指定该教材，且已提交或者审核通过了，无需再次指定！";
+                            ADFContext.getCurrent().getPageFlowScope().put("err",
+                                                                           retInfo);
+                            RichPopup alPop =
+                                (RichPopup)JSFUtils.findComponentInRoot("alPop");
+                            //弹出提示框
+                            JSFUtils.showPopup(alPop);
+                            return;
+                        }
+                    }
+                }
+				
+20、执行存储过程
+    public String jcsfyjczPro(List jxbhList, List isbnList) {
+        java.sql.CallableStatement st = null;
+        Connection conn = null;
+        String stmt = "BEGIN LY_JCGL.LY_JCGL_PAC_JCSFYJCZ(?,?,?,?,?); END;";
+        String returnString = null;
+        String jcsfyjczStr = "0";
+        String yczjcxxStr = null;
+        try {
+            st = this.getDBTransaction().createCallableStatement(stmt, 0);
+            conn = this.getDBTransaction().createStatement(1).getConnection();
+
+            ArrayDescriptor arrayDesc =
+                ArrayDescriptor.createDescriptor("TYPE_VARCHAR", conn);
+            ARRAY jxbhArray = new ARRAY(arrayDesc, conn, jxbhList.toArray());
+            ARRAY jcmcArray = new ARRAY(arrayDesc, conn, isbnList.toArray());
+
+            st.setArray(1, jxbhArray);
+            st.setArray(2, jcmcArray);
+            st.registerOutParameter(3, Types.VARCHAR);
+            st.registerOutParameter(4, Types.VARCHAR);
+            st.registerOutParameter(5, Types.VARCHAR);
+            st.executeUpdate(); //执行
+
+            //返回消息
+            jcsfyjczStr = st.getString(3);
+            yczjcxxStr = st.getString(4);
+            returnString = st.getString(5);
+            if ("1".equals(jcsfyjczStr)) {//教材是否已经重新指定
+                returnString = yczjcxxStr;
+            }
+            log.info("====== jcsfyjczStr：【" + jcsfyjczStr + "】,yczjcxxStr：【" +
+                     yczjcxxStr + "】,returnString：【" + returnString+"】");
+
+        } catch (java.sql.SQLException s) {
+            this.getDBTransaction().rollback();
+            s.printStackTrace();
+            log.info("====== 判断是否存在指定过的教材再次进行指定失败！" + s.getMessage());
+            throw new oracle.jbo.JboException(s);
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+            } catch (java.sql.SQLException s2) {
+                throw new oracle.jbo.JboException(s2);
+            }
+        }
+        return returnString;
+    }
 
 ====== 页面 ======
 
