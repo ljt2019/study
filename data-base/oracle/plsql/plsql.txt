@@ -1,5 +1,5 @@
 
-====== PL/SQL块的基本结构 以及分类 ======
+====== PL/SQL块的基本结构 ======
 1、基本结构：
   DECLARE
   	/**
@@ -9,7 +9,7 @@
   	/**
   	 * 执行部分，PL/SQL语句和SQL语句
   	 */
-  EXCEPTION
+  EXCEPTION --可以省略异常处理部分
   	/**
   	 * 异常处理部分，处理运行错误
   	 */
@@ -30,7 +30,7 @@
   
 2、变量类型
   1)、数值类型：NUMBER(P,S)以及子类型INT、FLOAT等
-  2)、字符类型：CHAER(n)、VARCHAR2(n)
+  2)、字符类型：CHAR(n)、VARCHAR2(n)
   3)、日期类型：DATE
   4)、布尔类型：BOOLEAN
   
@@ -42,9 +42,9 @@
   5)、数据库对象和列采用小写格式，如：emp(表名),sal(列字段名)等
 
 4、引用型变量(%TYPE)和记录型变量(%ROWTYPE)，将变量类型动态编码
-  2)、引用型变量：列的数据类型一致,例如：【v_name emp.ename%TYPE;】
-  3)、记录类型变量：表的数据结构一致,例如：【emp_record emp%ROWTYPE;】
-  4)、记录型变量分量的引用：【emp_record.ename := 'ROSE'】
+  1)、引用型变量：列的数据类型一致,例如：【v_name emp.ename%TYPE;】
+  2)、记录类型变量：表的数据结构一致,例如：【emp_record emp%ROWTYPE;】
+  3)、记录型变量分量的引用：【emp_record.ename := 'ROSE'】
   
 ====== 循环结构 ======
 1、基本循环
@@ -62,7 +62,7 @@ end;
 declare
   v_cnt int := 1;
 begin
-  while v_cnt <= 20 loop
+  while v_cnt <= 20 loop--循环退出
     dbms_output.put_line(v_cnt);
     v_cnt := v_cnt + 1;
   end loop;
@@ -91,7 +91,7 @@ begin
   dbms_output.put_line('外结束，' || v_result);
 end;
 
-4、continue,跳出当前循环
+4、continue,跳出当前循环，继续下一次循环
 declare
   v_cnt int := 0;
 begin
@@ -124,88 +124,87 @@ end;
 ====== 游标 ======
 1、游标：sql的一个内存工作区，由系统或以变量的形式定义。通俗来说就是一个结果集。
   1)、显示游标：
-  定义游标：【cursor cursor_name[(paramter_name datatype)] is seelct_statment;】
-  打开游标：【open cursor_name】
-  提取数据：【fetch cursor_name into var1[,var2,...]】,每次只能提取一行
-  关闭游标：【close cursor_name】
+    定义游标：【 CURSOR cursor_name[(paramter_name datatype)] IS select_statment; 】
+    打开游标：【 OPEN cursor_name 】
+    提取数据：【 FETCH cursor_name INTO var1[,var2,...] 】,每次只能提取一行
+    关闭游标：【 CLOSE cursor_name 】
   2)、游标的属性：
-  %found：检测游标结果集是否存在数据，存在则返回true
-  %notfound：结果集不存在数据，则返回true
-  %isopen：检测是否打开，打开返回true
-  %rowcount：返回实际提取的行数
-  
-  declare
-    --定义游标
-    cursor emp_cursor is
-      select emp.empno, emp.ename, emp.job from emp;
-    v_empno emp.empno%type;
-    v_ename emp.ename%type;
-    v_job   emp.job%type;
-  begin
-    --打开游标
-    open emp_cursor;
-    --提取数据
-    loop
-      fetch emp_cursor
-        into v_empno, v_ename, v_job;
-      dbms_output.put_line('员工编号：' || v_empno || ';员工姓名' || v_ename ||
+  【 %FOUND 】：检测游标结果集是否存在数据，存在则返回true
+  【 %NOTFOUND 】：结果集不存在数据，则返回true
+  【 %ISOPEN 】：检测是否打开，打开返回true
+  【 %ROWCOUNT 】：返回实际提取的行数
+  3)、代码示例：
+  DECLARE
+    --1、定义游标
+    CURSOR emp_cursor IS SELECT emp.empno, emp.ename, emp.job FROM emp;
+	--自定义变量
+    v_empno emp.empno%TYPE;
+    v_ename emp.ename%TYPE;
+    v_job   emp.job%TYPE;
+  BEGIN
+    --2、打开游标
+    OPEN emp_cursor;
+    --3、提取数据
+    LOOP
+      FETCH emp_cursor
+        INTO v_empno, v_ename, v_job;
+      DBMS_OUTPUT.PUT_LINE('员工编号：' || v_empno || ';员工姓名' || v_ename ||
                            ';员工职位：' || v_job);
-      exit when emp_cursor%notfound;
-    end loop;
-    close emp_cursor;
-  end;
+      exit when emp_cursor%NOTFOUND;
+    END LOOP;
+    CLOSE emp_cursor;--4、关闭游标
+  END;
 
 2、游标的for循环 1
-  DECLARE
-    CURSOR EMP_CURSOR IS
-      SELECT EMPNO, ENAME, JOB FROM EMP;
+  DECLARE 
+    CURSOR emp_cursor IS SELECT empno, ename, job FROM emp;
   
   BEGIN
-    FOR EMP_RECORD IN EMP_CURSOR LOOP
-      DBMS_OUTPUT.PUT_LINE('员工编号：' || EMP_RECORD.EMPNO || ';员工姓名' ||
-                           EMP_RECORD.ENAME || ';员工33333职位：' ||
-                           EMP_RECORD.JOB);
+    FOR emp_record IN emp_cursor LOOP
+      DBMS_OUTPUT.PUT_LINE('员工编号：' || emp_record.empno || ';员工姓名' ||
+                           emp_record.ename || ';员工33333职位：' ||
+                           emp_record.job);
     END LOOP;
   END;
 
 --游标的for循环 2
   BEGIN
-    FOR EMP_RECORD IN (SELECT EMPNO, ENAME, JOB FROM EMP) LOOP
-      DBMS_OUTPUT.PUT_LINE('员工编号：' || EMP_RECORD.EMPNO || ';员工姓名' ||
-                           EMP_RECORD.ENAME || ';员工职位：' ||
-                           EMP_RECORD.JOB);
+    FOR emp_record IN (SELECT empno, ename, job FROM emp) LOOP
+      DBMS_OUTPUT.PUT_LINE('员工编号：' || emp_record.empno || ';员工姓名' ||
+                           emp_record.ename || ';员工职位：' ||
+                           emp_record.job);
     END LOOP;
   END;
 
 3、参数游标
-  1)、概念：参数游标是指带有参数的游标，通过使用参数游标，是不同的参数可以生成不同的游标结果集。
+  1)、概念：参数游标是指带有参数的游标，传入不同的参数可以生成不同的游标结果集。
   2)、代码示例如下：
   --参数游标的for循环 
   DECLARE
-    CURSOR EMP_CURSOR(PARA NUMBER) IS
-      SELECT EMPNO, ENAME, JOB FROM EMP WHERE EMPNO = PARA;
+    CURSOR emp_cursor(para NUMBER) IS
+      SELECT empno, ENAME, JOB FROM EMP WHERE empno = para;
   BEGIN
-    FOR EMP_RECORD IN EMP_CURSOR( &va ) LOOP
-      DBMS_OUTPUT.PUT_LINE('员工编号：' || EMP_RECORD.EMPNO || ';员工姓名' ||
-                           EMP_RECORD.ENAME || ';员工33333职位：' ||
-                           EMP_RECORD.JOB);
+    FOR emp_record IN emp_cursor( &va ) LOOP
+      DBMS_OUTPUT.PUT_LINE('员工编号：' || emp_record.empno || ';员工姓名' ||
+                           emp_record.ename || ';员工33333职位：' ||
+                           emp_record.job);
     END LOOP;
   END;
 
 4、显示游标和隐式游标的区别
   1)、显示游标：用户自定义的显示创建，主要用于查询语句的处理。
   2)、隐式游标：由系统隐含创建，主要用于非查询语句，如修改，删除等操作，由oracle系统自动地为这些操作设置游标并创建工作区，其定义、打开、取值以及关闭操作都由系统自动完成，无需用户处理。
-  3)、隐式游标的名称为【SQL】,有oracle系统定义。
+  3)、隐式游标的名称为【 SQL 】,有oracle系统定义。
   4)、DML操作和select语句会使用隐式游标：insert(插入操作)、update(更新操作)、delete(删除操作)、select ... into(单行查询操作)
 
 5、隐式游标的属性：可以通过隐式游标的属性来了解操作的状态和结果，进而控制程序的流程。
-  1)、通过sql游标名总是只能访问一个DML操作或单行select操作的游标属性。
-  2)、SQL%FOUND 值为true表示执行成功，false表示失败
-  3)、SQL%NOTFOUND 与FOUND相反
-  4)、SQL%ISOPEN ROWCOUNT  返回成功执行后的数据的行数 
+  1)、【 SQL%FOUND 】：检测游标结果集是否存在数据，存在则返回true
+  2)、【 SQL%NOTFOUND 】：结果集不存在数据，则返回true
+  3)、【 SQL%ISOPEN 】：检测是否打开，打开返回true
+  4)、【 SQL%ROWCOUNT 】：返回实际提取的行数
   5)、代码示例如下
   BEGIN
-    UPDATE EMP SET SAL = SAL + 100 WHERE EMPNO = &NO1;
+    UPDATE emp SET sal = sal + 100 WHERE empno = &no1;
     IF (SQL%FOUND) THEN --判断该更新是否执行成功
       DBMS_OUTPUT.PUT_LINE('更新员工工资成功!');
       COMMIT;
@@ -217,7 +216,7 @@ end;
 
 6、使用游标修改或删除数据：
   1)、如果创建的游标需要执行更新或删除操作必须带有for update子句。
-  2)、for update子句会对提取出的数据进行行级锁定，这样在本会话更新期间，其他用户就不能对当前游标中的数据进行更新操作，从而保证数据完整性。
+  2)、 FOR UPDATE 子句会对提取出的数据进行行级锁定，这样在本会话更新期间，其他用户就不能对当前游标中的数据进行更新操作，从而保证数据完整性
   3)、语法格式：
   【CURSOR cursor_name IS select_statement FOR UPDATE [OF column_reference] [NOWAIT];】
   【UPDATE table_name SET column=..WHERE CURSSOR OF cursor_name;】
@@ -248,8 +247,8 @@ EXCEPTION
 		 
 4、异常的分类：
   1)、预定义异常：无需用户定义，直接引用相应的异常情况名称
-    select into 没有找到数据：【NO_DATA_FOUND】
-    select into 返回多行数据：【TOO_MANY_ROWS】
+    select into 没有找到数据：【 NO_DATA_FOUND 】
+    select into 返回多行数据：【 TOO_MANY_ROWS 】
 	代码示例：
   【DECLARE
     v_name     emp.ename%TYPE;
@@ -289,10 +288,77 @@ EXCEPTION
           DBMS_OUTPUT.PUT_LINE('其他异常');
     END;】
   
-  3)、自定义异常：用户在程序中自己定义的异常
+  3)、自定义异常：用户在程序中自己定义的异常，在某个特定的事件发生时向用户发出一些警告信息，通过显式使用RAISE；语句来触发，当引发异常错误时，控制就转向到ECEPTION块异常错误部分执行错误代码
+    (1)、在声明部分定义异常情况：【<异常情况> EXCEPTION;】
+    (2)、RAISE <异常情况>
+    (3)、在异常处理部分对异常情况做相对应的处理。
+	(4)、实例代码如下：
+    DECLARE
+      v_empno emp.empno %TYPE := &empno; 
+      e_no_result EXCEPTION;--1、定义异常情况
+    BEGIN
+      UPDATE emp SET sal = sal + 100 WHERE empno = v_empno;
+      IF SQL%NOTFOUND THEN
+        RAISE e_no_result; --2、触发自定义异常跳转到异常处理部分
+      ELSE 
+        COMMIT;
+      END IF;
+    EXCEPTION
+      WHEN e_no_result THEN --3、处理异常
+        DBMS_OUTPUT.PUT_LINE('数据更新失败！');
+      WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('其他异常');
+    END;
+  
+  4)、获得oracle错误信息代码：【SQLCODE】,获得oracle错误信息内容：【SQLERRM】
   
   
+====== 存储过程和存储函数 ======子程序，谁调用谁 commit 和 rollback
+1、存储在数据库中的被命名的PLSQL块，供所有用户程序调用，完成特定功能的子程序。
+
+2、存储过程(void方法)与存储函数(有返回值的方法)的区别，[是否用return 返回值]
+
+3、创建存储过程,语法格式
+   CREATE [OR REPLACE] PROCEDURE Procedure_name
+   [ (argment1 [ { IN |  OUT。I IN OUT } ] Type,
+      argment2 [ { IN| OUT| IN OUT } ] Type,.) ]
+   { IS|  AS }
+       声明部分，类型.变量的说明
+   BEGIN
+       执行部分
+   EXCEPTION
+       可选的异常错误处理部分
+   END;
+   
+4、创建存储函数的语法格式
+   CREATE [OR REPLACE] FUNCTION function_name
+   [ (argment1 [ { IN |  OUT。I IN OUT } ] Type,
+      argment2 [ { IN| OUT| IN OUT } ] Type,.) ]
+    RETURN return_type
+   { IS|  AS }
+       声明部分，类型.变量的说明
+   BEGIN
+       执行部分
+   EXCEPTION
+       可选的异常错误处理部分
+   END;
+   
+5、存储过程的调用
+  1)、方法一：【EXEC[UTE] pro_name( para1,para2)】
+  --1、调用无参数的存储过程
+  BEGIN 
+      sel_cnt;
+  END;
+  --2、调用带有输入输出参数的存储过程
+  DECLARE 
+   o_avg NUMBER;
+   o_cnt NUMBER;
+  BEGIN 
+      sel_cnt(10,o_avg ,o_cnt);
+      DBMS_OUTPUT.PUT_LINE('平均工作：'||o_avg); 
+      DBMS_OUTPUT.PUT_LINE('总人数'||o_cnt); 
+  END;
   
-  
-  
+  2)、方法二：【BEGIN pro_name( para1,para2) END;】
+
   
