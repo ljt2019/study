@@ -319,29 +319,103 @@ EXCEPTION
 2、存储过程(void方法)与存储函数(有返回值的方法)的区别，[是否用return 返回值]
 
 3、创建存储过程,语法格式
-   CREATE [OR REPLACE] PROCEDURE Procedure_name
-   [ (argment1 [ { IN |  OUT。I IN OUT } ] Type,
-      argment2 [ { IN| OUT| IN OUT } ] Type,.) ]
-   { IS|  AS }
-       声明部分，类型.变量的说明
-   BEGIN
-       执行部分
-   EXCEPTION
-       可选的异常错误处理部分
-   END;
-   
+  CREATE [OR REPLACE] PROCEDURE Procedure_name
+  [ (argment1 [ { IN |  OUT。I IN OUT } ] Type,
+     argment2 [ { IN| OUT| IN OUT } ] Type,.) ]
+  { IS|  AS }
+      声明部分，类型.变量的说明
+  BEGIN
+      执行部分
+  EXCEPTION
+      可选的异常错误处理部分
+  END;
+  
+  --1、创建存储过程,无返回值
+  CREATE OR REPLACE PROCEDURE first_pro IS 
+  BEGIN 
+    DBMS_OUTPUT.PUT_LINE('我是存储过程'); 
+  END; 
+  
+  --2、创建有输入参数的存储过程
+  CREATE OR REPLACE PROCEDURE del_emp(i_empno IN emp.empno%TYPE) IS
+  BEGIN
+    DELETE FROM emp WHERE emp.empno = i_empno;
+    IF (SQL%NOTFOUND) THEN
+      DBMS_OUTPUT.PUT_LINE('删除员工成功！');
+    ELSE
+      -- -20000 ~ -20999
+      /*paise_application_error(-20001,'指定删除的员工不存在');*/
+      DBMS_OUTPUT.PUT_LINE('删除员工失败！');
+    END IF;
+  END;
+  
+  --3、创建带有输出参数的存储过程
+  CREATE OR REPLACE PROCEDURE sel_cnt(i_deptno IN dept.deptno%TYPE,o_avg OUT NUMBER,o_cnt OUT NUMBER) 
+  IS
+  BEGIN
+    SELECT AVG(sal),COUNT(1) 
+    INTO o_avg,o_cnt
+    FROM emp
+    WHERE deptno = i_deptno;
+  EXCEPTION 
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('没有此部门！'); 
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLERRM); 
+  END;
+  
+  
+  --4、创建存储函数，有返回值
+  CREATE OR REPLACE FUNCTION name_func 
+  RETURN VARCHAR2 
+  IS
+  BEGIN 
+    DBMS_OUTPUT.PUT_LINE('创建存储函数，有返回值'); 
+    RETURN 'Hello Everyone!';
+  END; 
+  
+  --5、创建带有输入输出参数的存储过程，实现两数的交换
+  CREATE OR REPLACE PROCEDURE swap(io_one IN OUT NUMBER,io_two IN OUT NUMBER) 
+  IS 
+    v_temp NUMBER := 0;
+  BEGIN 
+    v_temp := io_one;
+    io_one := io_two;
+    io_two := v_temp;
+    DBMS_OUTPUT.PUT_LINE(''); 
+  END; 
+     
 4、创建存储函数的语法格式
-   CREATE [OR REPLACE] FUNCTION function_name
-   [ (argment1 [ { IN |  OUT。I IN OUT } ] Type,
-      argment2 [ { IN| OUT| IN OUT } ] Type,.) ]
-    RETURN return_type
-   { IS|  AS }
-       声明部分，类型.变量的说明
-   BEGIN
-       执行部分
-   EXCEPTION
-       可选的异常错误处理部分
-   END;
+  CREATE [OR REPLACE] FUNCTION function_name
+  [ (argment1 [ { IN |  OUT。I IN OUT } ] Type,
+     argment2 [ { IN| OUT| IN OUT } ] Type,.) ]
+   RETURN return_type
+  { IS|  AS }
+      声明部分，类型.变量的说明
+  BEGIN
+      执行部分
+  EXCEPTION
+      可选的异常错误处理部分
+  END;
+	 
+  --1、创建带有输入输出参数的存储函数
+  CREATE OR REPLACE FUNCTION caculate_emp_sal(i_empno IN emp.empno %TYPE,o_cnt OUT NUMBER)
+  RETURN NUMBER
+  IS
+   v_sumsal NUMBER;
+  BEGIN
+    SELECT SUM(sal)/COUNT(*),COUNT(*)
+    INTO v_sumsal,o_cnt
+    FROM emp WHERE deptno = i_deptno;
+    DBMS_OUTPUT.PUT_LINE('总工资:'||v_sumsal);
+    RETURN v_sumsal;
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('没有此部门！');
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+  END;   
+
    
 5、存储过程的调用
   1)、方法一：【EXEC[UTE] pro_name( para1,para2)】
@@ -361,4 +435,75 @@ EXCEPTION
   
   2)、方法二：【BEGIN pro_name( para1,para2) END;】
 
+
+====== 包 ======
+1、什么是包：包是一组相关过程、函数、变量、常量和游标等plsql程序设计元素的组合。
+
+2、包的特点：它具有面向对象程序设计语言特点，是对plsql程序设计元素(过程、函数、变量)的封装；使程序设计模块化。
+
+3、包中的程序元素：
+  1)、公用元素(公共组件)
+  2)、私用元素(私有组件)
   
+4、包的组成
+  1)、包规范(包定义)：用于定义包的公用组件，包括常量、变量、游标、过程函数等。
+  2)、包体(包主体)：用于实现包规范所定义的公用过程和函数，包体不仅可以实现公共过程函数，而且还可以定义包的私有组件(变量、游标、过程、函数)
+  3)、语法格式：
+  CREATE [OR REPLACE] PACKAGE package_name
+  IS |AS
+    --定义公用常量、变量、游标、过程(过程头)、函数(函数头)等
+  END [package_name];
+  
+  --包的创建
+  CREATE OR REPLACE PACKAGE fisrt_package
+  IS 
+    v_deptno emp.deptno %TYPE := 10;
+    --过程规范
+   PROCEDURE query_emp(i_deptno IN emp.deptno %TYPE DEFAULT v_deptno,o_avg OUT NUMBER,o_cnt OUT NUMBER);
+  END fisrt_package;
+  
+  --包体的创建
+  CREATE OR REPLACE PACKAGE BODY fisrt_package
+  IS
+    PROCEDURE query_emp(i_deptno IN emp.deptno %TYPE DEFAULT v_deptno ,o_avg OUT NUMBER,o_cnt OUT NUMBER)
+    IS
+    BEGIN
+      SELECT AVG(sal),COUNT(1)
+      INTO o_avg,o_cnt
+      FROM emp
+      WHERE deptno = i_deptno;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('没有此部门');
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    END;
+  END fisrt_package;
+  
+====== 子程序重载 ======
+1、概念：指两个或多个子程序有相同的名称，但拥有不同的参数变量、参数顺序或参数数据类型。
+
+
+====== 数据备份 ======
+1、数据备份的必要性：由于计算机系统的各种软硬件故障，用户的错误操作以及一些恶意破坏时不可避免，因此这就影响到数据的正确性，甚至造成数据损失，服务器奔溃的严重后果。
+
+2、备份解决方案：
+  1)、物理备份
+    (1)、冷备份(脱机备份)
+	  脱机备份是在数据库关闭之后进行完整备份，是最快和最安全的方法，备份的是数据库全部文件(包括参数文件、所有控制文件、所有数据文件、所有联机重做日志文件)
+    (2)、热备份
+	  用户管理备份、oracle管理备份
+  2)、逻辑备份
+
+
+====== 数据的导入和导出 ======
+1、导出.dmp 的文件格式，.dmp文件是二进制的，可以跨平台，还能包含权限，效率很不错，用的最广泛。
+
+2、导出.sql 的文件格式，可以编辑查看，通用性好，但效率不如第一种，适合小数据两的导入导出。
+
+3、将数据库orcl完全导出：【 exp system/oracle@orcl file=C:\AAAAA\orcl_bak\orcl_bak.dmp full=y 】
+
+4、将数据库中scott用户所有对象导出：【 exp scott/123456@orcl file=C:\AAAAA\orcl_bak\scott_bak.dmp owner=scott 】
+
+5、将数据库中scott用户中表 emp、dept对象导出：【 exp scott/tiger1@orcl file=C:\AAAAA\orcl_bak\table_bak.dmp tables=(emp,dept) 】
+
+6、数据导入：【 imp [username/password] 参数1 参数2 ... ... 】
