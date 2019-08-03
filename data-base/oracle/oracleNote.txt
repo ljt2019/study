@@ -336,7 +336,7 @@
   • 如果别名包含空格或特殊字符，或者区分大小写，
   则需要使用双引号
   
-2、连接运算符：select last_name,job_id, last_name || ' is a '|| job_id as "Employees" from employees;
+2、连接运算符：select last_name,job_id, last_name || ' is a '|| job_id as "Employees" from emp;
   连接运算符具有以下特征和用途：
   • 将列或字符串链接到其它列
   • 由两条竖线 (||) 表示
@@ -372,9 +372,9 @@
   – 列表达式
   – 表名
   – 整个 SELECT 语句
-  使用替代变量指定数值：【SELECT * FROM employees WHERE employee_id = &employee_num;】
-  使用替代变量指定字符值和日期值：【SELECT * FROM employees WHERE job_id = '&job_title';】
-  指定列名、表达式和文本：【SELECT employee_id, last_name, job_id,&column_name FROM employees WHERE &condition ORDER BY &order_column;】
+  使用替代变量指定数值：【SELECT * FROM emp WHERE deptno = &employee_num;】
+  使用替代变量指定字符值和日期值：【SELECT * FROM emp WHERE job_id = '&job_title';】
+  指定列名、表达式和文本：【SELECT deptno, last_name, job_id,&column_name FROM emp WHERE &condition ORDER BY &order_column;】
   使用双与号替代变量,双与号 (&&)可以将变量保存起来，而不必每次都输入
 
 8、使用 DEFINE 命令
@@ -414,7 +414,7 @@
   • MOD：返回除法运算的余数【select MOD(1600, 300) from DUAL --> 100】
 
 14、处理日期，默认的日期显示格式为 DD-MON-RR
-  MONTHS_BETWEEN 两个日期之间的月数，计算工作年数和月数：【SELECT hire_date,trunc(months_between(SYSDATE,hire_date)/12) FROM employees;】
+  MONTHS_BETWEEN 两个日期之间的月数，计算工作年数和月数：【SELECT hire_date,trunc(months_between(SYSDATE,hire_date)/12) FROM emp;】
 
 15、条件表达式：
   1)、CASE 表达式：【CASE expr WHEN comparison_expr1 THEN return_expr1 [WHEN comparison_expr2 THEN return_expr2 WHEN comparison_exprn THEN return_exprn ELSE else_expr] END】
@@ -429,7 +429,7 @@
           ELSE salary
       END "REVISED_SALARY"
   FROM
-      employees;】
+      emp;】
 
   2)、DECODE 函数：【DECODE(col|expression, search1, result1 [, search2, result2,...,] [, default])】
   【SELECT
@@ -438,7 +438,7 @@
       salary,
       DECODE(job_id,'IT_PROG',1.10 * salary,'ST_CLERK',1.15 * salary,'SA_REP',1.20 * salary,salary) revised_salary
   FROM
-      employees;】
+      emp;】
   
 16、何谓组函数：组函数会对行集进行计算，为每个组提供一个结果。
 
@@ -454,24 +454,24 @@
   
 17、组函数和空值
   
-  1)、组函数将忽略列中的空值：【SELECT AVG(commission_pct) FROM employees; 】
+  1)、组函数将忽略列中的空值：【SELECT AVG(commission_pct) FROM emp; 】
 
-  2)、NVL 函数会强制组函数包括空值：【SELECT AVG(NVL(commission_pct, 0)) 2 FROM employees;】
+  2)、NVL 函数会强制组函数包括空值：【SELECT AVG(NVL(commission_pct, 0)) 2 FROM emp;】
   
 18、SELECT 列表中未出现在组函数中的所有列都必须包含在GROUP BY 子句中
-   【SELECT department_id, AVG(salary) FROM employees GROUP BY department_id ;】
+   【SELECT deptno, AVG(salary) FROM emp GROUP BY deptno ;】
 
 19、按多个列进行分组：将 EMPLOYEES 表中每种职务的薪金相加，并按部门进行分组
-   【SELECT department_id, job_id, SUM(salary) FROM employees WHERE department_id > 40 GROUP BY department_id, job_id;】
+   【SELECT deptno, job_id, SUM(salary) FROM emp WHERE deptno > 40 GROUP BY deptno, job_id;】
 
-20、使用 HAVING 子句限定组结果：【SELECT department_id, MAX(salary) FROM employees GROUP BY department_id HAVING MAX(salary)>10000 ;】
+20、使用 HAVING 子句限定组结果：【SELECT deptno, MAX(salary) FROM emp GROUP BY deptno HAVING MAX(salary)>10000 ;】
 
 21、嵌套组函数：【】
 
 22、自然连接（NATURAL JOIN）是一种特殊的等值连接，将表中具有相同名称的列自动进行匹配。自然连接不必指定任何连接条件。
 
 23、使用非等值联接检索记录
-   【SELECT e.last_name, e.salary, j.grade_level FROM employees e JOIN job_grades j ON e.salary BETWEEN j.lowest_sal AND j.highest_sal;】
+   【SELECT e.last_name, e.salary, j.grade_level FROM emp e JOIN job_grades j ON e.salary BETWEEN j.lowest_sal AND j.highest_sal;】
 
 24、笛卡尔积，以下情况时将形成笛卡尔积
   
@@ -486,12 +486,141 @@
   1)、先执行子查询（内部查询），再执行主查询（外部查询）
 
   2)、主查询会使用子查询的结果
+  
+  3)、单行子查询：【 select empno,ename,sal from emp where sal<(select max(sal) from emp) and sal>(select min(sal) from emp); 】
+  
+  4)、多行子查询：多行子查询 返回多行数据的子查询
+    (1)、使用in运算符：【 select empno,ename,sal from emp where deptno in (select deptno from dept where dname <> 'sales'); 】
+    (2)、使用any运算符：【 select depno,ename,sal from emp where sal > any (select sal from emp where deptno =10) and depno <> 10; 】
+    (3)、使用all运算符：【 select depno,ename,sal from emp where sal > all (select sal from emp where deptno=30); 】
 
-26、for update : 会对正在操作的行进行锁定
+26、排除信息【<> ALL】：【 SELECT * FROM emp WHERE deptno <> ALL ( SELECT deptno FROM emp WHERE deptno = 20); 】
 
+27、for update : 会对正在操作的行进行锁定
 
-P229
+28、聚合函数过滤用having而不是where：【 SELECT e.deptno ID,COUNT(1),MAX(e.sal) FROM emp e GROUP BY e.deptno HAVING  MAX(e.sal) > 3000; 】
 
+29、EXISTS
+  比如 a,b 关联列为 a.id = b.id，现在要取 a 中的数据，其中id在b中也存在：
+  【select * from a where exists(select 1 from b where a.id = b.id);】
+  或者：
+  现在要取 a 中的数据，其中id在b中 不存在：
+  【select * from a where not exists(select 1 from b where a.id = b.id);】
+  
+  In 和 exists 对比：若子查询结果集比较小，优先使用 in，若外层查询比子查询小，优先使用 exists。
+
+30、集合运算符准则：SELECT 列表中的表达式在数量和类型上必须匹配
+  1)、UNION/UNION ALL：除非使用 UNION ALL 运算符，否则会自动删除重复行，第一个查询中的列名将显示在结果中。
+  2)、INTERSECT：运算符将返回两个查询的共同行。
+  3)、MINUS：运算符将返回由第一个查询选定的但没有出现在第二个查询结果集中的所有不同行。
+    --1、要连接查询：求每个部门员工数以及总人数
+    SELECT * FROM (
+        SELECT dept.dname name,COUNT(emp.deptno) cnt 
+        FROM emp,dept 
+        WHERE dept.deptno = emp.deptno(+) 
+        GROUP BY dept.dname
+        UNION ALL
+        SELECT '总数' name,COUNT(*) cnt FROM emp
+      ) t ORDER BY cnt;
+      
+    --2、视图：求每个部门员工数以及总人数
+    SELECT dept.dname, DECODE(c.cnt,0,c.cnt)
+    FROM dept
+         ,(SELECT emp.deptno,COUNT(emp.deptno) cnt FROM emp GROUP BY emp.deptno) c 
+    WHERE dept.deptno = c.deptno(+)
+    UNION ALL
+    SELECT '员工总数', COUNT(emp.deptno) cnt FROM emp;
+    
+      
+    --3、分析函数：求每个部门员工数以及总人数
+    SELECT dept.dname, c.count_id 
+    FROM (select distinct emp.deptno deptno,count(emp.deptno) 
+          over(partition by emp.deptno 
+          order by emp.deptno) count_id
+          from emp
+          ) c,
+         dept
+    WHERE dept.deptno = c.deptno(+)
+    UNION ALL
+    SELECT '员工总数', COUNT(emp.deptno) FROM emp;
+    
+    --4、使用rollup函数
+    select decode(grouping(dept.dname),1,'员工总数',dept.dname)
+           ,count(emp.deptno)
+    from dept,emp
+    where dept.deptno=emp.deptno(+)
+    group by rollup(dept.dname)
+    ORDER BY count(emp.deptno);
+
+31、从其它表中复制行：请勿使用 VALUES 子句，使 INSERT 子句中的列数与子查询中的列数匹配。
+【 INSERT INTO sales_reps(id, name, salary, commission_pct) SELECT deptno, last_name, salary, commission_pct FROM emp WHERE job_id LIKE '%REP%'; 】
+
+32、使用子查询创建表：
+【CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;】
+
+33、将表重新置于读/写模式：【ALTER TABLE emp READ ONLY;】、【ALTER TABLE emp READ WRITE;】
+
+34、创建视图：【CREATE OR REPLACE VIEW EMPVU80 AS SELECT deptno, job, sal FROM emp WHERE deptno = 20;】
+
+35、拒绝DML操作：【WITH READ ONLY】
+
+36、确保对视图执行的 DML 操作只在视图范围内起作用：【WITH CHECK OPTION】
+CREATE OR REPLACE VIEW empvu20 AS SELECT * FROM emp WHERE deptno = 20 WITH CHECK OPTION CONSTRAINT empvu20_ck ;
+
+37、创建序列：
+【CREATE SEQUENCE dept_deptid_seq
+INCREMENT BY 10
+START WITH 120
+MAXVALUE 9999
+NOCACHE
+NOCYCLE;】
+
+38、创建索引：【CREATE [UNIQUE][BITMAP]INDEX index ON table (column[, column]...);】、【CREATE INDEX emp_last_name_idx ON emp(last_name);】
+
+39、删除索引：【DROP INDEX index;】
+
+40、rollup和grouping函数
+  SELECT DECODE(grouping(GROUP_ID),1,'总量',GROUP_ID)
+         ,DECODE(grouping(JOB),1,'部门编号为【'||GROUP_ID||'】的总量',JOB) 
+         ,sum(salary) 
+  from group_test 
+  group by rollup(group_id, job);
+  
+41、with 子句：使用 WITH AS 语句可以为一个子查询语句块 定义一个名称
+  1)、SQL 可读性增强。比如对于特定 with 子查询取个有意义的名字等。
+  2)、with 子查询只执行一次，将结果存储在用户临时表空间中，可以引用多次，增强性能。
+  3)、例子：查询出部门的总薪水大于所有部门平均总薪水的部门
+  WITH 
+    a AS (SELECT emp.deptno deptno,SUM(emp.sal) cnt FROM emp GROUP BY emp.deptno)
+    ,b AS (SELECT SUM(cnt)/COUNT(deptno) dep_avg FROM a)
+  SELECT dept.dname,cnt FROM a,dept WHERE dept.deptno = a.deptno AND cnt > (SELECT dep_avg FROM b)
+
+42、merge into 合并资料，
+  1)、语法：(其中 as 可以省略)
+  MERGE INTO table_name AS table_alias
+  USING (table|view|sub_query) AS alias
+  ON (join condition)
+  WHEN MATCHED THEN
+  UPDATE SET
+  col1 = col_val1,
+  col2 = col2_val --9i 不可以有 where 条件，10g 可以
+  WHEN NOT MATCHED THEN
+  INSERT (column_list)—多个列以逗号分割 //可以不指定列
+  VALUES (column_values); --9i 不可以有 where 条件，10g 可以
+  
+  2)、例子：
+  --10g新特性，满足条件的插入和更新
+  merge into acct a
+  using subs b on (a.msid=b.msid)
+  when MATCHED then
+  update set a.areacode=b.areacode
+  where b.ms_type=0
+  when NOT MATCHED then
+  insert(msid,bill_month,areacode)
+  values(b.msid,'200702',b.areacode)
+  where b.ms_type=0; 
+
+ ，
 
 
 
