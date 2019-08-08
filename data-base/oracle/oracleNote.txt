@@ -547,7 +547,7 @@ FROM student st
      ,major mj
 WHERE st.major_id = mj.id(+);
 
-
+从一张表中批量选中数据插入另外一张表中：【insert into t2 (xjh,xsid) select xh|| '10' AS xjh ,xsid from t1  WHERE xx = yy;】
 
 
 
