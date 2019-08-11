@@ -544,7 +544,7 @@
     UNION ALL
     SELECT '员工总数', COUNT(emp.deptno) FROM emp;
     
-    --4、使用rollup函数
+    --4、使用rollup函数：求每个部门员工数以及总人数
     select decode(grouping(dept.dname),1,'员工总数',dept.dname)
            ,count(emp.deptno)
     from dept,emp
@@ -620,8 +620,45 @@ NOCYCLE;】
   values(b.msid,'200702',b.areacode)
   where b.ms_type=0; 
 
- ，
+43、层次查询
+  1)、语法格式：【 select [level],colum,expr... from table [where condition(s)] [start with condition(s)] [connect by prior condition(s)]; 】
+  
+  2)、从id=2的员工开始查找其子节点，把整棵树删除
+   【 select id from s_emp a tart with id=2 connect by prior id=manager_id); 】
+  
+  3)、给定一个具体的 emp 看是否对某个 emp 有管理权，也就是从给定的节点寻找，看其子树节点中能否找到这个节点。如果找到，返回，找不到，no rows returned. 
+   【 select level,a.* from s_emp a where first_name='Elena' start with manager_id is null connect by prior id=manager_id; 】
+   
+  4)、找出每个部门的经理
+    【select level,a.* from s_emp a start with manager_id is null connect by prior id=manager_id and dept_id !=prior dept_id; 】
 
+44、case
+  1)、case 表达式返回的是一个确定的 value，如果没有 else，若前面的都不匹配，则返回 null。
+  2)、简单 case 中的表达式，when 后面的表达式类型应该全部保持一致
+  3)、所有的 then 后面的 return_value 类型要保持一致 
+
+45、子查询：非相关子查询效率高相关子查询
+  1)、非相关子查询：非相关子查询是独立于外部查询的子查询，子查询总共执行一次，执行完毕后
+将值传递给外部查询。
+  
+  2)、相关子查询：相关子查询的执行依赖于外部查询的数据，外部查询执行一行，子查询就执行一次。
+
+====== 分析函数，对数据提供多维分析 ======
+1、分类
+  1)、等级函数(ranking)
+  2)、聚合函数(aggregate)
+  3)、行比较函数(row comparison)
+  4)、统计函数(statistical)
+  
+2、分子子句构成：
+  1)、partition 子句：确定如何对行进行分组，如果没有 partition 子句，那么所有行为一组。
+  2)、window 子句：确定当前行对应的窗口范围，从而用分析函数计算当前行对应的窗口的值，如果没有 window 子句，而有 order by那么默认窗口范围是组的首行到当前行，如果没有 order by，那么默认是组的首行到组的末行。
+行。
+  3)、order by 子句：确定组内的排序规则。
+
+
+
+  
 
 
 
