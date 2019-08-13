@@ -1,0 +1,36 @@
+import asyncComponent from 'src/utils/asyncComponent';
+// 自定义的成绩分项小图标
+import ScoreSubItem from 'assets/svg/scoreSubItem.svg';
+// 自定义的成绩录入设置小图标
+import ScoreImportSetting from 'assets/svg/scoreImportSetting.svg';
+// 自定义的成绩录入管理小图标
+import ScoreImportManage from 'assets/svg/scoreImportManage.svg';
+// 自定义的成绩查询管理小图标
+import ScoreQueryManage from 'assets/svg/scoreQueryManage.svg';
+// 自定义的成绩分析管理小图标
+import ScoreAnalysis from 'assets/svg/scoreAnalysis.svg';
+
+// 成绩打印 component
+const ExportStudentScore = asyncComponent({
+    loader: () => import("../pages/scoreQuery/exportStudentScore/ExportStudentScore") //加载资源
+});
+
+
+// 侧边栏菜单（一级菜单可以不用配置url）
+export const allMenu = [
+    {
+        name: '成绩查询管理',
+        icon: ScoreQueryManage,
+        isSvg: true,
+        key: 'scoreQuery',
+        children: [
+            {
+                name: '成绩打印',
+                url: '/exportStudentScore',
+                key: 'exportStudentScore',
+                permission: "exportStudentScore:query",
+                component: ExportStudentScore  //上边定义的组件
+            }
+        ]
+    } 
+];
