@@ -470,10 +470,10 @@
 
 22、自然连接（NATURAL JOIN）是一种特殊的等值连接，将表中具有相同名称的列自动进行匹配。自然连接不必指定任何连接条件。
 
-23、使用非等值联接检索记录
-   【SELECT e.last_name, e.salary, j.grade_level FROM emp e JOIN job_grades j ON e.salary BETWEEN j.lowest_sal AND j.highest_sal;】
+23、非等值联接检索记录：查询员工工资以及工资所属级别
+   【SELECT * FROM emp e,salgrade sg WHERE e.sal BETWEEN sg.losal AND sg.hisal;】
 
-24、笛卡尔积，以下情况时将形成笛卡尔积
+24、笛卡尔积，以下情况时将形成笛卡尔积，使用连接条件可以避免笛卡尔全集（n-1个连接条件，n为表个数）
   
   1)、联接条件被忽略
   
@@ -642,6 +642,10 @@ NOCYCLE;】
 将值传递给外部查询。
   
   2)、相关子查询：相关子查询的执行依赖于外部查询的数据，外部查询执行一行，子查询就执行一次。
+  
+46、行转列：
+  1)、wm_concat：wm_concat(e.ename)
+  2)、listagg：listagg(e.ename,',') WITHIN GROUP (ORDER BY e.job)
 
 ====== 分析函数，对数据提供多维分析 ======
 1、分类
