@@ -1,0 +1,70 @@
+import React, { Component } from "react";
+import TableUtil from "../../../../../../utils/TableUtil";
+import { DragModal, TableBox, Permission, Scrollbars } from "components";
+import { Row, Col, Pagination, Button, message, Divider } from "antd";
+
+import ExportStudentScoreService from "./ExportStudentScoreService";
+import ExportStudentScoreSearch from './ExportStudentScoreSearch'
+import PrintModal from "./scorePrint/printModal";
+/**
+ *
+ * 学生成绩导出
+ *
+ * @author yangchunming
+ * @date 2019.07.18
+ * @export
+ * @class ExportStudentScore
+ * @extends {Component}
+ */
+export class ExportStudentScore extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      //打印模态框
+      printModalVisible: false,
+    };
+  }
+
+  //打印模态框 
+  showPrintModalVisible = () => {
+    console.log('========== 将printModalVisible的值设置为true ==========');
+    this.setState({
+      printModalVisible: !this.state.printModalVisible
+    });
+  };
+
+  render() {
+    //执行
+    return (
+      <div>
+        <div className="page_btn_box">
+          <Permission name="exportStudentScore:export">
+		  {/****** 点击按钮触发方法showPrintModalVisible ******/}
+          <Button type="primary" onClick={this.showPrintModalVisible}>
+             打印
+          </Button>
+          </Permission>
+        </div>
+
+        {/************************* 打印 ********************/}
+        <DragModal
+            title="打印"
+            width={600}
+            destroyOnClose
+            maskClosable={false}
+            visible={this.state.printModalVisible}
+            onCancel={this.showPrintModalVisible}
+            footer={null}
+            >
+            {/* <PrintModal ref="printModal" setChild={this.setChild}
+                              searchSituationLength={this.state.dataSource.length}
+                              selectedRowKeys={this.state.selectedRowKeys}
+                              params={this.params}
+            /> */}
+        </DragModal>
+      </div>
+    );
+  }
+}
+
+export default ExportStudentScore;

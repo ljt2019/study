@@ -1,0 +1,72 @@
+
+1、分页标签：
+  <Row className="page_pagination" gutter={24}>
+    <Col span={6}>
+      <span
+        style={{
+          lineHeight: "32px",
+          fontSize: "14px"
+        }}
+      >
+        每页{this.params.pageSize}条记录 , 共{this.state.total}条记录
+      </span>
+    </Col>
+    <Col span={18} className="tr">
+      <Pagination
+        showLessItems
+        showQuickJumper
+        showSizeChanger
+        current={this.params.pageNo}
+        total={this.state.total}
+        onShowSizeChange={(current, pageSize) => TableUtil.onShowSizeChange(this, current, pageSize)}
+        pageSize={this.params.pageSize}
+        onChange={(pageNo) => TableUtil.pageChange(this, pageNo)}
+      />
+    </Col>
+  </Row>
+		
+2、表单：
+  <TableBox
+           onRef={(ref) => TableUtil.onTableBoxRef(this, ref)}
+           className="mt10"
+           tableOption={{
+             loading: this.state.loading,
+             bordered: true,
+             rowKey: (record, index) => {
+               return record.studentId;
+             },
+             size: TableUtil.TABLE_SIZE_MIDDLE,
+             columns,
+             rowSelection: TableUtil.getRowSelection(this),
+             dataSource: this.state.dataSource,
+             pagination: false,
+             scroll: { x: TableUtil.calculateColumsWidthSum(columns) }
+           }}
+  />
+  
+3、
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

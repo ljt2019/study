@@ -1,0 +1,103 @@
+
+====== 窗口快捷键 ======
+ 1、Ctrl+W,W: 浏览器窗口
+ 2、Ctrl+W,S: 解决方案管理器 （Solution）
+ 3、Ctrl+W,C: 类视图 （Class）
+ 4、Ctrl+W,E: 错误列表 （Error）
+ 5、Ctrl+W,O: 输出窗口（Output）
+ 6、Ctrl+W,P: 属性窗口 （Property）
+ 7、Ctrl+W,T: 任务列表 （Task）
+ 8、Ctrl+W,X: 工具箱 （Tool,t已被任务列表占用）
+ 9、Ctrl+W,B: 书签窗口 （Bookmark,方便寻找代码）
+10、Ctrl+W,U: 文档大纲 （OutLine；第二个字母U）
+11、Ctrl+D,B: 断点窗口 （breakpoint）
+12、Ctrl+D,I: 即时窗口 （immediately）
+
+====== 项目功能快捷键 ======
+ 1、CTRL+TAB：活动窗体切换 （alt+tab：任务切换）
+ 2、CTRL+SHIFT+TAB：上一个文档窗口
+ 3、F7: 查看代码 （WebForm：查看后台代码）
+ 4、Shift+F7: 查看窗体设计器 (在后台cs文件时，方便跳到前台.aspx页面)
+ 5、Ctrl+Shift+N: 新建项目 
+ 6、Ctrl+Shift+O: 打开项目
+ 7、CTRL+SHIFT+C：显示类视图窗口
+ 8、CTRL+F4：关闭文档窗口 9 CTRL+SHIFT+E：显示资源视图 （Explorer）
+10、CTRL+SHIFT+B：生成解决方案 （Build）
+11、Shift+F6：生成当前项目
+12、F4：显示属性窗口（SHIFT+F4显示项目属性窗口）
+13、Ctrl+Shift+S: 全部保存 （Save）
+14、Shift+Alt+C: 新建类 （shift跟项目有关，Class）
+
+====== 查找相关快捷键 ======
+1、Ctrl+F: 查找 （Find） 
+2、Ctrl+Shift+F: 在文件中查找
+3、F3: 查找下一个
+4、Shift+F3: 查找上一个
+5、Ctrl+H: 替换 
+6、Ctrl+Shift+H: 在文件中替换
+
+====== 代码快捷键 ======
+ 1、ctrl+k,d：格式化代码
+ 2、Ctrl+E,F：格式化选中的代码
+ 3、Ctrl+K,C: 注释选定内容 （Comment）
+ 4、Ctrl+K,U: 取消选定内容注释 （UnComment）
+ 5、Ctrl+J：智能提示
+ 6、Ctrl+K,L:列出成员 （kernel核心内容，list）
+ 7、Ctrl+K,P: 参数信息 （kernel核心内容 ，Parameters参数）
+ 8、Ctrl+K,I: 快速查看信息（Infomation）
+ 9、Ctrl+K,S: 外侧代码
+10、CTRL+M：折叠或展开当前方法
+11、CTRL+M,O：折叠所有方法
+12、CTRL+M,L：展开所有方法 
+13、Ctrl+M,P: 停止大纲显示 
+14、ctrl+shift+f10：自动添加命名空间、实例化对象
+
+====== 调试快捷键 ======
+ 1、F5: 启动调试
+ 2、Ctrl+F5: 开始执行(不调试)
+ 3、Shift+F5: 停止调试
+ 4、Ctrl+Shift+F5: 重启调试
+ 5、F9: 启用/关闭断点
+ 6、Ctrl+F9: 停止断点
+ 7、Ctrl+Shift+F9: 删除全部断点
+ 8、F10: 逐过程 
+ 9、Ctrl+F10: 运行到光标处 
+10、F11: 逐语句
+
+====== 编辑快捷键 ======
+ 1、Shift+Alt+Enter: 切换全屏编辑
+ 2、F12: 转所调用过程、变量的定义
+ 3、Alt+F12: 查找符号(列出所有结果)
+ 4、shift+f12:查找所有引用（光标放在单词上，按Shift+F12）
+ 5、Ctrl+U: 全部变为小写(sql语句全部转换成大写以提高性能 )
+ 6、Ctrl+Shift+U:全部变为大写（Upper ）
+ 7、Ctrl+Shift+V:剪贴板循环（可粘贴上几次剪切的结果）
+ 8、Ctrl+Shift+L: 删除当前行
+ 9、Ctrl+E,S: 查看空白(同ctrl+r,w)
+10、Ctrl+E,W: 自动换行
+11、Ctrl+G: 转到指定行
+12、Shift+Alt+箭头键:选择矩形文本（同Alt+鼠标左按钮）
+13、CTRL+DELETE：删除至词尾（CTRL+BACKSPACE删除至词头）
+14、Ctrl+左右箭头键:移动单词 
+15、Ctrl+单击: 选中当前单词 
+16、SHIFT+END：选至行尾 
+17、SHIFT+HOME：选至行开始处 
+18、CTRL+SHIFT+END：选至文档末尾 （CTRL+SHIFT+HOME选择至文档末尾开始）
+19、CTRL+SHIFT+PAGE UP：选择至本页前面（CTRL+SHIFT+PAGE DOWN选择至本页后面） 
+20、CTRL+PAGE DOWN：光标定位到窗口上方（CTRL+PAGE UP光标定位到窗口下方）
+21、两下tab：快速代码段（for,foreach循环，try, 绑定事件方法） 
+22、ctrl+减号：回退到光标上一次的位置
+
+
+
+
+
+
+
+
+
+
+
+
+
+

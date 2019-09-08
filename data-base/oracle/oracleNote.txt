@@ -660,13 +660,72 @@ NOCYCLE;】
 行。
   3)、order by 子句：确定组内的排序规则。
 
+<<<<<<< HEAD
 
 
   
 
 
+=======
+将一行变多行：【 WITH t AS (SELECT 'G01-0005,9787508284309' txt FROM dual) 
+SELECT replace(regexp_substr(txt,'[^,]+',1,level),',','') txt FROM t 
+CONNECT BY level<=length(txt)-length(replace(txt,',',''))+1 】
 
+【  (
+    --多行转一行
+    SELECT LISTAGG(cbs.cbsmc,',') within group(order by cbs.cbsmc) FROM jcgl_cbsxx cbs 
+    WHERE cbs.cbsdm IN (
+    SELECT jckxxb.cbs FROM jcgl_jckxxb jckxxb WHERE jckxxb.isbn IN (
+	  --一行转多行
+      SELECT replace(regexp_substr(jxrwb.jcbh,'[^,]+',1,level),',','') FROM dual 
+      CONNECT BY level<=length(jxrwb.jcbh)-length(replace(jxrwb.jcbh,',',''))+1
+      )
+    )
+  ) AS cbs,--出版社】
+  
+  SELECT
+      wm_concat(isbn)
+  INTO
+      v_jcbm --更新到 JXJHGL_JXRWB 的 jcbh 字段中
+  FROM
+      jcgl_jckxxb
+  WHERE
+      isbn IN (
+          SELECT
+              column_value
+          FROM
+              TABLE ( i_jcbm )
+      );
+>>>>>>> 1132063b59395bd205e13fb75bd0d99843362813
 
+P229
+
+创建序列：
+【create SEQUENCE student_SEQ】
+插入序列：【INSERT INTO tbl_test VALUES(seq_test.nextval,'测试');】
+
+plsql中代替遍历，启用table方式
+  【UPDATE jxjhgl_jxrwb jxjhgljxrwb
+      SET
+          jxjhgljxrwb.jcmc = v_jcmc,
+          jxjhgljxrwb.jcbh = v_jcbm
+  WHERE
+      jxjhgljxrwb.jxbh IN (
+          SELECT
+              column_value
+          FROM
+              TABLE ( v_cbjxbh )
+      );】
+
+带(+)为从表
+SELECT st.id
+      ,st.name
+      ,mj.name 
+FROM student st
+     ,major mj
+WHERE st.major_id = mj.id(+);
+
+从一张表中批量选中数据插入另外一张表中：【insert into t2 (xjh,xsid) select xh|| '10' AS xjh ,xsid from t1  WHERE xx = yy;】
 
 
 

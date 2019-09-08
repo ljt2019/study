@@ -36,7 +36,7 @@
         }
     }
 	
-  自定义查询
+  自定义查询，遍历
   DCIteratorBinding dc =
       ADFUtils.findIterator("JcglJcckbView1Iterator"); //页面绑定迭代器
   JcglJcckbViewImpl jcVo =
@@ -46,19 +46,42 @@
   jcVo.setNamedWhereClauseParam("p_bjh", bjh);
   jcVo.executeQuery(); //查询
   jcVo.setWhereClauseParams(null); //删除定义的绑定变量
-  RowSetIterator rsi = jcVo.createRowSetIterator(null);
+
+
+  JgglZdjcxxHzImpl bjjcsymxVo =
+      (JgglZdjcxxHzImpl)ADFUtils.findIterator("JgglZdjcxxHz1Iterator").getViewObject();
+  bjjcsymxVo.executeQuery();
+  //遍历方式1
+  log.warning("====== sql: " + bjjcsymxVo.getQuery());
+  bjjcsymxVo.setRangeSize(-1);
+  Row[] rows = bjjcsymxVo.getAllRowsInRange();
+  log.warning("====== 班级教材使用明细: " + rows.length);
+  for (oracle.jbo.Row row : rows) {
+      log.warning("====== 班级教材使用明细,课程名称: " +
+                  row.getAttribute("Kcmc"));
+  }
+  //遍历方式2
+  RowSetIterator rsi = bjjcsymxVo.createRowSetIterator(null);
   oracle.jbo.Row row = null;
-  int k = 0;
   while (rsi.hasNext()) {
       row = rsi.next();
-      Object ckdh = row.getAttribute("Ckdh");
-      String ckdhStr = ckdh.toString();
-      ckdhArr[k] = ckdhStr;
-      log.info("====== 出库单号：" + ckdhStr);
-      k++;
+      log.warning("====== 班级教材使用明细,课程名称: " +
+                  row.getAttribute("Kcmc"));
   }
   rsi.closeRowSetIterator();
+  
+        Map<String, String> cellValues = new HashMap();
+        BysxxVoRowImpl bysxxRow = (BysxxVoRowImpl)row;
+        //学生信息
+        RowIterator xjkvo = bysxxRow.getGxhXjk();
+        while (xjkvo.hasNext()) {
+            Row xjkRow = xjkvo.next();
+            for (String attrName : xjkRow.getAttributeNames()) {
+                cellValues.put(attrName,
+                               String.valueOf(xjkRow.getAttribute(attrName)));
 
+            }
+        }
 
 5、关闭弹窗：addXsPop.hide();//addXsPop 为组件的绑定值：<af:popup id="addxsPop" binding="#{jxjhJxrwBean.addXsPop}" />
 
@@ -87,25 +110,6 @@
                 (ViewObjectImpl)ADFUtils.findIterator("JcglBjJczdxxVo1Iterator").getViewObject();
             Row jcRow = jcckbVo.getCurrentRow();
             String bjh = bjh = (String)jcRow.getAttribute("Bjdm");
-			
-14、遍历：
-            DCIteratorBinding kcdc =
-                ADFUtils.findIterator("JcglJcckbView1Iterator"); //页面绑定迭代器
-            JcglJcckbViewImpl jcVo = (JcglJcckbViewImpl)kcdc.getViewObject();
-            jcVo.setv_bjh(bjh);
-            jcVo.executeQuery();
-            Row[] cjRows = jcVo.getAllRowsInRange();
-            for (int i = 0; i < cjRows.length; i++) {
-                Row cjRow = cjRows[i];
-                Object ckdh = cjRow.getAttribute("Ckdh");
-                String ckdhStr = ckdh.toString();
-                log.info("====== 出库单号：" + ckdhStr);
-                String[] ckdhArr = new String[1];
-                ckdhArr[0] = ckdhStr;
-                ckdhArray = ckdhArr;
-            }
-			
-
 	
 it.insertRow(newrow);
 
@@ -140,31 +144,31 @@ it.insertRow(newrow);
         Row[] allRow = xscjVoImpl.getAllRowsInRange();
 
 19、获取AM中的方法：【 OperationBinding op = ADFUtils.findOperation("jcsfyjczPro");】
-                OperationBinding op =
-                    ADFUtils.findOperation(" "); //JcglServiceAMImpl
-                if (op.isOperationEnabled()) {
-                    Map map = op.getParamsMap();
-                    map.put("jxbhList", jxbhList);
-                    map.put("jcbmList", isbnList);
-                    op.execute();
-                    if (op.getErrors().size() == 0) {
-                        String hhf = "<br>";
-                        retInfo = (String)op.getResult();
-                        //如果存在教学班已指定过某本教材，就弹出popup提示用户重新选择教学班及征订教材信息
-                        if (!"OK".equals(retInfo) && retInfo != null) {
-                            retInfo = retInfo.replace(".", hhf);
-                            retInfo =
-                                    retInfo + "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该门课已指定该教材，且已提交或者审核通过了，无需再次指定！";
-                            ADFContext.getCurrent().getPageFlowScope().put("err",
-                                                                           retInfo);
-                            RichPopup alPop =
-                                (RichPopup)JSFUtils.findComponentInRoot("alPop");
-                            //弹出提示框
-                            JSFUtils.showPopup(alPop);
-                            return;
-                        }
-                    }
-                }
+  【OperationBinding op =
+      ADFUtils.findOperation(" "); //JcglServiceAMImpl
+  if (op.isOperationEnabled()) {
+      Map map = op.getParamsMap();
+      map.put("jxbhList", jxbhList);
+      map.put("jcbmList", isbnList);
+      op.execute();
+      if (op.getErrors().size() == 0) {
+          String hhf = "<br>";
+          retInfo = (String)op.getResult();
+          //如果存在教学班已指定过某本教材，就弹出popup提示用户重新选择教学班及征订教材信息
+          if (!"OK".equals(retInfo) && retInfo != null) {
+              retInfo = retInfo.replace(".", hhf);
+              retInfo =
+                      retInfo + "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该门课已指定该教材，且已提交或者审核通过了，无需再次指定！";
+              ADFContext.getCurrent().getPageFlowScope().put("err",
+                                                             retInfo);
+              RichPopup alPop =
+                  (RichPopup)JSFUtils.findComponentInRoot("alPop");
+              //弹出提示框
+              JSFUtils.showPopup(alPop);
+              return;
+          }
+      }
+  }】
 				
 20、执行存储过程
     public String jcsfyjczPro(List jxbhList, List isbnList) {
@@ -216,6 +220,87 @@ it.insertRow(newrow);
         }
         return returnString;
     }
+
+
+  StringBuilder builder = new StringBuilder();
+     builder.append("CKDH in (SELECT COLUMN_VALUE FROM TABLE(:V_CKDHS))");
+     System.out.println("出库单号:"+Arrays.toString(ckdhArray));
+  Array ssbmArr = new Array(ckdhArray) ;
+  Map ssbmContext = new HashMap();
+  ssbmContext.put(DomainContext.ELEMENT_SQL_NAME,
+                            "TYPE_VARCHAR");
+  ssbmContext.put(DomainContext.ELEMENT_TYPE, String.class);
+  ssbmArr.setContext(null, null, ssbmContext);
+  ckmxbVo1.setWhereClause(null);
+  ckmxbVo1.setWhereClauseParams(null); //删除定义的绑定变量
+  ckmxbVo1.setWhereClause(builder.toString());
+  ckmxbVo1.defineNamedWhereClauseParam("V_CKDHS", null, null);
+  ckmxbVo1.setNamedWhereClauseParam("V_CKDHS",ssbmArr);         
+  ckmxbVo1.executeQuery();
+  ckmxbVo1.setRangeSize(-1);
+			
+zdjcxxTable.getSelectedRowKeys().removeAll();//??	
+
+获取页面下拉框的值：
+  <af:popup id="p1" contentDelivery="lazyUncached" childCreation="deferred"
+            binding="#{jcfyysBean.njPop}">
+    <af:dialog contentWidth="150" id="d1" title="选择年级"
+               dialogListener="#{jcfyysBean.generate}">
+      <!--年级，可多选  -->
+      <af:selectManyChoice required="true" inlineStyle="color:red"
+                           value="#{bindings.XtglNjLov1.inputValue}"
+                           label="年级" id="smc1"
+                           binding="#{jcfyysBean.njManyBind}">
+        <f:selectItems value="#{bindings.XtglNjLov1.items}" id="si1"/>
+      </af:selectManyChoice>
+      <!-- 学年-->
+      <af:selectOneChoice value="#{bindings.XnLov1.inputValue}" label="学年"
+                          required="#{bindings.XnLov1.hints.mandatory}"
+                          shortDesc="#{bindings.XnLov1.hints.tooltip}"
+                          id="soc4">
+        <f:selectItems value="#{bindings.XnLov1.items}" id="si4"/>
+      </af:selectOneChoice>
+    </af:dialog>
+  </af:popup>
+  String xn = (String)ADFUtils.getSelectListValueOne("XnLov1", "Xnzj"); //学年
+  List gradeList = ADFUtils.getSelectListValueMany("XtglNjLov1", "Dm"); //年级
+
+添加查询条件
+   ViewObjectImpl zyvo =
+       (ViewObjectImpl)ADFUtils.findIterator("JcglZdjcxxView1Iterator").getViewObject(); //通过迭代器获取vo
+   zyvo.applyViewCriteria(null); //
+   ViewCriteria zyvc = zyvo.createViewCriteria(); //通过vo创建一个vc
+   zyvc.setName("tc"); //给vc起个名字
+   ViewCriteriaRow zyvcr1 =
+       zyvc.createViewCriteriaRow(); //创建一个查询条件
+   ViewCriteriaItem zyvci1 =
+       zyvcr1.ensureCriteriaItem("Jxbh"); //申明查询字段
+   zyvci1.setOperator(JboCompOper.OPER_IN); //指定描述形式
+   if (null != jxbhList) {
+       for (int i = 0; i < jxbhList.size(); i++) {
+           zyvci1.setValue(i, jxbhList.get(i));
+       }
+   }
+   zyvc.addElement(zyvcr1); //将查询
+   zyvo.applyViewCriteria(zyvc);
+   zyvo.setRangeSize(-1);
+   zyvo.executeQuery();
+   Row[] row = zyvo.getAllRowsInRange();
+   zyvo.removeViewCriteria("tc");
+   zyvo.reset();
+   List zdjcxxzjList = new ArrayList();
+   for (int i = 0; i < row.length; i++) {
+       zdjcxxzjList.add(row[i].getAttribute("Zdjcxxzj"));
+   }
+
+获取AM
+  DCIteratorBinding dc = ADFUtils.findIterator("xxxView1Iterator"); //页面绑定迭代器
+  ViewObjectImpl rwVo = (ViewObjectImpl)dc.getViewObject();
+  JcglServiceAMImpl jcglAm = (JcglServiceAMImpl)rwVo.getApplicationModule();
+  String tbzdsjRet = jcglAm.tbzdsj(jxbhList);
+  if (!"OK".equals(tbzdsjRet)) {
+      JSFUtils.addFacesInformationMessage("征订数据同步失败！");
+  }
 
 ====== 页面 ======
 
@@ -277,3 +362,56 @@ it.insertRow(newrow);
       filename="征订教材信息明细.xls" 
 	  method="#{zdjcxxBean.printZdjcxxXsLsByExcel}"/>
   </af:commandToolbarButton>
+  
+8、输入框值变化监听 【 valueChangeListener="#{viewScope.JcrkBean.slChangeListener}" 】
+<!--入库数量 -->
+          <af:column sortProperty="#{bindings.JcglRkmxbView2.hints.Sl.name}"
+                     sortable="true"
+                     headerText="#{bindings.JcglRkmxbView2.hints.Sl.label}"
+                     id="c8" width="105">
+            <af:inputNumberSpinbox value="#{row.bindings.Sl.inputValue}"
+                                   label="#{bindings.JcglRkmxbView2.hints.Sl.label}"
+                                   required="#{bindings.JcglRkmxbView2.hints.Sl.mandatory}"
+                                   columns="10"
+                                   readOnly="#{pageFlowScope.Rkzt eq '0'?false:true}"
+                                   shortDesc="#{bindings.JcglRkmxbView2.hints.Sl.tooltip}"
+                                   id="it6"
+                                   valueChangeListener="#{viewScope.JcrkBean.slChangeListener}"
+                                   minimum="1" autoSubmit="true">
+              <f:validator binding="#{row.bindings.Sl.validator}"/>
+              <af:convertNumber groupingUsed="false"
+                                pattern="#{bindings.JcglRkmxbView2.hints.Sl.format}"/>
+            </af:inputNumberSpinbox>
+          </af:column>
+  
+成功提示信息：
+  Noty.success(ErrorStringKey.COMMMIT_SCUUESS);
+  Noty.success("操作成功");
+  Noty.error("文件类型不对，请选择Excel文件进行导入!");
+  Noty.info("请选择上传文件!");
+
+多选，教师领用
+        <af:selectManyChoice value="#{viewScope.jclyBean.jsDwValue}" label="单位"
+                             id="smc5">
+          <f:selectItems value="#{bindings.XtglDwLov2.items}" id="si5"/>
+        </af:selectManyChoice>
+  
+多行错误提示：
+  JSFUtils.addFacesInformationMessage("第" + rowIndex +  "行的《" + colName + "》有误，请检查！当前值：" +  colValue);
+  
+  <!--审批弹框提示 TODO -->
+  <af:popup id="approvalPop" childCreation="deferred"
+            contentDelivery="lazyUncached">
+    <af:dialog id="gbktabd1" affirmativeTextAndAccessKey="#{common.ok}"
+               cancelTextAndAccessKey="#{common.cancel}" title="提示"
+               contentHeight="100" contentWidth="200"
+               dialogListener="#{viewScope.xgxjBean.confimApprovalAction}">
+      <!--<af:outputText value="审核后将不可进行修改，请认真确认后再进行提交!" id="ot37"/>-->
+    </af:dialog>
+  </af:popup>
+
+  
+  
+======   ======
+C:\Oracle\Middleware
+C:\Users\admin\AppData\Roaming\JDeveloper
