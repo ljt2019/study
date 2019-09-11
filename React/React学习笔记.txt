@@ -1,0 +1,265 @@
+
+
+====== 元素 ======
+
+1、元素是构成 React 应用的最小单位，用来描述你在屏幕上看到的内容。
+
+2、与浏览器的 DOM 元素不同，React 当中的元素事实上是普通的对象，React DOM 可以确保浏览器 DOM 的数据内容与 React 元素保持一致。
+
+3、更新元素渲染：React 元素都是immutable 不可变的。当元素被创建之后，你是无法改变其内容或属性的。一个元素就好像是动画里的一帧，它代表应用界面在某一时间点的样子，更新时只会更新变化的部分。
+
+4、便我们每秒都创建了一个描述整个UI树的新元素，React DOM 也只会更新渲染文本节点中发生变化的内容。
+  1)、例子，时钟
+  function tick() {
+    const element = (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {new Date().toLocaleTimeString()}.</h2>
+      </div>
+    );
+    ReactDOM.render(
+      element,
+      document.getElementById('root')
+    );
+  }
+
+  setInterval(tick, 1000);
+
+
+====== 组件 ======
+
+1、组件可以将UI切分成一些独立的、可复用的部件，这样你就只需专注于构建每一个单独的部件。
+
+2、组件从概念上看就像是函数，它可以接收任意的输入值（称之为“props”），并返回一个需要在页面上展示的React元素。
+
+3、组件名称必须以大写字母开头。 
+
+4、组合组件：组件可以在它的输出中引用其它组件，这就可以让我们用同一组件来抽象出任意层次的细节。在React应用中，按钮、表单、对话框、整个屏幕的内容等，这些通常都被表示为组件。
+
+5、组件的返回值只能有一个根元素。这也是我们要用一个<div>来包裹所有<Welcome />元素的原因。
+
+====== JSX ======
+
+1、JSX 代表 Objects
+
+2、下面两种代码的作用是完全相同的
+  1)、
+  const element = (
+    <h1 className="greeting">
+      Hello, world!
+    </h1>
+  );
+  2)、
+  const element = React.createElement(
+    'h1',
+    {className: 'greeting'},
+    'Hello, world!'
+  );
+
+
+====== ======
+
+1、方式1：
+  const user = {
+    firstName: 'Harper',
+    lastName: 'Perez'
+  };
+  function formatName(props) {
+    return props.firstName + ' ' + props.lastName;
+  }
+  const element = (
+    <h1> Hello, {formatName(user)}!  </h1>
+  );
+  ReactDOM.render(
+    element,document.getElementById('root')
+  );
+  
+
+5、方式2：组件名称必须以大写字母开头
+  //props是自定义的，一般用props，后边的属性(id,name,...)也是自定义，随意定义多个
+  function Tiger(props) {
+    return <h1>Hello, {props.id},{props.name}.</h1>;
+  }
+  const element = <Tiger id="Tiger" name="老虎"/>;
+  ReactDOM.render(
+    element, document.getElementById('root')
+  );
+  
+6、定义一个类（函数转为类）：this.props固定写法，后边的属性(id,name,...)也是自定义，随意定义多个
+  class Tiger extends React.Component {
+    render() {
+      return (
+        <div>
+          <h1>Hello, It is Hello, {this.props.id},{this.props.name}.</h1>
+        </div>
+      );
+    }
+  }
+  
+====== Props的只读性 ======
+
+1、无论是使用函数或是类来声明一个组件，它决不能修改它自己的props。
+
+2、所有的React组件必须像纯函数那样使用它们的props。
+
+3、props后边的属性值，参数传递的目标对象。
+
+
+====== state的只读性 ======
+
+1、不要直接更新状态：
+  1)、this.state.comment = 'Hello';			// Wrong ，错误的
+  2)、this.setState({comment: 'Hello'});	// Correct ，正确的
+
+2、构造函数是唯一能够初始化 this.state 的地方
+
+3、状态更新可能是异步的
+
+4、状态通常被称为局部或封装。 除了拥有并设置它的组件外，其它组件不可访问。
+
+5、自顶向下或单向数据流。 任何状态始终由某些特定组件所有，并且从该状态导出的任何数据或 UI 只能影响树中下方的组件
+
+6、状态分享是通过将state数据提升至离需要这些数据的组件最近的父组件来完成的。这就是所谓的状态提升
+
+
+====== React类的生命周期，有状态组件 ======
+
+1、当类组件被传递给 ReactDOM.render() 时，React调用类组件的构造函数，初始化一些参数变量
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+  
+2、React 然后调用 Clock 组件的 render() 方法。这是 React 了解屏幕上应该显示什么内容，然后 React 更新 DOM 以匹配 Clock 的渲染输出。
+
+3、当类的输出插入到 DOM 中时，会调用函数：componentDidMount() ，在里边调用接口获得渲染数据
+  componentDidMount(){
+      console.log('--------componentDidMount-----------');
+  }
+  
+4、利用this.setState() 函数改变变量值，动态变化
+  this.setState({
+        date: new Date()
+  }); 
+ 
+5、一旦Clock组件被从DOM中移除，React会调用componentWillUnmount()这个钩子函数，做些清理工作
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+  
+construtor() //创建组件
+componentWillMount() //组件挂载之前
+componentDidMount() // 组件挂载之后
+componentWillReceiveProps() // 父组件发生render的时候子组件调用该函数
+shouldComponentUpdate() // 组件挂载之后每次调用setState后都会调用该函数判断是否需要重新渲染组件，默认返回true
+componentDidUpdate() // 更新
+render() //渲染，react中的核心函数
+componentWillUnmount() //组件被卸载的时候调用，一般在componentDidMount注册的事件需要在这里删除
+
+
+====== 事件处理 ======
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Toggle />, document.getElementById('root')
+);
+
+====== map()函数,遍历数组 ======
+
+1、当你在map()方法的内部调用元素时，你最好随时记得为每一个元素加上一个独一无二的key
+
+2、示例代码：
+function NumberList(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map((number) =>
+    <li key={number.toString()}>
+      {number}
+    </li>
+  );
+  return (
+    <ul>{listItems}</ul>
+  );
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('root')
+);
+
+====== 表单提交 ======
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    //限制用户输入全部大写
+    this.setState({value: event.target.value.toUpperCase()});
+  }
+
+  handleSubmit(event) {
+    alert('A name was submitted: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+		  <textarea value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+	  <fieldset>
+        <legend>Enter temperature in Celsius:</legend>
+        
+      </fieldset>
+    );
+  }
+}
+
+ReactDOM.render(
+  <NameForm />,
+  document.getElementById('root')
+);
+
+
+
+
+
+
+
+
+
+
+
+
