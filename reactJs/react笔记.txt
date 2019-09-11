@@ -1,72 +1,212 @@
 
-1、分页标签：
-  <Row className="page_pagination" gutter={24}>
-    <Col span={6}>
-      <span
-        style={{
-          lineHeight: "32px",
-          fontSize: "14px"
-        }}
-      >
-        每页{this.params.pageSize}条记录 , 共{this.state.total}条记录
-      </span>
-    </Col>
-    <Col span={18} className="tr">
-      <Pagination
-        showLessItems
-        showQuickJumper
-        showSizeChanger
-        current={this.params.pageNo}
-        total={this.state.total}
-        onShowSizeChange={(current, pageSize) => TableUtil.onShowSizeChange(this, current, pageSize)}
-        pageSize={this.params.pageSize}
-        onChange={(pageNo) => TableUtil.pageChange(this, pageNo)}
-      />
-    </Col>
-  </Row>
-		
-2、表单：
-  <TableBox
-           onRef={(ref) => TableUtil.onTableBoxRef(this, ref)}
-           className="mt10"
-           tableOption={{
-             loading: this.state.loading,
-             bordered: true,
-             rowKey: (record, index) => {
-               return record.studentId;
-             },
-             size: TableUtil.TABLE_SIZE_MIDDLE,
-             columns,
-             rowSelection: TableUtil.getRowSelection(this),
-             dataSource: this.state.dataSource,
-             pagination: false,
-             scroll: { x: TableUtil.calculateColumsWidthSum(columns) }
-           }}
+4、单选框
+    <RadioGroup name="makeUpExam11" value={this.state.makeUpExam1} selectedValue={this.state.makeUpExam1} onChange={(event) => { this.setState({ makeUpExam1: event.target.value }) }}>
+      补考通过最终成绩是否显示60分
+      <Radio value="1">是</Radio>
+      <Radio value="0">否</Radio>
+    </RadioGroup>
+    
+5、预览PDF文件：【 npm install react-pdf-js 】
+
+6、对象转换：
+JSON.stringify(printDatas); //json对象转json字符串
+JSON.parse(); //json字符串转json对象
+
+section.events.push(datas); 
+
+7、时间格式化显示：new Date(Date.parse(${dataSource[i].events[0].timesStartTime}.replace(/-/g, "/"))).format('hh:mm'))
+
+8、查询所有节次
+to_char(JCSZ.KSSJ,'hh:mi') as KSSJ,
+        to_char(JCSZ.JSSJ,'hh:mi') as JSSJ,
+
+9、排序：
+  const newSingleSchudle = JSON.parse(JSON.stringify(singleSchedule)).sort(
+    (a, b) => {
+      // 以time为主排序，key为次排序
+      if (a.time === b.time) {
+        return a.key - b.key;
+      } else {
+        return a.time - b.time;
+      }
+    }
+  );
+  
+10、在显示里修改逻辑
+      {
+        title: "在校状态",
+        dataIndex: "sudentStatus",
+        key: "sudentStatus",
+        align: "center",
+        width: 100,
+        render: (text) => {
+          let state = '';
+          if (text == "1") {
+            state = "在校";
+          } else {
+            state = "不在校";
+          }
+          return <div>{state}</div>
+        }
+      }
+
+11、提示框：【message.error("请选中数据");】
+
+
+12、引入公共代码接口：【import { selectDepartment } from "../../../../../config/commonService";】
+
+按钮控件：<Button type="primary" onClick={this.batchDelete} ghost> 取消订购  </Button>
+
+13、遍历数组：
+  _this.state.selectedRows.map((item, i) => {
+       let status = item.orderStatus;
+       if (status != 0 && status != 1) {
+           cnt++;
+       }
+   })
+
+debugger
+
+14、组件如果有default，则引用时不需要{}
+
+15、子组件传值给父组件：{/* 获取子table的数据 */}
+  1)、表单形式获取子组件值：<SupplierInfo wrappedComponentRef={(inst) => (this.supplierInfo = inst)} />
+  2)、不是表单形式获取子组件值：<SupplierInfo ref={(ref)=>{this.supplierInfo=ref}} />
+  const supplierIds = this.supplierInfo.state.selectedRowKeys;
+
+16、父组件传值给子组件：【record={this.state.record}】，子组件中通过【this.props.record】来获取
+  <ClassBooksModal ref="showClassOrderBooksModal"
+      setChild={this.setChild}
+      record={this.state.record}
+  />
+
+17、注意：前台传值到后台，参数列表格式需要特别注意。大括号，等等
+
+18、提示框确认操作：
+  confirm({
+      title: '提示',
+      content: '确认要取消订购吗？',
+      onOk() {
+          let _data = {
+              "orderNumberList": _this.state.selectedRowKeys,
+              "orderStatus": 0//修改订购状态为已订购
+          }
+          //接口调用
+          updateOrderBook(_data, "orderBook:updateOrderBook", () => {
+              _this.indexQuery();
+          });
+      }
+  });
+  
+19、在提示确认框中需要用【let _this = this;】，如下
+  approvalBooks = () => {
+      let _this = this;
+      confirm({
+          title: '提示',
+          content: '确认要提交吗？',
+          onOk() {
+              let _data = {
+                  "orderNumberList": _this.state.selectedRowKeys,
+                  "approvalStatus": 2,//修改审批状态,直接通过
+                  "teachingClassNumber": _this.props.record.teachingClassNumber
+              }
+              updateOrderBook(_data, "orderBook:update", () => {
+                  _this.indexQuery();
+              });
+          }
+      });
+  };
+
+20、传递参数的方式：前端传参，入参
+  1)、
+  const params = {
+      'teachingClassNumberList': this.state.selectedRowKeys,
+      'isbnList': isbnList,
+      'appendOrder': appendOrder
+  };
+  
+  2)、
+  const params = {
+      teachingClassNumberList: this.state.selectedRowKeys,
+      isbnList: isbnList,
+      appendOrder: appendOrder
+  };
+  
+  3)、
+  let _params = {
+      ...this.params,
+      param:{
+          useable:1
+      }
+  };
+  
+  4)、
+  let _params = {
+      ...this.params,
+      ...params,
+      param: {
+          teachingClassNumber: this.props.record.teachingClassNumber
+      }
+  };
+  
+21、匿名函数：【onChange={(v) => { this.onChange(v, record) }}】
+
+22、在表格行中通过render 返回自定义东西
+
+23、将新的属性添加到record中：【record.studentOrderCnt = value.target.value;】
+  //【教师征订人数】回调函数
+  studentOrderCntOnChange = (value, record, index) => {
+      record.studentOrderCnt = value.target.value;
+      // let dataSource = this.state.dataSource;
+      // dataSource[index] = value.target.value;
+      // this.setState({ dataSource: dataSource })
+
+  }
+  
+  {
+    title: '请确认学生征订人数',
+    dataIndex: 'studentOrderCnt',
+    key: 'studentOrderCnt',
+    align: 'center',
+    width: 100,
+    render: (text, record, index) => {
+        return <Input
+            onChange={(v) => { this.studentOrderCntOnChange(v, record, index) }}
+            defaultValue={this.props.classRecord.classCnt}
+            rows={1}
+        />
+    }
+  },
+
+24、批量修改保存【dataSource[index].returnNotice = value.target.value;】
+  returnNoticeOnChange = (value, record, index) => {
+  
+      let _data = {
+          "orderNumber": record.orderNumber,
+          "returnNotice": value.target.value,//回告
+          "approvalStatus": 4,
+      }
+      let dataSource = this.state.dataSource;
+      dataSource[index].returnNotice = value.target.value;
+      this.setState({
+          dataSource: dataSource
+      });
+  }
+  
+  
+25、模态框传递数据 参数
+  <ClassBooksModal ref="showClassOrderBooksModal"
+      setChild={this.setChild}
+      codeList={this.state.selectedRowKeys}
+      record={this.state.record}
   />
   
-3、
+  codeList: this.props.codeList
+
+26、设置表格行联合主键
+  rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+列宽设置：
+const sumWidth = TableUtil.calculateColumsWidthSum(columns, 0);
+scroll: { x: sumWidth },
