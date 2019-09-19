@@ -1,0 +1,18 @@
+
+1)、后台：设计接口(编写接口，按按钮划分接口,一个按钮对应一个接口)
+2)、前台，在【config/api.js】中配置接口路由信息
+3)、在 【service.js】中 引入配置的后台接口信息,【import { appointBookApi } from "src/app/layout/teachingMaterial/config/api";】 统一编写接口调用
+4)、在【authority.js】中配置权限，按后台接口路径配置（要一一对应好维护）
+5)、在主页面调用接口【】
+6)、权限开关【config/global.js】，修改该文件下的 auth 信息
+
+
+前台看到的permission指的是权限编号
+
+权限配置步骤：
+  1)、刷资源信息
+  2)、配置菜单
+  3)、配功能：权限编号(给功能配资源)
+  4)、给角色分配菜单
+  5)、给用户分配角色
+
