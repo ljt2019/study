@@ -190,6 +190,12 @@ ReactDOM.render(
 );
 
 ====== map()函数,遍历数组 ======
+ this.state.selectedRows.map((item, i) => {
+     let _params = {
+         changeStudentScoreFinalId: item.changeStudentScoreFinalId
+     }
+     update(_params, authority.update, () => { });
+ })
 
 1、当你在map()方法的内部调用元素时，你最好随时记得为每一个元素加上一个独一无二的key
 
@@ -256,13 +262,36 @@ ReactDOM.render(
 );
 
 
+设置样式：【style={{height:35.016}}】，【style={{ width: "100%" }}】
 
 
+判空：【
+        if (typeof remark != "undefined" && remark != null && remark.replace(/(^s*)|(s*$)/g, "").length != 0) {
+          disabled = true
+        }
+      】
 
+传id查详情：【isExtraQuery: id => `${base}/studentExtraScore/queryIsExtraData?studentExtraScoreId=${id}`】 // 查询是否为额外成绩表数据
 
+查询模态框：
+    // 查询
+    onSearch = () => {
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                //this.props.onSearch({ param: values });
+				//this.props.onSearch({ ...values });
+            }
+        });
+    };
 
+刷新主表数据
+<AddModal ref="addModal" onSearch={this.indexQuery} reload={this.reload} enterWareNumber={this.state.enterWareNumber}/>
 
-
+//成绩类型
+<Option key={'1'}>正考</Option>
+<Option key={'2'}>补考</Option>
+<Option key={'3'}>缓考</Option>
+<Option key={'4'}>清考</Option>
 
 
 
