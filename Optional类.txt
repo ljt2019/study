@@ -1,0 +1,28 @@
+
+资料来自：【https://www.jb51.net/article/170559.htm】
+          【https://www.jb51.net/article/141787.htm】
+
+1、在写程序的时候一般都遇到过 NullPointerException，所以经常会对程序进行非空的判断：
+  User user = getUserById(id);
+  if (user != null) {
+   String username = user.getUsername();
+   System.out.println("Username is: " + username); // 使用 username
+  }
+  
+  替换为：
+  Optional<User> user = Optional.ofNullable(getUserById(id));
+  user.ifPresent(u -> System.out.println("Username is: " + u.getUsername()));
+  
+2、为了解决这种尴尬的处境，JDK 终于在 Java8 的时候加入了 Optional 类，查看 Optional 的 javadoc 介绍：翻译如下
+  A container object which may or may not contain a non-null value. If a value is present, isPresent() will return true and get() will return the value.
+  这是一个可以包含或者不包含非 null 值的容器。如果值存在则 isPresent()方法会返回 true，调用 get() 方法会返回该对象。
+
+1.2、解决进阶：我们假设 getUserById 已经是个客观存在的不能改变的方法，那么利用 isPresent 和 get 两个方法，我们现在能写出下面的代码：
+  Optional<User> user = Optional.ofNullable(getUserById(id));
+  if (user.isPresent()) {
+   String username = user.get().getUsername();
+   System.out.println("Username is: " + username); // 使用 username
+  }
+  
+
+

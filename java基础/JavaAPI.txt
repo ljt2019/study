@@ -1,0 +1,6 @@
+
+//数据格式化
+String.format("Jersey app started with WADL available at " + "%s\nHit enter to stop it...", Main.BASE_URI);
+
+//内存级别的持久化
+ConcurrentHashMap<String, Device> fakeDB = new ConcurrentHashMap<>();

@@ -1,0 +1,33 @@
+package cn.healthmall.sail.base.config;
+
+import cn.healthmall.sail.base.module.Gym;
+import org.springframework.context.ApplicationEvent;
+
+import java.io.Serializable;
+
+/**
+ * Description: 当场馆名称更新时 将关联的模块 场馆的名称 响应的修改
+ */
+public class ChangeGymNameEvent extends ApplicationEvent implements Serializable {
+
+
+    private Gym gym ;
+
+    /**
+     * Create a new ApplicationEvent.
+     *
+     * @param source the object on which the event initially occurred (never {@code null})
+     */
+    public ChangeGymNameEvent(Object source,Gym gym) {
+        super(source);
+        this.gym = gym;
+    }
+
+    public Gym getGym() {
+        return gym;
+    }
+
+    public void setGym(Gym gym) {
+        this.gym = gym;
+    }
+}

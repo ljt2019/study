@@ -1,0 +1,10 @@
+
+====== java程序的执行过程简略 ======
+
+1、java执行分为两个步骤
+  1)、将java源码(.java文件)通过编译器(java。exe)编译成JVM文件(.class文件)
+  2)、将JVM文件通过java.exe执行，输出结果。
+
+2、流程：java源文件(.java) -> JVM文件(.class) -> 结果
+
+3、JVM(java虚拟机)，向上屏蔽了操作系统的差异性，使得java编程语言能够跨平台。

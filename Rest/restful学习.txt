@@ -1,0 +1,48 @@
+
+1、rest服务的资源路径 = 服务器路径 + 资源相对路径
+
+2、web.xml文件。默认使用的Servlet是2.5，如果使用的是3.0，则web.xml文件不是必须的
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!-- This web.xml file is not required when using Servlet 3.0 container,
+       see implementation details http://jersey.java.net/nonav/documentation/latest/jax-rs.html -->
+  <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+      <servlet>
+          <servlet-name>Jersey Web Application</servlet-name>
+          <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+          <!--初始化参数加载时要扫描的包-->
+          <init-param>
+              <param-name>jersey.config.server.provider.packages</param-name>
+              <param-value>com.example</param-value>
+          </init-param>
+          <load-on-startup>1</load-on-startup>
+      </servlet>
+      <!--Servlet的作用域，映射路径-->
+      <servlet-mapping>
+          <servlet-name>Jersey Web Application</servlet-name>
+          <url-pattern>/webapi/*</url-pattern>
+      </servlet-mapping>
+  </web-app>
+
+
+====== 请求方式 ====== //javax.ws.rs.client
+1、get请求，不带参数 
+  Client client = ClientBuilder.newClient();
+  WebTarget webTarget = client.target("http://examples.jaxrs.com/").path("");
+  String result = webTarget.request().get(String.class);
+  
+2、get请求，带参数 
+  Client client = ClientBuilder.newClient();
+  WebTarget webTarget = client.target(uri).path("device");
+  final String param = "10.11.58.184";
+  Device result = webTarget.queryParam("ip", param).request().get(Device.class);
+  
+3、put请求
+  final String param = "10.11.58.163";
+  final Device device = new Device(param);
+  device.setStatus(1);
+  //构建请求体
+  Entity<Device> entity = Entity.entity(device, MediaType.APPLICATION_XML_TYPE);
+  final Client c = ClientBuilder.newClient();
+  WebTarget target = c.target(Main.BASE_URI);
+  final Device result = target.path("device").request().put(entity, Device.class);

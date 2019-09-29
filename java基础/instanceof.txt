@@ -1,0 +1,10 @@
+
+instanceof关键字的用法
+
+1、obj 必须为引用类型，不能是基本类型
+
+2、obj 为 class 类的实例对象
+
+3、obj 为 class 接口的实现类
+
+4、obj 为 class 类的直接或间接子类
