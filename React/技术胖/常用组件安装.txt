@@ -1,0 +1,21 @@
+
+====== redux ======
+1、安装：【npm install --save redux】
+
+====== axios ======
+1、安装：【npm install --save axios】
+2、简单的请求方式
+  axios.post('https://web-api.juejin.im/v3/web/wbbr/bgeda').then((res) => {
+    console.log('axios 获取数据成功:' + JSON.stringify(res))
+  }).catch((error) => {
+    console.log('axios 获取数据失败' + error)
+  })
+
+====== AntDesign ======
+1、安装：【npm install antd --save【  或 【yarn add antd】
+2、引入：
+   import 'antd/dist/antd.css'
+   import { Input, Button, List } from 'antd'
+
+====== react-transition-group动画组件 ======
+1、安装：【npm install react-transition-group --save】

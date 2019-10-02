@@ -1,0 +1,20 @@
+
+====== redux ======
+概念：Redux是一个用来管理管理数据状态和UI状态的JavaScript应用工具。，Redux就是降低管理难度的。
+
+安装：【npm install --save redux】
+
+1、创建主页面【TodoList.js】
+
+2、创建无状态组件UI【TodoListUI.js】
+
+2、创建仓库【store.js】，它并没有管理能力，它会把接收到的action自动转发给Reducer，store必须是唯一的
+  
+3、创建【reducer.js】，仓库管理员，必须是纯函数(如果函数的调用参数相同，则永远返回相同的结果)
+
+4、创建文件【actionTypes.js】，抽离公共action类型。
+
+5、创建文件【actionCreatores.js】，抽离公共action。
+
+  
+  

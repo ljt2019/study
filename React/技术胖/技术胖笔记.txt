@@ -1,0 +1,111 @@
+
+====== JSX ======
+1、JSX：javascript与xml的结合，当遇到< /> 就当做html来解析，当遇到{}，就当做js来解析，如下：
+  <ul className='my-list'>
+    <li>{false ? 'Hello tiger' : 'Hello react'} </li>
+  </ul>
+
+2、JSX写法
+  return (
+    <ul className='my-list'>
+      <li>Hello tiger </li>
+      <li>Hello react </li>
+    </ul>
+  )
+  
+  //效果等同于上边
+  // let child1 = React.createElement('li', null, 'Hello tiger111')
+  // let child2 = React.createElement('li', null, 'Hello react111')
+  // let root = React.createElement('ul', { className: 'mu-list' }, child1, child2)
+  // return root
+
+3、扩展运算符【...】
+  inputClick = () => {
+    this.setState({
+	  //先将之前的加上，再加新的
+      list: [...this.state.list, this.state.inputValue],
+	  inputValue:''
+    })
+  }
+
+4、素组元素删除：【list.splice(index, 1)】
+
+5、输入html：【dangerouslySetInnerHTML={{__html:item}}】
+
+6、标签与输入框关联：
+<label htmlFor='tiger'>增加服务</label>
+<input id='tiger' className='input' value={this.state.inputValue}  />
+          
+7、不绑定，那么使用箭头函数，大多数情况下是可以的，但如果该回调函数作为props传入子组件时，这些组件可能会额外重新渲染，所有建议在构造器中绑定或使用class fields 与否来避免这类问题
+
+8、单向数据流，只能在父组件中定义改变数据，子组件显示
+
+9、父组件向子组件传值时，子组件需要对父组件传过来的值进行校验，如下：
+  1)、import PropTypes from 'prop-types';
+  2)、// 校验
+      Item.propTypes = {
+          avname: PropTypes.string.isRequired,
+          content: PropTypes.string,
+          index: PropTypes.number,
+          del: PropTypes.func
+      }
+	  
+10、默认值
+  Item.defaultProps = {
+      tiger: '老虎'
+  }
+  
+11、值绑定：
+  <input ref={(v) => { this.input = v }} />
+  <ul ref={(v) => { this.ul = v }}>
+  
+12、异步回调：,后边跟着是回调函数
+  this.setState({
+    list: [...this.state.list, this.state.inputValue],
+    inputValue: ''
+  }, (v) => {
+    console.log(this.ul.querySelectorAll('li').length)
+  })
+
+13、性能优化：
+  shouldComponentUpdate(nextProps, nextState) {
+      if (nextProps.content != this.context) {
+          console.log('child - shouldComponentUpdate - true')
+          return true
+      } else {
+          console.log('child - shouldComponentUpdate - false')
+          return false
+      }
+  }
+
+====== 伪造数据 ======
+1、淘宝：rap2
+2、EasyMock
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

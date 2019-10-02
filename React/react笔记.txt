@@ -1,6 +1,13 @@
 
+谷歌浏览器调试工具：React Developer Tools，谷歌应用商店中添加
+
+====== react插件 ======
+1、Simple React Snippets
+
+3、匿名函数：【onChange={(v) => { this.onChange(v, record) }}】
+
 4、单选框
-    <RadioGroup name="makeUpExam11" value={this.state.makeUpExam1} selectedValue={this.state.makeUpExam1} onChange={(event) => { this.setState({ makeUpExam1: event.target.value }) }}>
+    <RadioGroup name="makeUpExam11" value={this.state.makeUpExam1} selectedValue={this.state.makeUpExam1} 【onChange={(event) => { this.setState({ makeUpExam1: event.target.value }) }}】>
       补考通过最终成绩是否显示60分
       <Radio value="1">是</Radio>
       <Radio value="0">否</Radio>
@@ -70,9 +77,9 @@ debugger
 14、组件如果有default，则引用时不需要{}
 
 15、子组件传值给父组件：{/* 获取子table的数据 */}
-  1)、表单形式获取子组件值：<SupplierInfo wrappedComponentRef={(inst) => (this.supplierInfo = inst)} />
-  2)、不是表单形式获取子组件值：<SupplierInfo ref={(ref)=>{this.supplierInfo=ref}} />
-  const supplierIds = this.supplierInfo.state.selectedRowKeys;
+  1)、表单形式获取子组件值：【<SupplierInfo wrappedComponentRef={(inst) => (this.supplierInfo = inst)} />】
+  2)、不是表单形式获取子组件值：【<SupplierInfo ref={(ref)=>{this.supplierInfo=ref}} />】
+  父组件可以这样使用子组件传来的参数：【const supplierIds = this.supplierInfo.state.selectedRowKeys;】
 
 16、父组件传值给子组件：【record={this.state.record}】，子组件中通过【this.props.record】来获取
   <ClassBooksModal ref="showClassOrderBooksModal"
@@ -82,23 +89,7 @@ debugger
 
 17、注意：前台传值到后台，参数列表格式需要特别注意。大括号，等等
 
-18、提示框确认操作：
-  confirm({
-      title: '提示',
-      content: '确认要取消订购吗？',
-      onOk() {
-          let _data = {
-              "orderNumberList": _this.state.selectedRowKeys,
-              "orderStatus": 0//修改订购状态为已订购
-          }
-          //接口调用
-          updateOrderBook(_data, "orderBook:updateOrderBook", () => {
-              _this.indexQuery();
-          });
-      }
-  });
-  
-19、在提示确认框中需要用【let _this = this;】，如下
+18、【提示框确认操作】,在提示确认框中需要用【let _this = this;】，如下
   approvalBooks = () => {
       let _this = this;
       confirm({
@@ -117,7 +108,7 @@ debugger
       });
   };
 
-20、传递参数的方式：前端传参，入参
+19、传递参数的方式：前端传参，入参
   1)、
   const params = {
       'teachingClassNumberList': this.state.selectedRowKeys,
@@ -149,17 +140,15 @@ debugger
       }
   };
   
-21、匿名函数：【onChange={(v) => { this.onChange(v, record) }}】
+20、在表格行中通过render 返回自定义东西
 
-22、在表格行中通过render 返回自定义东西
-
-23、将新的属性添加到record中：【record.studentOrderCnt = value.target.value;】
+21、将新的属性添加到record中：【record.studentOrderCnt = value.target.value;】
   //【教师征订人数】回调函数
   studentOrderCntOnChange = (value, record, index) => {
-      record.studentOrderCnt = value.target.value;
-      // let dataSource = this.state.dataSource;
-      // dataSource[index] = value.target.value;
-      // this.setState({ dataSource: dataSource })
+      record.studentOrderCnt = value.target.value
+      let dataSource = this.state.dataSource
+      dataSource[index] = value.target.value
+      this.setState({ dataSource: dataSource })
 
   }
   
@@ -178,9 +167,8 @@ debugger
     }
   },
 
-24、批量修改保存【dataSource[index].returnNotice = value.target.value;】
+22、批量修改保存【dataSource[index].returnNotice = value.target.value;】
   returnNoticeOnChange = (value, record, index) => {
-  
       let _data = {
           "orderNumber": record.orderNumber,
           "returnNotice": value.target.value,//回告
@@ -194,7 +182,7 @@ debugger
   }
   
   
-25、模态框传递数据 参数
+23、模态框传递数据 参数
   <ClassBooksModal ref="showClassOrderBooksModal"
       setChild={this.setChild}
       codeList={this.state.selectedRowKeys}
@@ -203,9 +191,8 @@ debugger
   
   codeList: this.props.codeList
 
-26、设置表格行联合主键
+24、设置表格行联合主键
   rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
-
 
 列宽设置：
 const sumWidth = TableUtil.calculateColumsWidthSum(columns, 0);

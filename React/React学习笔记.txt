@@ -284,6 +284,10 @@ ReactDOM.render(
         });
     };
 
+数组元素操作：
+  删除：list.splice(index, 1)
+  添加：list.push(newState.inputValue)  //push新的内容到列表中去
+
 刷新主表数据
 <AddModal ref="addModal" onSearch={this.indexQuery} reload={this.reload} enterWareNumber={this.state.enterWareNumber}/>
 

@@ -1,0 +1,24 @@
+
+====== 生命周期 ======
+
+1、简单理解：生命周期函数指在某一个时刻组件会自动调用执行的函数
+
+2、生命周期
+
+  1)、初始化阶段：initialization
+    construtor() //创建组件,定义属性（props）和状态(state)
+	
+  2)、挂載:Mounting
+	componentWillMount()  //在组件即将被挂载到页面的时刻执行,页面刷新一次执行一次。
+    render()              //页面state或props发生变化时执行。
+    componentDidMount()   //组件挂载完成时被执行,页面刷新一次执行一次。
+	
+  3)、更新:Updation
+    componentWillReceiveProps() // 父组件发生render的时候，子组件调用该函数，需要接收props
+    shouldComponentUpdate() //组件挂载之后每次调用setState后都会调用该函数判断是否需要重新渲染组件，默认返回true
+    componentWillUpdate()
+	render() //state发生改变时自动执行
+	componentDidUpdate() 
+	
+  4)、卸载销毁阶段:Unmounting
+  componentWillUnmount() //组件被卸载的时候调用，一般在componentDidMount注册的事件需要在这里删除

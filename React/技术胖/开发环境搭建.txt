@@ -13,32 +13,11 @@
 
   1)、方法1：（老）单文件组件项目
     (1)、安装脚手架工具：【npm install -g create-react-app】
-    
     (2)、创建项目：【create-react-app reactDemo001】
-    
     (3)、运行项目调试：【npm start】
-    
     (4)、生成项目发布：【npm run build】
 	
   2)、方法2：新
-
     (2)、创建项目：【npx create-react-app reactDemo001】
-    
     (3)、运行项目调试：【npm start】
-    
     (4)、生成项目发布：【npm run build】
-  
-5、react的目录结构
-  1)、模块化，文件分类
-  
-6、render：放的是模板，只能有一个根 div
-
-
-
-
-
-
-
-
-
-
