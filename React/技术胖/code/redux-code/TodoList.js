@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import store from '../store/store'
 import { CHANGE_INPUT, ADD_ITEM, DELETE_ITEM } from '../store/actionTypes'
-import { commonAction } from '../store/actionCreatores'
+import { commonAction, getTodoList } from '../store/actionCreatores'
 import { TodoListUI } from './TodoListUI'
-import axios from "axios";
 
 class TodoList extends Component {
   constructor(props) {
@@ -16,17 +15,22 @@ class TodoList extends Component {
     })
   }
 
+  //后台获取数据存到仓库中
+  componentDidMount() {
+    store.dispatch(getTodoList())
+  }
+
   //改变输入框的值
   changeInputValue = (e) => {
-    store.dispatch(commonAction(e.target.value, null, CHANGE_INPUT))
+    store.dispatch(commonAction(e.target.value, CHANGE_INPUT))
   }
   //添加列
   addClick = () => {
-    store.dispatch(commonAction(null, null, ADD_ITEM))
+    store.dispatch(commonAction(null, ADD_ITEM))
   }
   //删除列
-  delClick = (index) => {
-    store.dispatch(commonAction(null, index, DELETE_ITEM))
+  delClick = (e) => {
+    store.dispatch(commonAction(e, DELETE_ITEM))
   }
 
   render() {

@@ -1,7 +1,4 @@
 
-====== redux ======
-1、安装：【npm install --save redux】
-
 ====== axios ======
 1、安装：【npm install --save axios】
 2、简单的请求方式
@@ -11,11 +8,45 @@
     console.log('axios 获取数据失败' + error)
   })
 
+
 ====== AntDesign ======
 1、安装：【npm install antd --save【  或 【yarn add antd】
 2、引入：
    import 'antd/dist/antd.css'
    import { Input, Button, List } from 'antd'
 
+
 ====== react-transition-group动画组件 ======
 1、安装：【npm install react-transition-group --save】
+
+
+====== redux ======
+1、安装：【npm install --save redux】
+
+
+====== Redux-thunk 中间件 ======
+1、什么时候会用到这个插件那？
+  在Dispatch一个Action之后，到达reducer之前，进行一些额外的操作，就需要用到middleware。可以用来【日志记录、创建崩溃报告，调用异步接口或者路由】。它就是对Redux中dispatch的加强。
+  
+2、安装：【npm install --save redux-thunk】
+
+
+====== react-redux ======
+1、安装：【npm install --save react-redux】
+
+
+====== react-router ======
+1、安装：【npm install --save react-router-dom】
+
+
+
+
+
+
+
+
+
+
+
+
+

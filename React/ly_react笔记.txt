@@ -1,8 +1,4 @@
 
-谷歌浏览器调试工具：React Developer Tools，谷歌应用商店中添加
-
-====== react插件 ======
-1、Simple React Snippets
 
 3、匿名函数：【onChange={(v) => { this.onChange(v, record) }}】
 
@@ -194,6 +190,46 @@ debugger
 24、设置表格行联合主键
   rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
 
-列宽设置：
+25、列宽设置：
 const sumWidth = TableUtil.calculateColumsWidthSum(columns, 0);
 scroll: { x: sumWidth },
+
+26、设置样式：【style={{height:35.016}}】，【style={{ width: "100%" }}】
+
+
+27、判空：【
+        if (typeof remark != "undefined" && remark != null && remark.replace(/(^s*)|(s*$)/g, "").length != 0) {
+          disabled = true
+        }
+      】
+
+28、传id查详情：【isExtraQuery: id => `${base}/studentExtraScore/queryIsExtraData?studentExtraScoreId=${id}`】 // 查询是否为额外成绩表数据
+
+29、查询模态框：
+    // 查询
+    onSearch = () => {
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                //this.props.onSearch({ param: values });
+				//this.props.onSearch({ ...values });
+            }
+        });
+    };
+
+30、数组元素操作：
+  删除：list.splice(index, 1)
+  添加：list.push(newState.inputValue)  //push新的内容到列表中去
+
+31、刷新主表数据
+<AddModal ref="addModal" onSearch={this.indexQuery} reload={this.reload} enterWareNumber={this.state.enterWareNumber}/>
+
+
+
+
+
+
+//成绩类型
+<Option key={'1'}>正考</Option>
+<Option key={'2'}>补考</Option>
+<Option key={'3'}>缓考</Option>
+<Option key={'4'}>清考</Option>

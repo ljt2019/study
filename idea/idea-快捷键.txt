@@ -68,26 +68,6 @@
 5、转型：【alt+enter】
 
 
-========= 自定义模板 =========
-
-1、快捷键模板：【Ctrl+Alt+S --> Editor --> Live Templates】，创建一个自己的模板组，之后在组里边创建模板
-
-2、类注释模板：【Ctrl+Alt+S --> Editor --> File And Code Templates -->includes】，在File Header 中加入下边内容
-
-	/**
-     * Create by ${USER} on ${DATE}
-     */	
-	 
-			
-========= IDEA中的Linux远程管理工具 =========
-	
-1、【Ctrl+Alt+S --> Build,Execution,Deployment --> Deployment】,点击+号创建一台主机连接，type中选中加密方式(SFTP)
-
-2、启动ssh工具：【Tools --> Start SSH Session】，在这里可以以命令行的方式部署项目
-
-3、Linux视图目录：【Tools --> Deployment --> Browse Remote Host】,可以在这里直接复制粘贴的方式上传下载文件
-
-
 ========= IDEA的debug调试快捷键 =========
 
 1、F9            	resume programe 恢复程序

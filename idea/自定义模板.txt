@@ -1,0 +1,10 @@
+
+========= 自定义模板 =========
+
+1、快捷键模板：【Ctrl+Alt+S --> Editor --> Live Templates】，创建一个自己的模板组，之后在组里边创建模板
+
+2、类注释模板：【Ctrl+Alt+S --> Editor --> File And Code Templates -->includes】，在File Header 中加入下边内容
+
+	/**
+     * Create by ${USER} on ${DATE}
+     */	

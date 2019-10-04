@@ -1,0 +1,7 @@
+
+====== Visual Studio Code插件 ======
+1、Simple React Snippets
+
+====== 谷歌浏览器调试工具 谷歌应用商店中添加======
+1、React Developer Tools
+2、Redux DevTools
