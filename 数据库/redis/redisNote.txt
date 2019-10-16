@@ -1,13 +1,17 @@
 
-============ window安装redis ============
+============ hash与字符串键存在诸多相似之处，那hash键存在的意义? ============
+1、Hash键可以将信息凝聚在一起，而不是直接分散存储在整个redis中，这不仅方便数据管理，还可以尽量避免一定的误操作。（牵强）
 
-1、这里我们下载 Redis-x64-xxx.zip压缩包到 C 盘，解压后，将文件夹重新命名为 redis。
+2、避免键冲突。（牵强）
 
-2、打开一个 cmd 窗口 使用cd命令切换目录到 C:\redis 运行 【redis-server.exe redis.windows.conf】，指定服务脚本与配置文件
+3、减少内存占用（IO与cpu的占用），主要存在的意义
+  redis在第一层的key上会有相关的管理，比如说设置过期时间，第二层key上不会有这些管理，最后更新时间，等等这些计算都是在第一层key上处理。因此为了减少内存的占用可以用hash键代替字符串键。
 
-3、	这时候另启一个cmd窗口，原来的不要关闭，不然就无法访问服务端了
-
-	切换到redis目录下，前台启动，window系统：【redis-cli.exe -h 127.0.0.1 -p 6379】，Linux系统【redis-cli -h 192.168.31.245 -c -p 7002】
+4、不适应hash键的情况
+  1)、过期功能的使用，过期功能只能使用在key上。
+  2)、二进制操作命令：如【setbit、getbit、bitop】
+  3)、需要考虑数据量分布的问题
+  
 
 
 ============ springboot中使用redis ============
@@ -24,123 +28,6 @@
 
 2、注意事项：1、key不要过长、不要过短、统一的命名规范
 
-
-============ Redis 5种数据类型 ============
-
-1、字符串（String）：二进制的形式存储，value最大容纳数据长度512M,key-value(string/int/float)
-
-	1)、赋值更新：【set key value】 ，【setnx key value】(如果key存在就不设置，返回0，不存在才设置，返回1)
-	
-	2)、赋值多个值：【mset key1 value1 key2 value2】
-	
-	3)、设置过期时间：【setex key second value】,second表示second后秒过期
-	
-	4)、按索引替换：【setrange key index value】,index表示从index处开始替换
-	
-	5)、取值：【get key】
-	
-	6)、删除：【del key】
-	
-	7)、扩展：【getset key value】,表示先将值取出再重新覆盖赋值
-	
-	8)、数值增减：【incr/decr key】,key自增/减1，如果key不存在，则先给key自动赋值0，再加/减1	
-				  【incrby/decrby key 2】,key的加/减加2	
-				
-2、哈希（hash）：由多个key-value散列组组成，其中key是字符串，value是元素，按key进行增加删除
-	
-	1)、赋值：【hset hashMap key value】
-			  【hmset hashMap key1 value1 key2 value2】
-	
-	2)、取值：【hget hashMap key】，取指定key的值
-			  【hmget hashMap key1 key2】，取多个key中的值
-			  【hgetall hashMap】，取容器中的所有key和value的值
-			  【hkeys hashMap】，获取所有key
-	
-	3)、删除：【hdel hashMap key1 key2】，删除指定key的值
-			  【del hashMap】	
-	
-	4)、自学命令：【hexists hashMap key】,判断某属性是否存在
-				
-	5)、String Key和String Value的map容器
-	
-	6)、每个Hash可以存储4294967295个键值对				  
-				  
-3、字符串列表（list）：允许重复元素
-
-	1)、赋值：【lpush list1 value1 value2 value3】
-		      【rpush list2 value1 value2 value3】
-			  【rpushx list2 value1】,存在list才会赋值
-	
-	2)、取值：【lrange list 0 -1】,取list中的全部值
-			  【llen list】,取list的长度
-			  【llen list】,取list的长度
-			  【rpoplpush list】,右边元素弹出放进左边中
-	
-	3)、删除：【lpop list】,弹出左边的元素
-			  【rpop list】,弹出右边的元素
-
-4、字符串集合（set）：不允许重复元素，跟踪数据唯一性，维护数据对象之间的关联关系
-
-	1)、赋值：【sadd set a b c】
-			  【sadd set 1 2 3】
-	
-	2)、取值：【smembers set】
-			  【scard set】,取set元素的长度
-			  【srandmember set】,随机取set元素
-	          【sismember set a】,判断元素是否存在，返回1表示存在，0表示不存在
-	
-	3)、删除：【srem set 1 2 3】
-	
-	4)、差集运算：【sdiff set1 set2】，求出两集合中相差的元素
-	
-	5)、交集运算：【sinter set1 set2】，求出两集合中都有的元素
-	
-	6)、并集运算：【sdunion set1 set2】，合并两个集合，重复的元素set会去掉
-	
-	7)、差集存储：【sdiffstore set set1 set2】
-	
-	8)、交集存储：【sinterstore set set1 set2】
-	
-	8)、并集存储：【sunionstore set set1 set2】
-
-5、有序字符串集合（sorted set）：排名，热点话，构建索引数据，带分数score-value有序集合,value不可重复，score可重复
-
-	1)、赋值：【zadd key 70 zs 80 ls 90 ww】
-		      【zadd key 100 zs】,会替换掉之前存在的分数的值
-			  
-	2)、取值：【zscore key zs】
-		      【zcard key】，取长度
-			  【zrange key 0 -1】，取某范围内的值，默认是升序
-			  【zrevrange key 0 -1】，取某范围内的值，从大到小
-			  【zrange key 0 -1 withscores】，取某范围内的值，并将分数也取出
-			  【zrangebyscore key 80 100 withscores limit 0 2】，根据分数的范围进行取值
-			  
-	3)、删除：【zrem key zs ls】
-		      【zremrangebyrank key 0 4】,根据排名的范围进行删除
-			  【zremrangebyscore key 80 100】,根据分数的范围进行删除
-			  
-	4)、给某个分数加值：【zincrby key 3 ls】,表示给ls的分数加3		
-
-	5)、获取某分数之间的个数：【zcount key 80 90】
-	
-	
-============ Redis Key的一些操作 ============
-
-1、获得所有key：【keys *】
-
-2、删除某个key：【del key1 key2 key3】
-
-3、查看某个key是否存在：【exists key】
-
-4、对key重命名：【rename key newKey】
-
-5、设置过期时间：【expire key 1000】，单位是秒
-
-6、查看key过期所剩的时间：【ttl key】
-
-7、获取key的类型：【type key】
-
-
 ============ Redis 中的多数据库 ============
 
 1、一共有15个数据库，默认存储的是0号数据库
@@ -155,28 +42,6 @@
 	
 	3)、事务回滚：【discard】
 	
-
-============ Redis 持久化 ============
-
-1、修改redis.conf 文件：【vim /usr/local/redis/etc/redis.conf】
-
-2、两种持久化方式:
-
-  1）、snapshotting(快照)默认方式：在指定的时间间隔内将内存中的数据集快照写入磁盘，rdb文件：dump.rdb
-    snapshotting设置：
-    (1)、save 900 1 ###900秒内如果超过1个key被修改则发起快照保存
-    (2)、save 300 10 ###300秒内如果超过10个key被修改则发起快照保存
-    (3)、save 60 10000 ###60秒内如果超过10000个key被修改则发起快照保存
-
-  2)、append-only file(aof)方式：类似于Oracle日志，体现数据的高可靠，必须开启，工作中常用，但一定层度上会导致变慢  
-    aof设置：【appendonly yes】，开启后，rdb方式自动失效，文件名：【appendfilename "appendonly.aof"】，可以修改
-    (1)、#appendfsnyc always ###收到命令立即写入磁盘，效率最慢，但保证完全持久化，工作中用
-    (2)、#appendfsnyc everysec ###每秒写入一次磁盘，在性能和持久化方面做了折中
-    (3)、#appendfsnyc no ###完全依赖os，持久化没保证，一般不用
-   
-3、将持久化文件放到改目录下便于管理：【dir /usr/local/redis/etc/】
-
-
 ====================== Redis 集群 =Redis不是靠单点的性能来决定的，强调的是多实例，而memcache强调的是单点性能 ======================
 
 1、主从模式：一主多从，一台主机(可写)，多台从机(可读，适用高并发，类似于mysql的主从读写分离)，此方式最简陋，一旦主节点挂掉则不可用
@@ -198,50 +63,6 @@
 	业务层措施：
 	数据库措施：加缓存给数据库减压，能放进缓存的可以放入缓存
 	
-============ Linux下安装redis ============
-	
-1、下载安装包：【wget http://download.redis.io/releases/redis-3.0.7.tar.gz】  稳定版
-
-2、解压/usr/local/目录下：【tar -zxvf redis-3.0.7.tar.gz -C /usr/local/】
-
-3、安装gcc(如果没有则执行以下两命令,[gcc --version]检验有没有该编译器)：
-	【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
-	【yum -y install wget httpd-tools vim】
-	
-4、进入目录：【cd redis-5.0.3】
-
-5、执行编译：【make】，出现[Hint: It's a good idea to run 'make test' ;)],则说明编译成功
-
-6、进入src目录：【cd src】
-
-7、执行：【make install】
-
-8、建立两个文件夹存放redis命令和配置文件
-	【mkdir -p /usr/local/redis/etc】
-	【mkdir -p /usr/local/redis/bin】
-	
-9、将redis-3.0.7目录下的redis.conf拷贝到新建的etc目录下：【cp redis.conf /usr/local/redis/etc/】
-
-10、将redis-3.0.7/src目录下的一些文件移动到新建的bin目录下：
-   【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
-
-11、编辑redis.conf文件，使之后台启动：【vim redis.conf】，后台启动【daemonize yes】，持久化存放的位置【dir /usr/local/redis/etc/】
-
-12、退出编辑器：【:wq+enter键】
-
-13、启动：指定服务脚本与配置文件：【/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf】
-
-14、关闭redis服务：【/usr/local/redis/bin/redis-cli shutdown】，或查看进程方式kill掉
-
-15、客户端进入：【/usr/local/redis/bin/redis-cli】
-
-16、客户端进入：【/usr/local/redis/bin/redis-cli】，有密码：【/usr/local/redis/bin/redis-cli -a password】
-
-17、设置密码：【requirepass foobared】将此行取消注释
-
-18：密码输入：【auth password】
-
-
 ============ Redis 主从复制 ============
 
 1、建立一台master，见Linux下安装redis具体步骤；注：确保三台机器安装了相同版本的redis
@@ -285,69 +106,32 @@
   4)、查看sentinel相关信息命令：【/usr/local/redis/bin/redis-cli -h 192.168.56.102 -p 26379 info Sentinel】
   
   5)、关闭master查看集群信息：【/usr/local/redis/bin/redis-cli -h 192.168.56.101 -p 6379 shutdown】
- 
-============ Redis 集群 ============
 
-1、前置依赖：
-  1.1)、集群用到ruby命令，因此安装ruby，方式一
-    (1)、【yum install ruby】
-	(2)、【yum install rubygems】
-	(3)、【gem install redis】,安装redis和ruby接口,redis版本要2.2.x以上
-	
-  1.2)、集群用到ruby命令，因此安装ruby，方式二
-    (1)、安装rvm
-	  1]、切换到root目录下：【cd /】
-	  2]、【gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB】
-      3]、【curl -sSL https://get.rvm.io | bash -s stable】
-      4]、【source /etc/profile.d/rvm.sh】
-      5]、查看是否安装成功：【rvm -v】
-	(2)、安装ruby：【rvm install 2.4.2】
-	(3)、【gem install redis】,安装redis和ruby接口,redis版本要2.2.x以上
 
-2、说明：至少6台，3主3从，本例中【7001[master1]、7002[master2]、7003[master3]、7004[slave1]、7005[slave2]、7006[slave3]】，搭建在同台机器上
-
-3、搭建步骤：
-
-  1)、分别在6台机器上递归创建文件夹：【mkdir -p /usr/local/redis-cluster/700*】
   
-  2)、将redis.conf配置文件分别copy到700*下，进行修改各个文件的内容
-    (1)、后台启动：【daemonize yes】
-	(2)、端口号：【port 700*】
-	(3)、绑定当前机器IP：【bind 192.168.56.101】
-	(4)、指定数据文件存放路径：【dir /usr/local/redis-cluster/700*/】,不修改担心丢失数据
-	(5)、持久方式开启快照：【appendonly yes】，生产上用【appendfsync always】
-	(6)、启动集群模式：【cluster-enabled yes】
-	(7)、节点配置文件与端口号对应：【cluster-config-file nodes700*.conf】，让每个节点相互知道对方的存在
-	(8)、设置超时时间：【cluster-node-timeout 15000】
-	
-  4)、逐个启动6个redis实例：【/usr/local/redis/bin/redis-server /usr/local/redis-cluster/700*/redis.conf】
-  
-  5)、检查是否启动成功：【ps -ef | grep redis】,查看是否已存在对应进程
-  
-  6)、在redis的安装目录下，执行集群脚本：【/usr/local/redis-3.0.7/src/redis-trib.rb create --replicas 1 192.168.56.101:7001 192.168.56.102:7002 192.168.56.103:7003 192.168.56.104:7004 192.168.56.105:7005 192.168.56.106:7006】，下次重启机器不需要此操作
-  注：其中的 1 为主节点与从节点的比值(1 = 主节点数量/从节点数量),主节点排完，接着排从节点，一一对应，例如，7001为master1，则7004为slave1
-  
-  7)、连接任意客户端：【/usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 7001】(./redis-cli -c -h -p),[-c 表示集群模式，-h指定ip,-p指定端口号]
-  
-  8)、验证集群是否搭建成功：查看集群信息【cluster info】，查看集群节点【cluster nodes】
-  
-  9)、关闭集群：【/usr/local/redis/bin/redis-cli -c -h 192.168.56.101 -p 700* shutdown】，需要逐个关闭
-  
-  注意：出现集群无法启动时，删除临时的数据文件，再次重新启动每个redis服务，然后重新构建集群环境
- 
- 
-================== 192.168.56.107 单机集群 ==================
-1、安装在同台机器时启动：【/usr/local/redis/bin/redis-server /usr/local/redis-cluster/7001/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7002/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7003/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7004/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7005/redis.conf && /usr/local/redis/bin/redis-server /usr/local/redis-cluster/7006/redis.conf】
 
-2、安装在同台机器时关闭：【/usr/local/redis/bin/redis-cli -c -h 192.168.56.107 -p 7001 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.107 -p 7002 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.107 -p 7003 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.107 -p 7004 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.107 -p 7005 shutdown && /usr/local/redis/bin/redis-cli -c -h 192.168.56.107 -p 7006 shutdown】
 
-3、执行集群脚本【/usr/local/redis-3.0.7/src/redis-trib.rb create --replicas 1 192.168.56.107:7001 192.168.56.107:7002 192.168.56.107:7003 192.168.56.107:7004 192.168.56.107:7005 192.168.56.107:7006】
 
-4、连接任意一台客户端【/usr/local/redis/bin/redis-cli -c -h 192.168.56.107 -p 7001】
-  
-============ Redis 发布与订阅 ============
 
-1、发布：【PUBLISH cctv hello_tiger】，PUBLISH 频道 发布内容
 
-2、订阅：【SUBSCRIBE cctv】，SUBSCRIBE 频道
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

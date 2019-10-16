@@ -1,0 +1,5 @@
+============ Redis 发布与订阅 ============
+
+1、发布：【PUBLISH cctv hello_tiger】，PUBLISH 频道 发布内容
+
+2、订阅：【SUBSCRIBE cctv】，SUBSCRIBE 频道

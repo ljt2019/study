@@ -1,0 +1,36 @@
+
+============ window安装单机redis ============
+
+1、这里我们下载 Redis-x64-xxx.zip压缩包到 C 盘，解压后，将文件夹重新命名为 redis。
+
+2、在redis安装目录下，cmd进入，运行 【redis-server.exe redis.windows.conf】，指定服务脚本与配置文件
+
+3、	命令行客户端连接：这时候另启一个cmd窗口，原来的不要关闭，不然就无法访问服务端了
+  1)、window系统：【redis-cli.exe -h 127.0.0.1 -p 6379】
+  2)、Linux系统【redis-cli -h 192.168.31.245 -c -p 7002】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
