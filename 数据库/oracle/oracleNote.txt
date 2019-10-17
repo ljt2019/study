@@ -208,11 +208,9 @@
   4)、彻底删除非空约束：【alter table table_name modify clounm_name [datatype] null;】
    
 
-  
-  
 ====== 数据操纵语言(DML) ======
    
-   
+
    
 ====== 数据控制语言(DCL) ======
 
@@ -660,12 +658,6 @@ NOCYCLE;】
 行。
   3)、order by 子句：确定组内的排序规则。
 
-<<<<<<< HEAD
-
-
-  
-
-
 =======
 将一行变多行：【 WITH t AS (SELECT 'G01-0005,9787508284309' txt FROM dual) 
 SELECT replace(regexp_substr(txt,'[^,]+',1,level),',','') txt FROM t 
@@ -696,9 +688,6 @@ CONNECT BY level<=length(txt)-length(replace(txt,',',''))+1 】
           FROM
               TABLE ( i_jcbm )
       );
->>>>>>> 1132063b59395bd205e13fb75bd0d99843362813
-
-P229
 
 创建序列：
 【create SEQUENCE student_SEQ】
