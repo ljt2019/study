@@ -1,7 +1,10 @@
 
+更加纤细查询redis官方网站【https://www.redis.net.cn/order/3625.html】
+
 ============ Redis 5种数据类型 ============
 
 1、字符串（String）：二进制的形式存储，value最大容纳数据长度512M,key-value(string/int/float)
+   雷同：Map<key,value>
 
 	1)、赋值更新：【set key value】 ，【setnx key value】(如果key存在就不设置，返回0，不存在才设置，返回1)
 	
@@ -23,6 +26,7 @@
 	9)、可以实现的业务场景：分布式锁、字符串分布式键、分布式计时器
 				
 2、哈希（hash）：由多个key-value散列组组成，其中key是字符串，value是元素，按key进行增加删除
+   雷同：Map<String,HashMap<String,value>>
 	
 	1)、赋值：【hset hashMap key value】
 			  【hmset hashMap key1 value1 key2 value2】
@@ -42,6 +46,7 @@
 	6)、每个Hash可以存储4294967295个键值对	
 				  
 3、字符串列表（list）：允许重复元素
+   雷同：Map<key,List<value>>
 
   1)、赋值：【lpush/rpush key value[value...]】，往key列表键中左/右边放入一个元素，key不存在则新建
   		    【lpushx/rpushx key value[value...]】，往key列表键中左/右边放入一个元素，key存在才赋值
@@ -56,6 +61,7 @@
       【brpop key [key...] timeout】，改性质可以用来做消息队列的实现
   
 4、字符串集合（set）：无序不重复，跟踪数据唯一性，维护数据对象之间的关联关系
+   雷同：Map<key,Set<value>>
 
   1)、赋值：【sadd key member [member ...]】，往集合键key中存放元素，若key不存在则新建
   
@@ -80,8 +86,9 @@
   9)、并集存储：【sunionstore set set1 set2】
 
 5、有序字符串集合（sorted set）：排名，热点话，构建索引数据，带分数score-value有序集合,value不可重复，score可重复
-
-  1)、赋值：【zadd key 70 zs 80 ls 90 ww】
+   Map<key,TreeMap<key,value>>
+   
+  1)、赋值：【zadd key [NX|XX] [CH] [INCR] score member [score member ...]】，往有序集合键key中存放元素，若key不存在则新建  https://yq.aliyun.com/articles/504008
   	        【zadd key 100 zs】,会替换掉之前存在的分数的值
   		  
   2)、取值：【zscore key zs】

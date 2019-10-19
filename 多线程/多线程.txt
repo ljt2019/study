@@ -1,4 +1,55 @@
 
+1、简述什么是多线程？多线程有几种实现方法,都是什么？同步有几种实现方法,都是什么？
+答：1)、多线程是指一个应用程序同时执行多个任务，一般来说一个任务就是一个线程，而一个应用程序有一个以上的线程我们称之为多线程。
+
+2)、有四种实现方式。
+
+方式一：直接调用Thread实例的start()方法，如下程序示例：
+public class MyThread extends Thread {
+	@Override
+	public void run() {
+		System.out.println("MyThread.run()");
+	}
+	public static void main(String[] args) {
+		new MyThread().start();
+	}
+}
+
+方式二：将Runable实例传给一个Thread实例，然后调用它的start()方法，如下程序实例：
+public class MyRunable implements Runnable {
+	@Override
+	public void run() {
+		System.out.println("MyRunable.run()");
+	}
+	public static void main(String[] args) {
+		new Thread(new MyRunable()).start();;
+	}
+}
+
+方式三：实现Callable接口通过FutureTask包装器来实现的线程方法，此方式可以有返回值，如下程序实例：
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+public class MyCallable implements Callable<Object> {
+	@Override
+	public Object call() throws Exception {
+		System.out.println("MyCallable.call()");
+		return null;
+	}
+	public static void main(String[] args) {
+		new Thread(new FutureTask<>(new MyCallable())).start();
+	}
+}
+
+方式四：Java 线程池
+Java通过Executors提供四种线程池，分别为：
+(1)、ExecutorService threadPool = Executors.newCachedThreadPool()，创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。
+(2)、ExecutorService threadPool = Executors.newFixedThreadPool()， 创建一个定长线程池，可控制线程最大并发数，超出的线程会在队列中等待。
+(3)、ExecutorService threadPool = Executors.newScheduledThreadPool()，创建一个定长线程池，支持定时及周期性任务执行。
+(4)、ExecutorService threadPool = Executors.newSingleThreadExecutor()，创建一个单线程化的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序(FIFO, LIFO, 优先级)执行。
+
+3)、实现同步有5种实现方式，分别是：(1)、同步方法、(2)、同步代码块、(3)、使用特殊域变量volatile、(4)、使用重入锁、(5)、使用局部变量。
+
+
 1、java里的运算（比如自增）并不是原子性的。
 
   1)、线程不安全：
