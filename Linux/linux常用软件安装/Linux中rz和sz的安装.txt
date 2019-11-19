@@ -7,7 +7,7 @@
 
 3、进入解压后的目录：【cd /usr/local/lrzsz-0.12.20】
 
-4、配置安装路径：【./configure】
+4、配置安装路径：【./configure】，这里可能会缺少缺少GCC编译器：【yum install gcc gcc-c++ gcc-g77】
 
 5、编译&安装：【make && make install】
 

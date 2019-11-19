@@ -1,3 +1,5 @@
-FROM apline:latest
+FROM openjdk:8
 MAINTAINER tiger
-CMD echo 'hello docker'
+LABEL name="dockerfile-demo" version="1.0" author="tiger"
+COPY dockerfile-demo-0.0.1-SNAPSHOT.jar dockerfile-image.jar
+CMD ["java","-jar","dockerfile-image.jar"]

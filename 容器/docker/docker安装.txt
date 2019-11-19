@@ -1,4 +1,4 @@
-====== Linux下docker安装 ======
+====== centos7下docker安装 ======
 
 1、方式1
 
@@ -38,6 +38,7 @@ sudo yum remove docker \
 
   5)、验证 docker 是否安装成功并在容器中执行一个测试的镜像：【sudo docker run hello-world】
 
+删除docker：【sudo yum remove docker-ce】、【sudo rm -rf /var/lib/docker】
 
 ====== 镜像加速 ======中国加速器
 新版的 Docker 使用 /etc/docker/daemon.json（Linux） 或者 %programdata%\docker\config\daemon.json（Windows） 来配置 Daemon。
@@ -52,14 +53,6 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
-删除docker：【sudo yum remove docker-ce】、【sudo rm -rf /var/lib/docker】
-
-
-====== docker 常用命令 ======
-1、通过帮助文档查找：【docker help】
-2、拉取镜像：【docker pull hello-world】,默认拉取最新版本
-2、拉取镜像：【docker pull hello-world】,默认拉取最新版本
-3、移除镜像：【dcoker -rmi -f hello-world】
 
 
 

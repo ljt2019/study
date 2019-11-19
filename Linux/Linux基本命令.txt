@@ -82,7 +82,7 @@ sync; sync; sync; reboot
 
 17、发送命令道全部终端：[查看 --> 撰写 --> 撰写栏]，在撰写栏下面勾选全部Xshell
 
-18、解压：【tar -xvzf ruby-2.5.3.tar.gz -C /usr/local/】
+18、解压：【tar -zxvf ruby-2.5.3.tar.gz -C /usr/local/】
 
 19、压缩：【tar -cvzf jpg.tar.gz *.jpg】，将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz
 

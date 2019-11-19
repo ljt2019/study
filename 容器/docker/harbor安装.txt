@@ -1,0 +1,32 @@
+====== centos7下harbor安装 ======
+
+1、官网下载：【https://github.com/goharbor/harbor/releases?after=v1.7.2】，这里下载 1.7.2
+
+2、上传到linux,接着解压：【tar -zxvf harbor-offline-installer-v1.7.1.tgz】，会生成harbor目录
+
+3、进入到harbor目录：【cd harbor】
+
+4、修改配置文件：【vi vi harbor.cfg】,修改主机名为当前ip:【hostname = 192.168.3.12】，同时也可以看到Harbor默认密码【harbor_admin_password = Harbor12345】
+
+5、查看磁盘使用情况，时候够用：【df -h】
+
+在这之前想要安装docker-compose
+
+6、安装：【sh install.sh】
+
+
+====== centos7下docker-compose安装 ======
+
+官网：【https://docs.docker.com/compose/install/】，git：【https://github.com/docker/compose】
+
+1、从github上下载docker-compose二进制文件安装：
+【sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose】
+ To install a different version of Compose, substitute 1.24.1 with the version of Compose you want to use.
+
+2、对二进制文件应用可执行权限：Apply executable permissions to the binary:
+【sudo chmod +x /usr/local/bin/docker-compose】
+
+3、测试安装结果：【docker-compose --version】
+
+
+上面的方式由于国内网速原因，安装不成功

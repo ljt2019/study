@@ -1,35 +1,66 @@
 
 ====== 基本命令操作 ======
+一、images:
+1、拉取images：【docker pull tomcat】
 
-1、停止关闭容器进程id：【docker stop eb1dfeec7fbb】
+2、列出images：【docker images】
 
-2、保存改动为新images：【docker commit -m "tiger-nginx" 1c1af7a4c777 tiger-nignx】
+3、删除images：【dcoker rmi -f hello-world】,【docker rmi eb1dfeec7fbb】
+   删除所有：【dcoker rmi -f $(docker images)】
 
-3、获取images：【docker pull】
+4、
 
-4、创建images：【docker build】
+二、container 
 
-5、列出images：【docker images】
+1、利用images创建container：
+  【docker run -d --name my-tomcat -p 9090:8080 tomcat】，-p端口映射，将nginx本身80的端口映射到本地8080,-d允许直接返回，作为守护进程来执行,-name指定要创建容器的名称
+  交互式运行
+  【docker run -d -it --name my-tomcat -p 9090:8080 tomcat】
 
-6、运行container：【docker run -p 8080:80 -d nginx】, -p端口映射，将nginx本身80的端口映射到本地8080,-d允许直接返回，作为守护进程来执行
+  创建mysql容器
+  【docker pull mysql】
+  【docker run -d --name tiger-mysql -p 3301:3306 -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql】
 
-7、列出正在运行的container：【docker ps】，列出运行过的历史记录【docker ps -a】
+2、进入到容器中：【docker exec -it my-tomcat /bin/bash】
 
-8、删除正在运行的container：【docker rm】，删除前得先停掉正在运行的container
+3、停止容器进程：【docker stop eb1dfeec7fbb】、【docker stop my-tomca】
 
-9、删除images：【docker rmi】,docker rmi eb1dfeec7fbb，删除前得删除掉所有历史记录以及正在运行的container
+4、启动容器进程：【docker start eb1dfeec7fbb】
 
-10、在host与container之间拷贝文件：【docker cp】,docker cp indexdocker.html eb1dfeec7fbb://usr/share/nginx/html
+5、查看运行容器：【docker ps】
+
+6、查看所有容器：【docker ps -a】
+
+7、删除容器：【docker rm】
+
+8、删除所有容器【docker rm -f $(docker ps -aq)】
+
+9、container生成images：【docker commit my-centos vim-centos-images】
+
+10、查看日志：【docker logs hello-world】
+
+11、在host与container之间拷贝文件：【docker cp】,docker cp indexdocker.html eb1dfeec7fbb://usr/share/nginx/html
+
+------ container 资源 ------
+1、资源使用情况：【docker top eb1dfeec7fbb】
+                 【docker stats eb1dfeec7fbb】
+				 
+2、内存限制以及cpu权重：【docker run -d --name tomcat1 --memory 100M --cpu-shares 10 tomcat】
 
 
-====== Dockerfile ======编写文件自创 docker images
+查看docker网络：【docker network ls】
+                【docker inspect bridge】
+				
+查看资源使用情况：【】
 
-1、打包成镜像命令：【docker build -t tiger/hello-nginx .】
+====== Dockerfile ======
+
+1、由Dockerfile生成image：【docker build -t dockerfile-demo .】，根据当前目录下的Dockerfile文件生成一个 image,而images实例化出container
 
 2、Dockerfile语法
   1)、FROM：基础镜像
   2)、RUN：执行命令
-  3)、ADD：添加文件
+  3)、ADD：添加文件,会自动解压
   4)、COPY：拷贝文件
   5)、CMD：执行命令
   6)、EXPOSE：暴露端口
@@ -40,14 +71,37 @@
   11)、USER：指定用户
   12)、VOLUME：mountpoint，挂载点
   
-3、进入容器中看：【docker exec -it nginx /bin/bash】
+
   
-  
+====== docker仓库 ======
+1、docker官方：【43df2c27-d5ef-4d56-ac66-3c9b581692e1】
+  (1)在docker机器上登录：【docker login】
+  (2)输入用户名和密码
+  (3)【docker push itcrazy2018/test-docker-image】
+  [注意镜像名称要和docker id一致，不然push不成功]
+  (4)给image重命名，并删除掉原来的：【docker tag test-docker-image itcrazy2018/test-docker-image】
+  【docker rmi -f test-docker-image】
+  (5)再次推送，刷新hub.docker.com后台，发现成功
+  (6)别人下载，并且运行
+  【docker pull itcrazy2018/test-docker-image】
+  【docker run -d --name user01 -p 6661:8080 itcrazy2018/test-docker-image】
 
 
+2、阿里云仓库 regs
+  1)、登陆：【sudo docker login --username=1165069099@qq.com registry.cn-hangzhou.aliyuncs.com】
+  2)、输入密码
+  3)、在阿里云页面创建命名空间，比如 tiger1029：【https://cr.console.aliyun.com/cn-hangzhou/instances/namespaces】
+  4)、给image打tag：【sudo docker tag tiger-dockerfile registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
+  5)、推送镜像到docker阿里云仓库：【sudo docker push registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
+  6)、别人下载，并且运行
+   【docker pull registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
+   【docker run -d --name user01 -p 6661:8080 registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
 
 
+3、私有仓库：harbor:【https://github.com/goharbor/harbor/releases?after=v1.7.2】
 
+
+监控资源工具：【weaveworks/scope】【https://github.com/weaveworks/scope】
 
 
 

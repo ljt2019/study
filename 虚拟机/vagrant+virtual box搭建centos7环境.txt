@@ -7,7 +7,7 @@
   访问VirtualBox官网：【https://www.virtualbox.org/】，下载对应版本
   
 2、将 virtualbox.box 文件添加到vagrant管理的镜像中
-  1)、下载网盘中的镜像文件 virtualbox.box 文件
+  1)、下载网盘中的镜像文件 virtualbox.box 文件，在官网可以下载
   2)、保存到磁盘的某个目录，比如【C:\SoftInstalled\Vagrant\virtualbox.box】
   3)、添加镜像并起名叫centos/7，执行命令：【vagrant box add centos/7 C:\SoftInstalled\Vagrant\virtualbox.box】
   4)、vagrant box list 查看本地的box[这时候可以看到centos/7]
