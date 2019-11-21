@@ -22,7 +22,7 @@
 
   创建mysql容器
   【docker pull mysql】
-  【docker run -d --name tiger-mysql -p 3301:3306 -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql】
+  【docker run -d --name tiger-mysql -p 3366:3306 -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql】
 
 2、进入到容器中：【docker exec -it my-tomcat /bin/bash】
 
@@ -94,7 +94,7 @@ Weave Scope is listening at the following URL(s):
   9)、ENV：设定环境变量
   10)、ENTRYPOINT：容器入口
   11)、USER：指定用户
-  12)、VOLUME：mountpoint，挂载点
+  12)、VOLUME：mountpoint，挂载点，数据保存的地方
   
 
   

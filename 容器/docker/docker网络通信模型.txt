@@ -1,0 +1,100 @@
+
+====== 基本命令 ======
+1、查看网卡[网络接口]
+  1)、查看网卡【ip link show】
+  2)、【ls /sys/class/net】
+  3)、【ip a】
+  ip a解读
+  状态：UP/DOWN/UNKOWN等
+  link/ether：MAC地址
+  inet：绑定的IP地址
+
+2、配置文件
+  1)、在Linux中网卡对应的其实就是文件，所以找到对应的网卡文件即可，比如：【cat /etc/sysconfig/network-scripts/ifcfg-eth0】
+  2)、给网卡添加IP地址：当然，这块可以直接修改ifcfg-*文件，但是我们通过命令添加试试
+  添加【ip addr add 192.168.0.100/24 dev eth0】
+  删除【ip addr delete 192.168.0.100/24 dev eth0】
+  
+3、Network Namespace，对网络进行隔离，和java中的package有点类似
+  查看【ip netns list】
+  添加【ip netns add ns1】
+  删除【ip netns delete ns1】
+  
+4、 namespace实战
+  1)、创建一个network namespace【ip netns add ns1】
+  2)、查看该namespace下网卡的情况【ip netns exec ns1 ip a】
+  3)、启动ns1上的lo网卡【ip netns exec ns1 ifup lo】，【ip netns exec ns1 ip link set lo up】
+  4)、可以发现state变成了UNKOWN
+  5)、再次创建一个network namespace【ip netns add ns2】
+  6)、再次创建一个network namespace【ip netns add ns2】
+  7)、此时想让两个namespace网络连通起来，veth pair ：Virtual Ethernet Pair，是一个成对的端口，可以实现上述功能
+  8)、创建一对link，也就是接下来要通过veth pair连接的link【ip link add veth-ns1 type veth peer name veth-ns2】
+  9)、查看link情况【ip link】
+  10)、将veth-ns1加入ns1中，将veth-ns2加入ns2中
+  【ip link set veth-ns1 netns ns1】
+  【ip link set veth-ns1 netns ns2】
+  11)、查看宿主机和ns1，ns2的link情况
+  【ip link】
+  【ip netns exec ns1 ip link】
+  【ip netns exec ns2 ip link】
+  12)、此时veth-ns1和veth-ns2还没有ip地址，显然通信还缺少点条件
+  【ip netns exec ns1 ip addr add 192.168.0.11/24 dev veth-ns1】
+  【ip netns exec ns2 ip addr add 192.168.0.12/24 dev veth-ns2】
+  13)、再次查看，发现state是DOWN，并且还是没有IP地址
+  【ip netns exec ns1 ip link】
+  【ip netns exec ns2 ip link】
+  14)、启动veth-ns1和veth-ns2
+  【ip netns exec ns1 ip link set veth-ns1 up】
+  【ip netns exec ns2 ip link set veth-ns2 up】
+  15)、)再次查看，发现state是UP，同时有IP
+  【ip netns exec ns1 ip a】
+  【ip netns exec ns2 ip a】
+  16)、此时两个network namespace互相ping一下，发现是可以ping通的
+  【ip netns exec ns1 ping 192.168.0.12】
+  【ip netns exec ns2 ping 192.168.0.11】
+
+====== Container的NS ======
+1、按照上面的描述，实际上每个container，都会有自己的network namespace，并且是独立的，我们可以进入到容器中进行验证
+  1)、不妨创建两个container看看？
+  【docker run -d --name tomcat01 -p 8081:8080 tomcat】
+  【docker run -d --name tomcat02 -p 8082:8080 tomcat】
+  2)、进入到两个容器中，并且查看ip
+  【docker exec -it tomcat01 ip a】，例如查到ip是：172.17.0.4
+  【docker exec -it tomcat02 ip a】，例如查到ip是：172.17.0.5
+  3)、互相ping一下是可以ping通的
+  【docker exec -it tomcat01 ping 172.17.0.5】
+  【docker exec -it tomcat02 ping 172.17.0.4】
+  值得我们思考的是，此时tomcat01和tomcat02属于两个network namespace，是如何能够ping通的？有些小伙伴可能会想，不就跟上面的namespace实战一样吗？注意这里并没有veth-pair技术
+  
+2、深入分析container网络-Bridge
+  1)、查看centos的网络:ip a，可以发现
+  2)、在centos中ping一下tomcat01的网络，发现可以ping通【ping 172.17.0.4】
+  3)、既然可以ping通，而且centos和tomcat1又属于不同的network namespace，是怎么连接的？很显然，跟之前的实战是一样的，画个图，图脑补
+  4)、也就是说，在tomcat01中有一个eth0和centos的docker0中有一个veth3是成对的，类似于之前实战中的veth-ns1和veth-ns2，不妨再通过一个命令确认下：brctl
+  5)、安装一下：【yum install bridge-utils】，【brctl show】
+  6)、那为什么tomcat01和tomcat02能ping通呢？不多说，直接上图，图脑补，docker作为中间桥梁，有两对link
+  7)、这种网络连接方法我们称之为Bridge，其实也可以通过命令查看docker中的网络模式：docker network ls bridge 也是docker中默认的网络模式
+  8)、不妨检查一下bridge：【docker network inspect bridge】
+  9)、在tomcat01容器中是可以访问互联网的，顺便把这张图画一下咯，NAT是通过iptables实现的
+  10)、创建自己的network
+  【docker network create tomcat-net】
+  【docker network create --subnet=172.17.0.4/24 tomcat-net】
+  11)、查看已有的network：【docker network ls】
+  12)、查看tomcat-net详情信息：【docker network inspect tomcat-net】
+  13)、)创建tomcat的容器，并且指定使用tomcat-net
+  【docker run -d --name custom-net-tomcat --network tomcat-net tomcat】
+  14)、查看custom-net-tomcat的网络信息【docker exec -it custom-net-tomcat ip a】，172.18.0.2/16，与之前不是在同一个网段中
+  15)、此时在custom-net-tomcat容器中ping一下tomcat01的ip会如何？发现无法ping通
+  【docker exec -it custom-net-tomcat ping 172.17.0.4】，PING 172.17.0.4 (172.17.0.4) 56(84) bytes of data.
+  16)、此时如果tomcat01容器能够连接到tomcat-net上应该就可以咯
+  【docker network connect tomcat-net tomcat01】
+  17)、查看tomcat-net网络，可以发现tomcat01这个容器也在其中【docker network inspect tomcat-net】
+  18)、此时进入到tomcat01或者custom-net-tomcat中，不仅可以通过ip地址ping通，而且可以通过名字ping到，这时候因为都连接到了用户自定义的tomcat-net bridge上【docker exec -it custom-net-tomcat ping 172.18.0.4】
+  【docker exec -it tomcat01 bash】，【ping 172.18.0.4】
+  19)、但是ping tomcat02是不通的【ping 172.17.0.5】
+  
+  
+  
+  
+  
+  

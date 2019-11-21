@@ -1,0 +1,10 @@
+ 
+======  MySQL高可用集群搭建 ======
+1、拉取pxc镜像：【docker pull percona/percona-xtradb-cluster:5.7.21】
+2、复制pxc镜像(实则重命名)：【docker tag percona/percona-xtradb-cluster:5.7.21 pxc】
+3、删除pxc原来的镜像：【docker rmi percona/percona-xtradb-cluster:5.7.21】
+4、创建一个单独的网段，给mysql数据库集群使用：
+  【docker network create --subnet=172.18.0.0/24 pxc-net】
+  【docket network inspect pxc-net】 [查看详情]
+  【docker network rm pxc-net】 [删除]
+5、

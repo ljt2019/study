@@ -1,0 +1,88 @@
+
+1、 Volume
+
+1、创建mysql数据库的container：【docker run -d --name tiger-mysql -p 3366:3306 -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql】
+
+2、查看所有volume：【docker volume ls】
+
+3、查看具体volume：【docker volume inspect 83a10572608971674d4a6c1ed213866b785c3ba0cc1422f68ac5c34cc89ff1b4】
+
+4、删除volume：【docker volume rm -f 83a10572608971674d4a6c1ed213866b785c3ba0cc1422f68ac5c34cc89ff1b4】
+
+4、名字不好看，name太长，修改一下：
+【docker run -d --name mysql01 -p 3306:3306 -v mysql01_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql】
+
+
+真的能够持久化保存数据吗？不妨来做个实验?
+1、进入到上面创建的容器中：【docker exec -it mysql01 bash】
+2、登录mysql服务【mysql -uroot -123456】
+3、创建测试库：【create database db_test;】
+4、退出mysql服务，退出mysql container
+5、删除mysql容器：【docker rm -f mysql01】
+6、查看volume，发现 mysql01_volume 还在
+7、新建一个mysql container，并且指定使用"mysql01_volume" 
+【docker run -d --name test-mysql -p 3306:3306 -v mysql01_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql】
+8、进入容器，登录mysql服务，查看数据库，之前呗删除的mysql容器的数据还存在
+  【docker exec -it test-mysql bash】
+  【mysql -uroot -p123456】
+  【show databases;】
+9、查看 mysql01_volume 详情：【docker volume inspect mysql01_volume】
+[
+    {
+        "CreatedAt": "2019-11-18T10:53:20Z",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/mysql01_volume/_data",
+        "Name": "mysql01_volume",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+10、进入宿主机挂载点：【cd /var/lib/docker/volumes/mysql01_volume/_data】
+
+
+====== Bind Mounting ======
+
+宿主机器任意目录 -- 容器的任意目录 一一对应起来 对于开发者非常有效的利器，实时更新宿主机中的源码，而无需动容器
+
+1、创建一个tomcat容器：【docker run -d --name tomcat01 -p 9090:8080 -v /tmp/test:/usr/local/tomcat/webapps/test tomcat】
+
+2、查看两个目录
+  centos：【cd /tmp/test】
+  tomcat容器：先进入到容器：【docker exec -it tomcat01 bash】，再：【cd /usr/local/tomcat/webapps/test】
+3、在centos的/tmp/test中新建1.html，并写一些内容：【<p style="color:blue; font-size:20pt;">This is p!</p>】
+4、进入tomcat01的对应目录查看，发现也有一个1.html，并且也有内容
+5、在centos7上访问该路径：【curl localhost:9090/test/1.html】
+6、)在win浏览器中通过ip访问：【http://192.168.3.13:9090/test/1.html】
+  
+也可以将cetnos中的目录映射到window上的机器进行修改，按自己的思维进行挂载，
+我的虚拟机通过 Vagrantfile 来创建，在该文件中有如下信息，将这行取消注释 config.vm.synced_folder "../data", "/vagrant_data" ,配置对应的目录
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder "C://AAAAA//all-code//async-servlet-demo", "/tmp/test"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
