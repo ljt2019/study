@@ -1,10 +1,191 @@
  
+高可用集群解决方案
+1、弱一致性高可用数据库解决方案(速度快)：Replication，异步复制，无法保证每个节点中的数据是一致的，存储低价值数据，例如新闻信息。。。无需实时展现处理的数据
+2、强一致性高可用数据库解决方案(速度慢)：percona-xtradb-cluster[对mysql镜像的一个封装 pxc 方便搭建强一致性高可用的集群],例如订单，红包等等实时性强的数据
+ 
+ 实战1
 ======  MySQL高可用集群搭建 ======
-1、拉取pxc镜像：【docker pull percona/percona-xtradb-cluster:5.7.21】
+1、拉取pxc镜像：【docker pull percona/percona-xtradb-cluster:5.7.21】，存在于 docker hub 中，可以直接拉取使用
 2、复制pxc镜像(实则重命名)：【docker tag percona/percona-xtradb-cluster:5.7.21 pxc】
 3、删除pxc原来的镜像：【docker rmi percona/percona-xtradb-cluster:5.7.21】
 4、创建一个单独的网段，给mysql数据库集群使用：
-  【docker network create --subnet=172.18.0.0/24 pxc-net】
-  【docket network inspect pxc-net】 [查看详情]
+  【docker network create --subnet=172.19.0.0/24 pxc-net】
+  【docker network inspect pxc-net】 [查看详情]
   【docker network rm pxc-net】 [删除]
-5、
+5、创建和删除volume
+  创建：【docker volume create --name v1】
+  删除：【docker volume rm v1】
+  查看详情：【docker volume inspect v1】
+6、搭建PXC[MySQL]集群
+  准备3个数据卷,如果3个数据库的挂载点都是一样呢？例如都是挂载在 v1 
+  【docker volume create --name v1】
+  【docker volume create --name v2】
+  【docker volume create --name v3】
+7、运行三个PXC容器
+  【docker run -d --name=node1 -p 3301:3306 -v v1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.2 pxc】
+  注意：下边两个节点(node2和node3)加入到node1节点中
+  【docker run -d --name=node2 -p 3302:3306 -v v2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.3 pxc】
+  【docker run -d --name=node3 -p 3303:3306 -v v3:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.4 pxc】
+
+====== 数据库的负载均衡 ======
+1、拉取haproxy镜像：【docker pull haproxy】
+
+2、创建 haproxy 配置文件，这里使用bind mounting的方式【mkdir /tmp/haproxy】,【touch haproxy.cfg】,文件内容如下
+【
+global
+	#工作目录，这边要和创建容器指定的目录对应
+	chroot /usr/local/etc/haproxy
+	#日志文件
+	log 127.0.0.1 local5 info
+	#守护进程运行
+	daemon
+defaults
+	log	global
+	mode	http
+	#日志格式
+	option	httplog
+	#日志中不记录负载均衡的心跳检测记录
+	option	dontlognull
+ 	#连接超时（毫秒）
+	timeout connect 5000
+ 	#客户端超时（毫秒）
+	timeout client  50000
+	#服务器超时（毫秒）
+ 	timeout server  50000
+
+    #监控界面	
+    listen  admin_stats
+	#监控界面的访问的IP和端口
+	bind  0.0.0.0:8888
+	#访问协议
+ 	mode        http
+	#URI相对地址
+ 	stats uri   /dbs_monitor
+	#统计报告格式
+ 	stats realm     Global\ statistics
+	#登陆帐户信息
+ 	stats auth  admin:admin
+	#数据库负载均衡
+	listen  proxy-mysql
+	#访问的IP和端口，haproxy开发的端口为3306
+ 	#假如有人访问haproxy的3306端口，则将请求转发给下面的数据库实例
+	bind  0.0.0.0:3306  
+ 	#网络协议
+	mode  tcp
+	#负载均衡算法（轮询算法）
+	#轮询算法：roundrobin
+	#权重算法：static-rr
+	#最少连接算法：leastconn
+	#请求源IP算法：source 
+ 	balance  roundrobin
+	#日志格式
+ 	option  tcplog
+	#在MySQL中创建一个没有权限的haproxy用户，密码为空。
+	#Haproxy使用这个账户对MySQL数据库心跳检测
+ 	option  mysql-check user haproxy
+	server  MySQL_1 172.19.0.2:3306 check weight 1 maxconn 2000  
+ 	server  MySQL_2 172.19.0.3:3306 check weight 1 maxconn 2000  
+	server  MySQL_3 172.19.0.4:3306 check weight 1 maxconn 2000 
+	#使用keepalive检测死链
+ 	option  tcpka
+】
+3、创建haproxy容器
+  【docker run -it -d -p 8888:8888 -p 3308:3306 -v /tmp/haproxy:/usr/local/etc/haproxy --name haproxy01 --privileged --net=pxc-net haproxy】
+4、根据haproxy.cfg文件启动haproxy：
+  【docker exec -it haproxy01 bash】
+  【haproxy -f /usr/local/etc/haproxy/haproxy.cfg】
+5、win上的datagrip连接haproxy01：
+  ip:192.168.3.13
+  port:3308
+  user:root
+  password:123456
+6、在haproxy连接上进行数据操作，然后查看数据库集群各个节点
+
+ 实战2
+====== Nginx+Spring Boot（springboot集群）+MySQL（haproxy强一致性高可以mysql集群） 项目====== 
+
+ Spring Boot+MyBatis实现CRUD操作，名称为“springboot-mybatis”
+
+**准备一个单独的网段**
+  【docker network create --subnet=172.18.0.0/24 nginx-net】
+  【docker network inspect nginx-net】 [查看详情]
+  【docker network rm nginx-net】 [删除]
+  
+**MySQL容器准备开始**
+> (1)创建volume，准备数据卷，mysql数据持久化：【docker volume create my-mysql-v】
+> (2)创建mysql容器：【docker run -d --name my-mysql -v my-mysql-v:/var/lib/mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=123456 --net=nginx-net --ip 172.18.0.5 mysql】
+> (3)datagrip连接，执行.mysql文件
+  name:my-mysql
+  ip:centos-ip
+  端口:3307
+  user:root
+  password:123456
+ ##db_gupao_springboot
+create table t_user
+(
+	id int not null primary key,
+	username varchar(50) not null,
+	password varchar(50) not null,
+	number varchar(100) not null
+);
+
+**MySQL容器准备结束**
+
+1、将 springboot-mybatis 打成 jar 包 【springboot-mybatis.jar】
+  ### 在同一个网络中，bridge  nginx-net   容器之间不仅可以通过ip访问，而且可以通过名称 my-mysql
+  数据库配置：【url: jdbc:mysql://172.18.0.5:3306/db_gupao_springboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC】
+  数据库配置：【url: jdbc:mysql://my-mysql:3306/db_gupao_springboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC】
+2、在docker环境中新建一个目录"springboot-mybatis-nginx" 【mkdir springboot-mybatis-nginx】
+3、进到目录下：【cd mkdir springboot-mybatis-nginx】
+4、将 springboot-mybatis.jar 上传到该目录下
+5、创建 Dockerfile 文件，内容如下
+【
+FROM openjdk:8
+MAINTAINER tiger2019
+LABEL name="springboot-mybatis-nginx" version="1.0" author="tiger2019"
+COPY springboot-mybatis.jar springboot-mybatis-nginx.jar
+CMD ["java","-jar","springboot-mybatis-nginx.jar"]
+】
+6、基于Dockerfile构建镜像：【docker build -t springboot-mybatis-nginx-image .】
+7、基于image创建container：【docker run -d --name sbm1 -p 8091:8080 --net=nginx-net --ip 172.18.0.11 springboot-mybatis-nginx-image】
+8、查看启动日志【docker logs sbm1】
+9、在win浏览器访问 http://192.168.3.13:8091/user/listall
+10、创建多个项目容器，（再创建2个）
+  【docker run -d --name sbm2 -p 8092:8080 --net=nginx-net --ip 172.18.0.12 springboot-mybatis-nginx-image】
+  【docker run -d --name sbm3 -p 8093:8080 --net=nginx-net --ip 172.18.0.13 springboot-mybatis-nginx-image】
+
+====== Nginx 配置 ======
+1、在centos的/tmp/nginx下新建nginx.conf文件，并进行相应的配置，配置内容如下
+【
+user nginx;
+worker_processes  1;
+events {
+    worker_connections  1024;
+}
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65; 
+
+   
+    server {
+        listen 80;
+        location / {
+         proxy_pass http://balance;
+        }
+    }
+    
+    upstream balance{  
+	    #这里可以通过名字来指定   server sbm1:8080;
+        server 172.18.0.12:8080;  
+        server 172.18.0.12:8080;
+        server 172.18.0.13:8080;
+    }
+    include /etc/nginx/conf.d/*.conf;
+}
+】
+2、创建nginx容器，注意`：先在centos7上创建/tmp/nginx目录，并且创建nginx.conf文件，写上内容
+  【docker run -d --name my-nginx -p 80:80 -v /tmp/nginx/nginx.conf:/etc/nginx/nginx.conf --network=nginx-net --ip 172.18.0.10 nginx】
+
+3、win浏览器访问: ip[centos]/user/listall  --> 192.168.3.13/user/listall
