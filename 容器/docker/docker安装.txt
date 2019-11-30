@@ -44,7 +44,7 @@ sudo yum remove docker \
 新版的 Docker 使用 /etc/docker/daemon.json（Linux） 或者 %programdata%\docker\config\daemon.json（Windows） 来配置 Daemon。
 请在该配置文件中加入（没有该文件的话，请先建一个）：
 
-sudo mkdir -p /etc/docker
+创建文件夹【sudo mkdir -p /etc/docker】，创建文件 【touch daemon.json】，之后执行下面内容
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
   "registry-mirrors": ["https://ea3wi4om.mirror.aliyuncs.com"]

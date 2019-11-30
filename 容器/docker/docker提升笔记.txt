@@ -1,0 +1,181 @@
+
+
+Docker Compose
+
+Docker传统方式实现
+
+操作步骤
+1、创建文件夹并进入到其中：【mkdir -p /tmp/composetest && cd /tmp/composetest】
+2、创建app.py文件，写业务内容，如下
+【
+import time
+
+import redis
+from flask import Flask
+
+app = Flask(__name__)
+cache = redis.Redis(host='redis', port=6379)
+
+def get_hit_count():
+    retries = 5
+    while True:
+        try:
+            return cache.incr('hits')
+        except redis.exceptions.ConnectionError as exc:
+            if retries == 0:
+                raise exc
+            retries -= 1
+            time.sleep(0.5)
+
+@app.route('/')
+def hello():
+    count = get_hit_count()
+    return 'Hello World! I have been seen {} times.\n'.format(count)
+】
+3、新建requirements.txt文件，内容如下，py所需要的依赖
+【
+flask
+redis
+】
+4、编写 Dockerfile 内容如下
+【
+FROM python:3.7-alpine
+WORKDIR /code
+ENV FLASK_APP app.py
+ENV FLASK_RUN_HOST 0.0.0.0
+RUN apk add --no-cache gcc musl-dev linux-headers
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["flask", "run"]
+】
+5、根据Dockerfile生成image：【docker build -t python-app-image .】
+6、获取Redis的image：【docker pull redis:alpine】
+7、创建网络
+  【docker network ls】
+  【docker network create --subnet=172.20.0.0/24 app-net】
+8、创建python程序的container，并指定网段和端口：【docker run -d --name web -p 5000:5000 --network app-net python-app-image】
+9、创建redis的container，并指定网段【docker run -d --name redis --network app-net redis:alpine】
+10、访问测试：【ip[centos]:5000】
+
+
+====== 搭建虚拟机分布式环境 ======
+1、新建 swarm-docker-centos7 文件夹，创建 Vagrantfile ，内容如下
+
+【
+boxes = [
+    {
+        :name => "manager-node",
+        :eth1 => "192.168.3.11",
+        :mem => "1024",
+        :cpu => "1"
+    },
+    {
+        :name => "worker01-node",
+        :eth1 => "192.168.3.12",
+        :mem => "1024",
+        :cpu => "1"
+    },
+    {
+        :name => "worker02-node",
+        :eth1 => "192.168.3.13",
+        :mem => "1024",
+        :cpu => "1"
+    }
+]
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "centos/7"
+  
+   boxes.each do |opts|
+      config.vm.define opts[:name] do |config|
+        config.vm.hostname = opts[:name]
+        config.vm.provider "vmware_fusion" do |v|
+          v.vmx["memsize"] = opts[:mem]
+          v.vmx["numvcpus"] = opts[:cpu]
+        end
+
+        config.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--memory", opts[:mem]]
+		  v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
+		  v.customize ["modifyvm", :id, "--name", opts[:name]]
+        end
+
+        config.vm.network :public_network, ip: opts[:eth1]
+      end
+  end
+
+end
+】
+
+
+2、进入到对应的centos里面，使得root账户能够登陆，从而使用XShell登陆
+
+  vagrant ssh manager-node/worker01-node/worker02-node
+  sudo -i
+  vi /etc/ssh/sshd_config
+  修改PasswordAuthentication yes
+  passwd root
+  systemctl restart sshd
+
+3、在win上ping一下各个主机，看是否能ping通：【ping 192.168.0.11/12/13】
+4、在每台机器上安装docker engine
+  `小技巧`：要想让每个shell窗口一起执行同样的命令"查看-->撰写-->撰写窗口-->全部会话"
+  
+5、进入manager，提示`：manager node也可以作为worker node提供服务
+  【docker swarm init --advertise-addr=192.168.3.11】
+6、注意观察日志，拿到worker node加入manager node的信息`
+  【docker swarm join --token SWMTKN-1-22xt8njpiyx25vdl2kgn4sw79dssbyqajcuvo3eluaaw9upvrq-a4ntqdaukqpnql9a1a2vrx560 192.168.3.11:2377】
+7、进入两个worker，执行
+  【docker swarm join --token SWMTKN-1-22xt8njpiyx25vdl2kgn4sw79dssbyqajcuvo3eluaaw9upvrq-a4ntqdaukqpnql9a1a2vrx560 192.168.3.11:2377】
+8、`日志打印` This node joined a swarm as a worker.
+9、进入到manager node查看集群状态【docker node ls】
+10、node类型的转换，可以将worker提升成manager，从而保证manager的高可用
+  【docker node promote worker01-node】
+  【docker node promote worker02-node】
+11、降级可以用demote
+  【docker node demote worker01-node】
+
+====== Swarm基本操作 ======
+1、创建一个tomcat的service，相当于单机中的container
+  【docker service create --name my-tomcat tomcat】
+2、查看当前swarm的service：【docker service ls】
+3、查看service的启动日志：【docker service logs my-tomcat】
+4、查看service的详情：【docker service inspect my-tomcat】
+5、查看my-tomcat运行在哪个node上：【docker service ps my-tomcat】
+6、水平扩展service：
+  【docker service scale my-tomcat=3】
+  【docker service ls】
+  【docker service ps my-tomcat】
+7、日志`：可以发现，其他node上都运行了一个my-tomcat的service【docker service ps my-tomcat】
+8、如果某个node上的my-tomcat挂掉了，这时候会自动扩展
+  【docker rm -f containerid】
+
+  [manager-node]
+  【docker service ls】
+  【docker service ps my-tomcat】
+9、删除service：【docker service rm my-tomcat】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

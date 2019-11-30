@@ -19,6 +19,8 @@
   【docker run -d -it --name my-tomcat -p 9090:8080 tomcat】
   内存限制以及cpu权重
   【docker run -d --name tomcat1 -p 6666:8080 --memory 100M --cpu-shares 10 tomcat】
+  指定网络和该网络下的ip  ，单独的网络需要自己创建：【docker network create --subnet=172.19.0.0/24 tomcat-net】
+  【docker run -d --name tomcat1 -p 6666:8080 --memory 100M --cpu-shares 10 --net=tomcat-net --ip 172.19.0.2 tomcat】
 
   创建mysql容器
   【docker pull mysql】
@@ -61,23 +63,22 @@
   停止：【scope stop】
   
 启动信息：可以看到访问地址：【http://192.168.3.12:4040/】
-scope launch 192.168.3.12
-Unable to find image 'weaveworks/scope:1.12.0' locally
-1.12.0: Pulling from weaveworks/scope
-Digest: sha256:2f063422cd74d6b0cc6a4c7a26aeb531a69d719de1fa039ca592877662051446
-Status: Image is up to date for weaveworks/scope:1.12.0
-88912011fc744c8f5d6e93a43c1ec87a29d949bb1d957fe566b62f7b48125b4e
-Scope probe started
-Weave Scope is listening at the following URL(s):
-  * http://192.168.3.12:4040/
-  * http://10.0.2.15:4040/
-
+  scope launch 192.168.3.12
+  Unable to find image 'weaveworks/scope:1.12.0' locally
+  1.12.0: Pulling from weaveworks/scope
+  Digest: sha256:2f063422cd74d6b0cc6a4c7a26aeb531a69d719de1fa039ca592877662051446
+  Status: Image is up to date for weaveworks/scope:1.12.0
+  88912011fc744c8f5d6e93a43c1ec87a29d949bb1d957fe566b62f7b48125b4e
+  Scope probe started
+  Weave Scope is listening at the following URL(s):
+    * http://192.168.3.12:4040/
+    * http://10.0.2.15:4040/
+  
 
 查看docker网络：【docker network ls】
                 【docker inspect bridge】
 				
-
-
+				
 ====== Dockerfile ======
 
 1、由Dockerfile生成image：【docker build -t dockerfile-demo .】，根据当前目录下的Dockerfile文件生成一个 image,而images实例化出container
@@ -97,7 +98,6 @@ Weave Scope is listening at the following URL(s):
   12)、VOLUME：mountpoint，挂载点，数据保存的地方
   
 
-  
 ====== docker仓库 ======
 1、docker官方：【43df2c27-d5ef-4d56-ac66-3c9b581692e1】
   (1)在docker机器上登录：【docker login】

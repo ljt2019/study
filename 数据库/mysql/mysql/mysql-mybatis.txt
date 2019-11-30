@@ -70,7 +70,7 @@
 	
 10、【省市区关联】
 		LEFT JOIN pub_region province ON province.id = xx.provinceId
-		LEFT JOIN pub_region city ON city.id = xx .cityId
+		LEFT JOIN pub_region city ON city.id = xx.cityId
 		LEFT JOIN pub_region region ON region.id = xx.regionId
 
 11、返回集合list,list集合里边嵌套list集合

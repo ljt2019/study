@@ -1,0 +1,7 @@
+
+https://youglish.com/pronounce/kubernetes/english
+
+k8s是对容器的编排与管理，扩缩容
+
+
+1、

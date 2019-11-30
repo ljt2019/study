@@ -4,7 +4,7 @@
 2、强一致性高可用数据库解决方案(速度慢)：percona-xtradb-cluster[对mysql镜像的一个封装 pxc 方便搭建强一致性高可用的集群],例如订单，红包等等实时性强的数据
  
  实战1
-======  MySQL高可用集群搭建 ======
+======  haproxy 强一致性高可用 mysql 集群 ======
 1、拉取pxc镜像：【docker pull percona/percona-xtradb-cluster:5.7.21】，存在于 docker hub 中，可以直接拉取使用
 2、复制pxc镜像(实则重命名)：【docker tag percona/percona-xtradb-cluster:5.7.21 pxc】
 3、删除pxc原来的镜像：【docker rmi percona/percona-xtradb-cluster:5.7.21】
@@ -27,8 +27,8 @@
   【docker run -d --name=node2 -p 3302:3306 -v v2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.3 pxc】
   【docker run -d --name=node3 -p 3303:3306 -v v3:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.4 pxc】
 
-====== 数据库的负载均衡 ======
-1、拉取haproxy镜像：【docker pull haproxy】
+====== haproxy 搭建(数据库的负载均衡） ======
+1、拉取 haproxy 镜像：【docker pull haproxy】
 
 2、创建 haproxy 配置文件，这里使用bind mounting的方式【mkdir /tmp/haproxy】,【touch haproxy.cfg】,文件内容如下
 【
@@ -102,7 +102,7 @@ defaults
 6、在haproxy连接上进行数据操作，然后查看数据库集群各个节点
 
  实战2
-====== Nginx+Spring Boot（springboot集群）+MySQL（haproxy强一致性高可以mysql集群） 项目====== 
+====== Nginx+Spring Boot（springboot集群）+MySQL项目 ====== 
 
  Spring Boot+MyBatis实现CRUD操作，名称为“springboot-mybatis”
 
@@ -168,7 +168,6 @@ http {
     sendfile        on;
     keepalive_timeout  65; 
 
-   
     server {
         listen 80;
         location / {
@@ -187,5 +186,12 @@ http {
 】
 2、创建nginx容器，注意`：先在centos7上创建/tmp/nginx目录，并且创建nginx.conf文件，写上内容
   【docker run -d --name my-nginx -p 80:80 -v /tmp/nginx/nginx.conf:/etc/nginx/nginx.conf --network=nginx-net --ip 172.18.0.10 nginx】
-
 3、win浏览器访问: ip[centos]/user/listall  --> 192.168.3.13/user/listall
+
+
+====== ======
+实战结束。发现容器太多，需要一个一个去启动，不便于管理，容易出错，因此一定有好事之者做这样的事情
+
+单机：多个容器 docker-ccompose
+
+多机[网络]多个容器：docker swarm   mesos  kubernets  等容器编排工具  k8s
