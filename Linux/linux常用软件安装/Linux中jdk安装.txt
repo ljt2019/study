@@ -1,13 +1,31 @@
 
-======== JDK安装 rpm方式简便======== 
+======== JDK8安装 rpm方式简便======== 
 
 1、下载jdk：【wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u131-linux-x64.rpm】
+  或者通过官网下载到上传至服务器
 
 2、执行安装命令：【rpm -ivh jdk-8u131-linux-x64.rpm】
+2、执行安装命令：【rpm -ivh jdk-8u231-linux-x64.rpm】
 
 3、检查是否安装成功：【java -version】
 
 4、卸载：【rpm -e --nodeps 要卸载的软件包 //软件包查询方法：rpm -qa|grep jdk】
+
+------------------ 可以省略 ---------------------
+rpm -ivh jdk-8u131-linux-x64.rpm
+3：配置环境变量（高数机器jdk在哪里）
+vim /etc/profile //打开环境变量文件
+进入insert模式（按字母i）在最后面加上下段，然后按esc + ":wq"
+JAVA_HOME=/usr/java/jdk1.8.0_131
+CLASSPATH=%JAVA_HOME%/lib:%JAVA_HOME%/jre/lib
+PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
+export PATH CLASSPATH JAVA_HOME
+source /etc/profile //重新载入
+4：检查是否安装完成
+java -version
+5：rpm卸载jdk
+rpm -qa|grep jdk   //查看版本
+------------------ 可以省略 ---------------------
 
 ======== JDK安装 gz方式========
  

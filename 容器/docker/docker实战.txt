@@ -192,6 +192,6 @@ http {
 ====== ======
 实战结束。发现容器太多，需要一个一个去启动，不便于管理，容易出错，因此一定有好事之者做这样的事情
 
-单机：多个容器 docker-ccompose
+单机：多个容器 docker-compose
 
 多机[网络]多个容器：docker swarm   mesos  kubernets  等容器编排工具  k8s
