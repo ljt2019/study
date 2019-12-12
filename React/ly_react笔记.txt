@@ -186,6 +186,9 @@ debugger
   />
   
   codeList: this.props.codeList
+  
+  form表单传参
+  <AddModal  wrappedComponentRef={(inst) => (this.addModal = inst)} />
 
 24、设置表格行联合主键
   rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
@@ -223,13 +226,39 @@ scroll: { x: sumWidth },
 31、刷新主表数据
 <AddModal ref="addModal" onSearch={this.indexQuery} reload={this.reload} enterWareNumber={this.state.enterWareNumber}/>
 
+32、创建map集合并往里边加值
+  let applyMap = {}
+  this.state.selectedRows.map((item) => {
+      applyMap[item.applyId] = item.studentId
+  })
+  
+33、添加默认过滤条件
+// 查询参数
+    params = {
+        pageNo: 1,
+        pageSize: 20,
+        total: 0,
+        param: { approvalStatus: '' }
+    }
+    //表单查询
+    indexQuery = params => {
+        if (this.props.queryType == '1') {
+            this.params.param.approvalStatus = '1' //待审批
+        } else if (this.props.queryType == '2') {
+            this.params.param.approvalStatus = "9"; //已审批
+        }
+        let _params = {
+            ...this.params,
+            ...params
+        }
+        this.setState({
+            loading: true
+        })
+        query(_params, authority.query, (data) => {
+           
+        })
+    }
 
+列隐藏：
+ellipsis: true,
 
-
-
-
-//成绩类型
-<Option key={'1'}>正考</Option>
-<Option key={'2'}>补考</Option>
-<Option key={'3'}>缓考</Option>
-<Option key={'4'}>清考</Option>
