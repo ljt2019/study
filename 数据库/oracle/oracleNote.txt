@@ -714,7 +714,101 @@ FROM student st
      ,major mj
 WHERE st.major_id = mj.id(+);
 
-从一张表中批量选中数据插入另外一张表中：【insert into t2 (xjh,xsid) select xh|| '10' AS xjh ,xsid from t1  WHERE xx = yy;】
+表之间数据的相互拷贝，从一张表中批量选中数据插入另外一张表中：【insert into t2 (xjh,xsid) select xh|| '10' AS xjh ,xsid from t1  WHERE xx = yy;】
+
+oracle中添加 UUID：【sys_guid()】
+
+inert into [key存在的就报错] / replace into [key存在的就更新]
+
+全模糊查询,效率更高
+  <if test="inDTO.mallId !=null and inDTO.mallId !='' ">
+  	AND instr(_member.mall_id,#{inDTO.mallId}) > 0
+  </if>
+
+判断字符是否相等		
+  <if test="grade!= null and grade!= '' and grade == '1'.toString()">
+      id = ''
+  </if>
+
+    <!-- 批量添加 -->
+    <insert id="batchInsert"
+            parameterType="java.util.List">
+        INSERT INTO T_BSGL_BSKT_MXZY (
+            BSKT_ID,
+            NJZYFX_ID,
+            CJR,
+            CJSJ
+        )
+        <foreach collection="list" item="item" index="index" separator="UNION ALL" open="(" close=")">
+            SELECT
+                #{item.graduationTopicId,jdbcType=VARCHAR},
+                #{item.gradeMajorId,jdbcType=VARCHAR},
+                #{item.creator,jdbcType=VARCHAR},
+                #{item.createTime,jdbcType=DATE}
+            FROM dual
+        </foreach>
+    </insert>
+
+18、oracle批量操作
+
+ <insert id="insertBatch"
+            parameterType="com.ly.education.teachingMaterial.api.dto.OutWareInfoDto">
+        insert into T_JCGL_XSCKMX (
+		ID,
+		XSCKDH,
+		ZDDH,
+		JG,
+		ISBN,
+		JCMC,
+		ZK,
+		CKSL,
+		GYSDM,
+		CBSDM,
+		CKZT,
+		TSZT,
+		SFCYFYHS,
+		DYZZ,
+		BZ,
+		CJRBH,
+		CJRXM
+        )
+
+        oracle 批量插入
+        <foreach item="item" index="index" collection="studentOutWareDetailsVoList"  open="(" close=")"  separator="union all">
+        select
+            sys_guid(),
+            #{outWareNumber,jdbcType=VARCHAR},
+            #{item.orderNumber,jdbcType=VARCHAR},
+            #{item.price,jdbcType=NUMERIC},
+            #{item.isbn,jdbcType=VARCHAR},
+            #{item.bookName,jdbcType=VARCHAR},
+            #{item.discount,jdbcType=NUMERIC},
+            #{item.studentOutWareCnt,jdbcType=NUMERIC},
+            #{item.supplierCode,jdbcType=VARCHAR},
+            #{item.publisherCode,jdbcType=VARCHAR},
+            #{item.useStatus,jdbcType=NUMERIC},
+            #{item.unOrderStatus,jdbcType=NUMERIC},
+            #{item.inCostAccounting,jdbcType=NUMERIC},
+            #{item.firstAuthor,jdbcType=VARCHAR},
+            '一键入库',
+            #{item.creator,jdbcType=VARCHAR},
+            #{item.creatorName,jdbcType=VARCHAR} from dual
+        </foreach>
+    </insert>
+	
+  <update id="batchChangeNoPracticeApplyStatus">
+      <foreach collection="list" item="item" separator=";" open="begin" close=";end;">
+          update T_SXGL_MSXSQ
+          <set>
+              <if test="item.applyStatus != null">
+                  SPZT = #{item.applyStatus,jdbcType=VARCHAR},
+              </if>
+          </set>
+          where
+          SQZJ =  #{item.applyId,jdbcType=VARCHAR}
+      </foreach>
+  </update>
+
 
 
 
