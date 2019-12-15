@@ -1,5 +1,5 @@
 
-1、 Volume
+1、 Volume 数据挂载点
 
 1、创建mysql数据库的container：【docker run -d --name tiger-mysql -p 3366:3306 -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql】
 

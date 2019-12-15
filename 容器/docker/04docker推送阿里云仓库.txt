@@ -1,0 +1,20 @@
+
+网址：【 https://cr.console.aliyun.com/repository/】
+
+2、阿里云仓库 regs
+
+  1)、登陆：【sudo docker login --username=1165069099@qq.com registry.cn-hangzhou.aliyuncs.com】
+  
+  2)、输入密码
+  
+  3)、在阿里云页面创建命名空间，比如 tiger1029：【https://cr.console.aliyun.com/cn-hangzhou/instances/namespaces】
+  
+  4)、给image打tag：【sudo docker tag tiger-dockerfile registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
+  
+  5)、推送镜像到docker阿里云仓库：【sudo docker push registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
+  
+  6)、别人下载，并且运行
+   【sudo docker pull registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:[镜像版本号]】
+   【sudo docker pull registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
+   【sudo docker run -d --name user01 -p 6661:8080 registry.cn-hangzhou.aliyuncs.com/tiger2019/tiger-docker-image:v1.0】
+   

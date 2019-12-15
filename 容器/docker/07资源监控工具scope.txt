@@ -1,0 +1,19 @@
+
+1、监控资源工具：【weaveworks/scope】官网：【https://github.com/weaveworks/scope】
+
+  1)、安装
+    【sudo curl -L git.io/scope -o /usr/local/bin/scope】
+    【sudo chmod a+x /usr/local/bin/scope】，权限赋予
+  
+  2)、启动
+    启动：指定当前 centos ip：【scope launch 192.168.3.10】
+    启动：同时监控两台机器，在两台机器中分别执行如下命令【scope launch ip1 ip2】
+  
+  3)、 停止：【scope stop】
+  
+启动信息：可以看到访问地址：【http://192.168.3.10:4040/】，注意浏览器开启极速模式
+Scope probe started
+Weave Scope is listening at the following URL(s):
+  * http://172.19.0.1:4040/
+  * http://10.0.2.15:4040/
+  * http://192.168.3.10:4040/

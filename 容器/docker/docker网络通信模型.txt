@@ -9,6 +9,9 @@
   link/ether：MAC地址
   inet：绑定的IP地址
 
+查看docker网络：【docker network ls】
+                【docker inspect bridge】
+				
 2、配置文件
   1)、在Linux中网卡对应的其实就是文件，所以找到对应的网卡文件即可，比如：【cat /etc/sysconfig/network-scripts/ifcfg-eth0】
   2)、给网卡添加IP地址：当然，这块可以直接修改ifcfg-*文件，但是我们通过命令添加试试

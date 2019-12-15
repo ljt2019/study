@@ -1,0 +1,18 @@
+
+网址：【hub.docker.com 】
+
+1、docker官方：【43df2c27-d5ef-4d56-ac66-3c9b581692e1】
+
+  1)、在docker机器上登录：【docker login】
+  
+  2)、输入用户名和密码 【docker push itcrazy2018/test-docker-image】[注意镜像名称要和docker id一致，不然push不成功]
+  
+  3)、给image重命名，并删除掉原来的：
+    【docker tag test-docker-image itcrazy2018/test-docker-image】
+    【docker rmi -f test-docker-image】
+  
+  4)、再次推送，刷新 hub.docker.com 后台，发现成功
+  
+  (6)别人下载，并且运行
+  【docker pull itcrazy2018/test-docker-image】
+  【docker run -d --name user01 -p 6661:8080 itcrazy2018/test-docker-image】

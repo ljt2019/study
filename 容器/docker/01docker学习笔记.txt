@@ -1,0 +1,82 @@
+
+====== 基本命令操作 ======
+一、images:
+
+1、拉取images：【docker pull tomcat】
+
+2、列出images：【docker images】
+
+3、给镜像打标签：【docker tag percona/percona-xtradb-cluster:5.7.21 pxc】
+
+4、删除某个镜像（删除前需要stop）：【dcoker rmi -f hello-world】,【docker rmi eb1dfeec7fbb】
+   删除所有：【dcoker rmi -f $(docker images)】
+   
+
+二、container 
+
+1、利用 images 创建 container
+
+  1)、-p端口映射，将nginx本身80的端口映射到本地8080,-d允许直接返回，作为守护进程来执行,-name指定要创建容器的名称
+    【docker run -d --name my-tomcat -p 8888:8080 tomcat】
+  
+  2)、交互式运行 【docker run -d -it --name my-tomcat -p 9090:8080 tomcat】
+  
+  3)、内存限制以及cpu权重 【docker run -d --name tomcat1 -p 6666:8080 --memory 100M --cpu-shares 10 tomcat】
+  
+  4)、指定网络和该网络下的ip  ，单独的网络需要自己创建：【docker network create --subnet=172.19.0.0/24 tomcat-net】
+    【docker run -d --name tomcat1 -p 6666:8080 --memory 100M --cpu-shares 10 --net=tomcat-net --ip 172.19.0.2 tomcat】
+
+  5)、案例：创建mysql容器
+    【docker pull mysql】
+    【docker run -d --name tiger-mysql -p 3366:3306 -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql】
+
+2、进入到容器中：【docker exec -it my-tomcat /bin/bash】
+
+3、停止容器进程：【docker stop eb1dfeec7fbb】、【docker stop my-tomca】
+
+4、启动容器进程：【docker start eb1dfeec7fbb】
+
+5、查看运行容器：【docker ps】
+
+6、查看所有容器：【docker ps -a】
+
+7、删除容器：【docker rm】
+
+8、删除所有容器【docker rm -f $(docker ps -aq)】
+
+9、container生成images：【docker commit my-centos vim-centos-images】
+
+10、查看日志：【docker logs hello-world】
+
+11、在host与container之间拷贝文件：【docker cp】,【docker cp indexdocker.html eb1dfeec7fbb://usr/share/nginx/html】
+
+12、查看容器详情：【docker inspect eb1dfeec7fbb】
+
+		
+====== Dockerfile ======
+
+1、由Dockerfile生成image：【docker build -t dockerfile-demo .】，根据当前目录下的Dockerfile文件生成一个 image,而images实例化出container
+
+2、Dockerfile语法
+  1)、FROM：基础镜像
+  2)、RUN：执行命令
+  3)、ADD：添加文件,会自动解压
+  4)、COPY：拷贝文件
+  5)、CMD：执行命令
+  6)、EXPOSE：暴露端口
+  7)、WORKDIR：指定路径
+  8)、MAINTAINER：维护者
+  9)、ENV：设定环境变量
+  10)、ENTRYPOINT：容器入口
+  11)、USER：指定用户
+  12)、VOLUME：mountpoint，挂载点，数据保存的地方
+  
+
+====== docker仓库 ======
+
+
+3、私有仓库：harbor:【https://github.com/goharbor/harbor/releases?after=v1.7.2】
+
+
+
+
