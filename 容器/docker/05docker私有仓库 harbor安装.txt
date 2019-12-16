@@ -1,3 +1,18 @@
+
+====== centos7下 docker-compose 安装 ======
+
+官网：【https://docs.docker.com/compose/install/】，git：【https://github.com/docker/compose】
+
+1、从github上下载docker-compose二进制文件安装：下载时可更改版本号，我此时下载的版本是 1.24.1
+【sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose】
+
+2、对二进制文件应用可执行权限：【sudo chmod +x /usr/local/bin/docker-compose】
+
+3、测试安装结果：【docker-compose --version】
+
+上面的方式由于国内网速原因，安装不成功
+
+
 ====== centos7下harbor安装 ======
 
 1、官网下载：【https://github.com/goharbor/harbor/releases?after=v1.7.2】，这里下载 1.7.2
@@ -15,18 +30,4 @@
 6、安装：【sh install.sh】
 
 
-====== centos7下docker-compose安装 ======
 
-官网：【https://docs.docker.com/compose/install/】，git：【https://github.com/docker/compose】
-
-1、从github上下载docker-compose二进制文件安装：
-【sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose】
- To install a different version of Compose, substitute 1.24.1 with the version of Compose you want to use.
-
-2、对二进制文件应用可执行权限：Apply executable permissions to the binary:
-【sudo chmod +x /usr/local/bin/docker-compose】
-
-3、测试安装结果：【docker-compose --version】
-
-
-上面的方式由于国内网速原因，安装不成功

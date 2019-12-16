@@ -34,17 +34,17 @@ sudo yum remove docker \
 
   3)、执行 Docker 安装脚本：【curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh】
 
-  4)、启动 Docker 进程：【sudo systemctl start docker】
+  4)、启动 Docker 进程，以及后台启动：【sudo systemctl start docker && sudo systemctl enable docker】
 
   5)、验证 docker 是否安装成功并在容器中执行一个测试的镜像：【sudo docker run hello-world】
 
 删除docker：【sudo yum remove docker-ce】、【sudo rm -rf /var/lib/docker】
 
 ====== 镜像加速 ======中国加速器
-新版的 Docker 使用 /etc/docker/daemon.json（Linux） 或者 %programdata%\docker\config\daemon.json（Windows） 来配置 Daemon。
-请在该配置文件中加入（没有该文件的话，请先建一个）：
 
-创建文件夹【sudo mkdir -p /etc/docker】，创建文件 【touch daemon.json】，之后执行下面内容
+1、创建文件夹【sudo mkdir -p /etc/docker】
+
+2、执行如下命令：网址，阿里云上加速地址
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
   "registry-mirrors": ["https://ea3wi4om.mirror.aliyuncs.com"]

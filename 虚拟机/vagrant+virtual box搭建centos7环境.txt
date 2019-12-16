@@ -54,13 +54,18 @@
 	文件:Identityfile指向的文件private-key
 	
 02 使用root账户登录
-	vagrant ssh   进入到虚拟机中
-	sudo -i
-	vi /etc/ssh/sshd_config
-	修改PasswordAuthentication yes
-	passwd修改密码，比如abc123
-	systemctl restart sshd
-	使用账号root，密码abc123进行登录
+
+  1)、【vagrant ssh】   进入到虚拟机中
+  
+  2)、【sudo -i】
+  
+  3)、【vi /etc/ssh/sshd_config】，修改 PasswordAuthentication yes
+  
+  4)、【passwd】 修改密码，比如abc123
+  
+  5)、【systemctl restart sshd】
+  
+  6)、使用xshell登陆，账号 root ，密码 123456 进行登录
 	
 	
 ====== 搭建多机 ======

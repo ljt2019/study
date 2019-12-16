@@ -1,32 +1,4 @@
  
-高可用mysql集群解决方案
-1、弱一致性高可用数据库解决方案(速度快)：Replication，异步复制，无法保证每个节点中的数据是一致的，存储低价值数据，例如新闻信息。。。无需实时展现处理的数据
-2、强一致性高可用数据库解决方案(速度慢)：percona-xtradb-cluster[对mysql镜像的一个封装 pxc 方便搭建强一致性高可用的集群],例如订单，红包等等实时性强的数据
- 
- 实战1
-====== 强一致性高可用 mysql 集群 ======
-1、拉取pxc镜像：【docker pull percona/percona-xtradb-cluster:5.7.21】，存在于 docker hub 中，可以直接拉取使用
-2、复制pxc镜像(实则重命名)：【docker tag percona/percona-xtradb-cluster:5.7.21 pxc】
-3、删除pxc原来的镜像：【docker rmi percona/percona-xtradb-cluster:5.7.21】
-4、创建一个单独的网段，给mysql数据库集群使用：
-  【docker network create --subnet=172.19.0.0/24 pxc-net】
-  【docker network inspect pxc-net】 [查看详情]
-  【docker network rm pxc-net】 [删除],不执行
-5、创建和删除 volume
-  创建：【docker volume create --name v1】
-  删除：【docker volume rm v1】
-  查看详情：【docker volume inspect v1】
-6、搭建PXC[MySQL]集群
-  准备3个数据卷,如果3个数据库的挂载点都是一样呢？例如都是挂载在 v1 
-  【docker volume create --name v1】
-  【docker volume create --name v2】
-  【docker volume create --name v3】
-7、运行三个PXC容器
-  【docker run -d --name=node1 -p 3301:3306 -v v1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.2 pxc】
-  注意：下边两个节点(node2和node3)加入到node1节点中
-  【docker run -d --name=node2 -p 3302:3306 -v v2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.3 pxc】
-  【docker run -d --name=node3 -p 3303:3306 -v v3:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.4 pxc】
-
 ====== haproxy 搭建(数据库的负载均衡） ======
 1、拉取 haproxy 镜像：【docker pull haproxy】
 
@@ -101,8 +73,9 @@ defaults
   password:123456
 6、在haproxy连接上进行数据操作，然后查看数据库集群各个节点
 
+
  实战2
-====== Nginx+Spring Boot（springboot集群）+MySQL项目 ====== 
+====== Nginx + Spring Boot（springboot集群）+  MySQL项目 ====== 
 
  Spring Boot+MyBatis实现CRUD操作，名称为“springboot-mybatis”
 

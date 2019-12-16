@@ -1,3 +1,23 @@
+
+====== Dockerfile ======
+
+1、由Dockerfile生成image：【docker build -t dockerfile-demo .】，根据当前目录下的Dockerfile文件生成一个 image,而images实例化出container
+
+2、Dockerfile语法
+  1)、FROM：基础镜像
+  2)、RUN：执行命令
+  3)、ADD：添加文件,会自动解压
+  4)、COPY：拷贝文件
+  5)、CMD：执行命令
+  6)、EXPOSE：暴露端口
+  7)、WORKDIR：指定路径
+  8)、MAINTAINER：维护者
+  9)、ENV：设定环境变量
+  10)、ENTRYPOINT：容器入口
+  11)、USER：指定用户
+  12)、VOLUME：mountpoint，挂载点，数据保存的地方
+  
+3、简单案例如下：
 FROM openjdk:8
 MAINTAINER tiger
 LABEL name="dockerfile-demo" version="1.0" author="tiger"
