@@ -25,6 +25,8 @@ sudo yum remove docker \
   6)、启动 Docker 后台服务：【sudo systemctl start docker】
 
   7)、测试运行 hello-world：【docker run hello-world】
+  
+  8、设置开机启动：【systemctl start docker && systemctl enable docker】
 
 2、方式2，使用脚本安装
 

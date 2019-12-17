@@ -86,7 +86,8 @@
 	
 	(3)、# kubelet，这边如果发现输出directory not exist，也说明是没问题的，大家继续往下进行即可
      【sed -i "s/cgroup-driver=systemd/cgroup-driver=cgroupfs/g" /etc/systemd/system/kubelet.service.d/10-kubeadm.conf】
-     【systemctl enable kubelet && systemctl start kubelet】
+     
+	(4)、安装成功，设置开机启动：【systemctl enable kubelet && systemctl start kubelet】
 
 7、proxy/pause/scheduler等国内镜像
 
@@ -193,22 +194,23 @@
 
   2)、【kubeadm init --kubernetes-version=1.14.0 --apiserver-advertise-address=192.168.3.51 --pod-network-cidr=10.244.0.0/16】
     1.执行成功信息
-    Your Kubernetes control-plane has initialized successfully!
-    
-    To start using your cluster, you need to run the following as a regular user:
-    
-      mkdir -p $HOME/.kube
-      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-      sudo chown $(id -u):$(id -g) $HOME/.kube/config
-    
-    You should now deploy a pod network to the cluster.
-    Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
-      https://kubernetes.io/docs/concepts/cluster-administration/addons/
-    
-    Then you can join any number of worker nodes by running the following on each as root:
-    
-    kubeadm join 192.168.3.51:6443 --token mu5vml.ncvsdp7ak5llq2lp \
-        --discovery-token-ca-cert-hash sha256:876eb7f630fe8f96544ab5f3913ee88837354731531ad02dc5ca409d6b9d901f 
+  Your Kubernetes control-plane has initialized successfully!
+  
+  To start using your cluster, you need to run the following as a regular user:
+  
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  
+  You should now deploy a pod network to the cluster.
+  Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+    https://kubernetes.io/docs/concepts/cluster-administration/addons/
+  
+  Then you can join any number of worker nodes by running the following on each as root:
+  
+  kubeadm join 192.168.3.51:6443 --token fvxofu.fxdgrb9f6l5mvgmd \
+      --discovery-token-ca-cert-hash sha256:db32c745032468fada5f50c218246951e098e3b09ef46696099a732d93cb92d5 
+
     
 	2.根据日志提示执行：
       mkdir -p $HOME/.kube
@@ -227,6 +229,7 @@
   1)、calico网络插件：【https://docs.projectcalico.org/v3.9/getting-started/kubernetes/】，calico，同样在master节点上操作
   
   2)、【kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml】
+  
         可省略步骤：
       【wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml】
 	  查看所使用到的镜像：【cat calico.yaml | grep image】
@@ -234,7 +237,71 @@
 
   3)、确认一下calico是否安装成功：【kubectl get pods --all-namespaces】，查看所有pods
   
-  4)、kubectl get node
+  4)、主节点查询节点：【kubectl get node】
+
+10、kube join，在woker01和worker02上执行之前保的命令，如下
+  【kubeadm join 192.168.3.51:6443 --token 9s9lxo.zeijg5g35x1aex7m \
+    --discovery-token-ca-cert-hash sha256:e7916a19e5c055acdf8f26aff67fb953efdfd7a55d78310cb258cf600dee9183】
+  
+  如果添加节点失败，或是想重新添加，可以在从节点使用命令：【kubeadm reset】
+  
+11、再次查看主节点：【kubectl get nodes】，此时发现多了节点信息
+
+12、体验Pod，定义pod.yml文件，比如pod_nginx_rs.yaml
+cat > pod_nginx_rs.yaml <<EOF
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx
+  labels:
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      name: nginx
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+EOF
+
+13、根据pod_nginx_rs.yml文件创建pod：【kubectl apply -f pod_nginx_rs.yaml】
+
+14、查看pod：
+  【kubectl get pods】
+  【kubectl get pods -o wide】，可以到对应节点查看验证：【docker ps | grep nginx】
+  【kubectl describe pod nginx】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
   
