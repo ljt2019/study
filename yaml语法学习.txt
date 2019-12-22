@@ -1,0 +1,58 @@
+
+1、数据类型，YAML 支持以下几种数据类型：
+
+  1)、对象：键值对的集合，又称为映射（mapping）/ 哈希（hashes） / 字典（dictionary）
+  
+  2)、数组：一组按次序排列的值，又称为序列（sequence） / 列表（list）
+  
+  3)、纯量（scalars）：单个的、不可再分的值
+  
+2、基础知识
+
+  1)、区分大小写
+  
+  2)、缩进表示层级关系，相同层级的元素左对齐
+  
+  3)、缩进只能使用空格，不能使用TAB
+  
+  4)、"#"表示当前行的注释
+  
+  5)、是JSON文件的超级，两个可以转换
+  
+  6)、---表示分隔符，可以在一个文件中定义多个结构，可选
+  
+  7)、使用key: value，其中":"和value之间要有一个英文空格
+  
+  
+复杂yaml文件案例
+
+-
+  languages:
+    - Ruby
+    -
+      - tiger
+    - Perl
+    - Python 
+    - linjitai: 林继泰
+      hehe : hehe
+      vufd:
+        -
+          xixi: 嘻嘻
+  websites:
+    YAML: yaml.org 
+    Ruby: ruby-lang.org 
+    Python: python.org 
+    Perl: use.perl.org
+
+转换为json如下：
+[ { "languages": 
+     [ "Ruby",
+       [ "tiger" ],
+       "Perl",
+       "Python",
+       { "linjitai": "林继泰", "hehe": "hehe", "vufd": [ { "xixi": "嘻嘻" } ] } ],
+    "websites": 
+     { "YAML": "yaml.org",
+       "Ruby": "ruby-lang.org",
+       "Python": "python.org",
+       "Perl": "use.perl.org" } } ]

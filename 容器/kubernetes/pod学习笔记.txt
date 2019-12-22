@@ -1,0 +1,155 @@
+
+
+deployment 管理  ReplicaSet(管理pod)/ReplicationController(逐渐被淘汰) 和 pod
+
+1、根据pod_nginx_rs.yml文件创建pod：【kubectl apply -f pod_nginx_rs.yaml】
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx
+  labels:
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      name: nginx
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+
+2、查看pod
+  【kubectl get pods】
+  【kubectl get pods -o wide】
+  【kubectl describe pod nginx】
+	
+3、过rs将pod扩容：【kubectl scale rs nginx --replicas=5】
+	
+4、删除所有pod：【kubectl delete -f pod_nginx_rs.yaml】
+   删除一个pod：【kubectl deletee pod podid】
+
+
+====== ReplicationController与ReplicaSet，升级版 ======
+
+1、定义了一个期望的场景，即声明某种Pod的副本数量在任意时刻都符合某个预期值，所以RC的定义包含以下几个部分：
+
+  - Pod期待的副本数（replicas）
+  - 用于筛选目标Pod的Label Selector
+  - 当Pod的副本数量小于预期数量时，用于创建新Pod的Pod模板（template）
+  
+  也就是说通过RC实现了集群中Pod的高可用，减少了传统IT环境中手工运维的工作。
+  
+  
+====== Deployment ======
+
+Deployment相对RC最大的一个升级就是我们可以随时知道当前Pod“部署”的进度。
+
+1、根据 nginx-deployment.yaml 文件创建pod：【kubectl apply -f nginx-deployment.yaml】
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:             # 匹配具有同一个label属性的pod标签
+    matchLabels:
+      app: nginx         
+  template:             # 定义pod的模板
+    metadata:
+      labels:
+        app: nginx      # 定义当前pod的label属性，app为key，value为nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+
+2、查看 deployment 资源详情:【kubectl get deployment -o wide】
+
+3、查看 deployment 管理的 rs 的数量；【kubectl get rs】
+
+4、更新镜像(滚动更新)：【kubectl set image deployment nginx-deployment nginx=nginx:1.9.1】
+  
+
+====== Namespace 命名空间 ======
+
+1、基本概念：命名空间就是为了隔离不同的资源，比如：Pod、Service、Deployment等。可以在输入命令的时候指定命名空间`-n`，如果不指定，则使用默认的命名空间：default。
+
+2、创建命名空间：
+
+  1)、创建yaml文件：【vi myns-namespace.yaml】,j将下面信息保存入文件中
+  【
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: myns
+  】  
+  
+  2)、执行创建命令：【kubectl apply -f myns-namespace.yaml】
+  
+  3)、查看命名空间：【kubectl get namespaces/ns】
+  
+3、指定命名空间下的资源，比如创建一个pod，属于myns命名空间下
+  
+  1)、vi nginx-pod.yaml
+  【
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: myns
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    ports:
+    - containerPort: 80
+  】
+  
+  2)、【kubectl apply -f nginx-pod.yaml】
+  
+
+4、查看myns命名空间下的Pod和资源：
+  【kubectl get pods】，这是获取默认命名空间下资源
+  【kubectl get pods -n myns】，获取指定命名空间下资源
+  【kubectl get all -n myns】
+  【kubectl get pods --all-namespaces】    #查找所有命名空间下的pod
+
+
+====== Network ======
+
+
+kind：表示要新建对象的类型
+
+spec.selector：表示需要管理的Pod的label，这里表示包含app: nginx的label的Pod都会被该RC管理
+
+spec.replicas：表示受此RC管理的Pod需要运行的副本数
+
+spec.template：表示用于定义Pod的模板，比如Pod名称、拥有的label以及Pod中运行的应用等
+
+通过改变RC里Pod模板中的镜像版本，可以实现Pod的升级功能
+
+kubectl apply -f nginx-pod.yaml，此时k8s会在所有可用的Node上，创建3个Pod，并且每个Pod都有一个app: nginx的label，同时每个Pod中都运行了一个nginx容器。
+
+如果某个Pod发生问题，Controller Manager能够及时发现，然后根据RC的定义，创建一个新的Pod
+
+扩缩容：kubectl scale rc nginx --replicas=5
+  
+  
+
+  
+  
+  
