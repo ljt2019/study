@@ -14,3 +14,7 @@
 6、创建软链接，上面安装过程默认把lsz和lrz安装到了/usr/local/bin/目录下，进入目录：【cd /usr/local/bin】
   1)、创建rz的软链接，并命名rz：【ln -s /usr/local/bin/lrz rz】
   2)、创建sz的软链接，并命名sz：【ln -s /usr/local/bin/lsz sz】
+  
+
+====== 简便方式 ======
+【yum install lrzsz】

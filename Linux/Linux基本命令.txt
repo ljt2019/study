@@ -126,7 +126,8 @@ sync; sync; sync; reboot
 	
 	7)、把编辑处理后的结果写到指定的文件中保存【:w filename】
 
-12、远程复制：【scp -r redis-3.0.7/ 192.168.56.102:/usr/local/】、【scp -r jdk-8u131-linux-x64.rpm 192.168.240.128:/root/software】
+12、远程复制：【scp -r /root/lrzsz-0.12.20.tar.gz 192.168.3.61:/root/lrzsz-0.12.20.tar.gz】、
+              【scp -r jdk-8u131-linux-x64.rpm 192.168.240.128:/root/software】
 
 13、建立软连接：【ln -s /usr/java/jdk1.8.0_60/ /usr/jdk】
 

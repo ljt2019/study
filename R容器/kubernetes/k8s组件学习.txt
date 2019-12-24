@@ -269,7 +269,7 @@ spec:
 
 7、Ingress ，外部访问集群内部服务，官网：【https://kubernetes.io/docs/concepts/services-networking/ingress/】
 
-  1)、创建文件：【vi my-tomcat.yaml】
+  1)、创建文件：【vi my-tomcat.yaml】,并 apply 使之运行起来
   【
 apiVersion: apps/v1
 kind: Deployment
@@ -304,23 +304,59 @@ spec:
     targetPort: 8080
   selector:
     app: tomcat 
+  #type: NodePort  
   】
   
-  2)、验证：宿主机ip：【curl 192.168.188.213:8080】，svc ip【curl 10.103.64.156】
+  2)、验证：宿主机ip：【curl 192.168.188.213:8080】，svc ip【curl 10.108.205.193】
+
+8、以Deployment方式创建Pod，该Pod为Ingress Nginx Controller，要想让外界访问，可以通过Service的NodePort或者HostPort方式，这里选择HostPort，比如指定worker01运行
+
+  1)、确保nginx-controller运行到w1节点上：【kubectl label node worker1-kubeadm-k8s name=ingress】,在yaml文件中增加配置  kind: Deployment
+      hostNetwork: true
+      nodeSelector:
+        name: ingress
   
-  3)、
+  2)、搜索nodeSelector，并且要确保 worker1-kubeadm-k8s 节点上的80和443端口没有被占用，【lsof -i tcp:80】、【lsof -i tcp:443】
 
+  3)、镜像拉取需要较长的时间：【kubectl apply -f mandatory.yaml】
+  
+  4)、【kubectl get pods -n ingress-nginx -o wide】，验证是否运行成功
 
+  5)、拉取镜像需要时间比较长：
+    可以查看里面需要哪些镜像：【cat mandatory.yaml | grep image】,可以先把镜像拉取下来再 apply【docker pull quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.26.1】
+	          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.26.1		
+    查看创建的进度：
+	【kubectl get pods -n ingress-nginx -o wide】,得到 name nginx-ingress-controller-7c66dcdd6c-64fj8
+	【kubectl describe pod nginx-ingress-controller-7c66dcdd6c-64fj8 -n ingress-nginx】
 
+  6)、创建Ingress以及定义转发规则：【vi nginx-ingress.yaml】
+  【
+#ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+spec:
+  rules:
+  ##域名映射
+  - host: tomcat.tiger.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: tomcat-service
+          servicePort: 80
+  】
+  
+  8)、【kubectl apply -f nginx-ingress.yaml】
+      【kubectl get ingress】
+      【kubectl describe ingress nginx-ingress】
+  
+  9)、修改win的hosts文件，添加dns解析，运行nginx 节点的ip：【192.168.3.61 tomcat.tiger.com】
+  
+  10)、浏览器访问：【tomcat.tiger.com】，验证能访问成功
 
-
-
-
-
-
-
-
-
+  11)、总结：如果以后想要使用 Ingress 网络，其实只要定义 ingress，service 和 pod 即可，前提是要保证 nginx、ingress、controller 已经配置好了。
 
 
 
