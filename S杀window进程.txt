@@ -22,3 +22,5 @@ cmd的一些常用命令：
 	电脑所开wifi的ip地址：192.168.191.1
 	
 	
+widow中通过名称查看进程：【tasklist |findstr "ruby"】 ruby.exe                     14912 Console                    1     58,180 K
+vagrant

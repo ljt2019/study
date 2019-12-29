@@ -2,7 +2,7 @@
 ====== 通过 kubeadm 搭建k8s集群 ======
 
 1、版本统一
-  Docker       18.09.0
+  Docker       18.09.0 【yum install -y docker-ce-18.09.0 docker-ce-cli-18.09.0 containerd.io】
   ---
   kubeadm-1.14.0-0 
   kubelet-1.14.0-0 
@@ -34,10 +34,13 @@
   【sudo hostnamectl set-hostname w1】
   【sudo hostnamectl set-hostname w2】
   
-3、三个节点都在hosts文件上加上：【vi /etc/hosts】
-  192.168.8.51 m
-  192.168.8.61 w1
-  192.168.8.62 w2
+3、三个节点都在hosts文件上加上：【vi /etc/hosts】，主机联网ip网段
+  【
+192.168.43.51 m
+192.168.43.61 w1
+192.168.43.62 w2
+  】
+
   
 4、使用ping测试一下，【ping w1】
 
@@ -57,27 +60,32 @@
   iptables -F && iptables -X && iptables -F -t nat && iptables -X -t nat && iptables -P FORWARD ACCEPT
   
   # (5)设置系统参数
-  cat <<EOF >  /etc/sysctl.d/k8s.conf
-  net.bridge.bridge-nf-call-ip6tables = 1
-  net.bridge.bridge-nf-call-iptables = 1
-  EOF
+  【
+cat <<EOF >  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+  】
+
   
-  sysctl --system
+  【sysctl --system】
   
 6、Installing kubeadm（搭建k8s集群）, kubelet（运行pod ） and kubectl（客户端与集群打交道的工具）
 
-  1)、配置yum源，三个节点执行
-  cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-  [kubernetes]
-  name=Kubernetes
-  baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
-  enabled=1
-  gpgcheck=0
-  repo_gpgcheck=0
-  gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
-         http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
-  EOF
-  
+  1)、配置yum源，三个节点执行，设置加速地址，杭州阿里巴巴
+  【
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+       http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+  】
+
   2)、安装kubeadm&kubelet&kubectl：【yum install -y kubeadm-1.14.0-0 kubelet-1.14.0-0 kubectl-1.14.0-0】
 
   3)、docker和k8s设置同一个cgroup
@@ -91,42 +99,45 @@
 
 7、proxy/pause/scheduler等国内镜像
 
-  1)、查看 kubeadm 使用的镜像：【kubeadm config images list】，内容如下，7个
-    k8s.gcr.io/kube-apiserver:v1.14.0
-    k8s.gcr.io/kube-controller-manager:v1.14.0
-    k8s.gcr.io/kube-scheduler:v1.14.0
-    k8s.gcr.io/kube-proxy:v1.14.0
-    k8s.gcr.io/pause:3.1
-    k8s.gcr.io/etcd:3.3.10
-    k8s.gcr.io/coredns:1.3.1
+  1)、查看 kubeadm 使用的镜像：【kubeadm config images list】，内容如下，7个，统一版本 v1.14.0 --> v1.14.0
+k8s.gcr.io/kube-apiserver:v1.14.0
+k8s.gcr.io/kube-controller-manager:v1.14.0
+k8s.gcr.io/kube-scheduler:v1.14.0
+k8s.gcr.io/kube-proxy:v1.14.0
+k8s.gcr.io/pause:3.1
+k8s.gcr.io/etcd:3.3.10
+k8s.gcr.io/coredns:1.3.1
 	
   2)、解决国外镜像不能访问的问题
     (1)、创建kubeadm.sh脚本，用于拉取镜像/打tag/删除原有镜像，在每个节点中都创建保存改脚本：【vi kubeadm.sh】,内容如下
-        #!/bin/bash
-		
-        set -e
-		
-        KUBE_VERSION=v1.14.0
-        KUBE_PAUSE_VERSION=3.1
-        ETCD_VERSION=3.3.10
-        CORE_DNS_VERSION=1.3.1
-        
-        GCR_URL=k8s.gcr.io
-        ALIYUN_URL=registry.cn-hangzhou.aliyuncs.com/google_containers
-        
-        images=(kube-proxy:${KUBE_VERSION}
-        kube-scheduler:${KUBE_VERSION}
-        kube-controller-manager:${KUBE_VERSION}
-        kube-apiserver:${KUBE_VERSION}
-        pause:${KUBE_PAUSE_VERSION}
-        etcd:${ETCD_VERSION}
-        coredns:${CORE_DNS_VERSION})
-        
-        for imageName in ${images[@]} ; do
-          docker pull $ALIYUN_URL/$imageName
-          docker tag  $ALIYUN_URL/$imageName $GCR_URL/$imageName
-          docker rmi $ALIYUN_URL/$imageName
-        done
+  【
+#!/bin/bash
+
+set -e
+
+KUBE_VERSION=v1.14.0
+KUBE_PAUSE_VERSION=3.1
+ETCD_VERSION=3.3.10
+CORE_DNS_VERSION=1.3.1
+
+GCR_URL=k8s.gcr.io
+ALIYUN_URL=registry.cn-hangzhou.aliyuncs.com/google_containers
+
+images=(kube-proxy:${KUBE_VERSION}
+kube-scheduler:${KUBE_VERSION}
+kube-controller-manager:${KUBE_VERSION}
+kube-apiserver:${KUBE_VERSION}
+pause:${KUBE_PAUSE_VERSION}
+etcd:${ETCD_VERSION}
+coredns:${CORE_DNS_VERSION})
+
+for imageName in ${images[@]} ; do
+  docker pull $ALIYUN_URL/$imageName
+  docker tag  $ALIYUN_URL/$imageName $GCR_URL/$imageName
+  docker rmi $ALIYUN_URL/$imageName
+done
+  】
+
 		
     (2)、运行脚本和查看镜像：【sh ./kubeadm.sh】，【docker images】
 
@@ -192,30 +203,33 @@
     
     09-最后一步是安装默认插件，kubernetes默认kube-proxy和DNS两个插件是必须安装的
 
-  2)、【kubeadm init --kubernetes-version=1.14.0 --apiserver-advertise-address=192.168.3.51 --pod-network-cidr=10.244.0.0/16】
-    1.执行成功信息
-  Your Kubernetes control-plane has initialized successfully!
-  
-  To start using your cluster, you need to run the following as a regular user:
-  
-    mkdir -p $HOME/.kube
-    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-    sudo chown $(id -u):$(id -g) $HOME/.kube/config
-  
-  You should now deploy a pod network to the cluster.
-  Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
-    https://kubernetes.io/docs/concepts/cluster-administration/addons/
-  
-  Then you can join any number of worker nodes by running the following on each as root:
-  
-  kubeadm join 192.168.3.51:6443 --token fvxofu.fxdgrb9f6l5mvgmd \
-      --discovery-token-ca-cert-hash sha256:db32c745032468fada5f50c218246951e098e3b09ef46696099a732d93cb92d5 
+  2)、【kubeadm init --kubernetes-version=1.14.0 --apiserver-advertise-address=192.168.3.51 --pod-network-cidr=10.244.0.0/16】，ip：【192.168.43.51】，【若要重新初始化集群状态：【kubeadm reset】，然后再进行上述操作】
+    1.执行成功信息，主节点执行下 那三行信息
+	【
+Your Kubernetes control-plane has initialized successfully!
 
-    
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.3.51:6443 --token 5heiy9.lqe19i1r00lkqeii \
+    --discovery-token-ca-cert-hash sha256:30272b5c370a090b1d4068624a85c190163ca85967fed2d3854cb5e2b647d795 
+	】
+ 
 	2.根据日志提示执行：
-      mkdir -p $HOME/.kube
-      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-      sudo chown $(id -u):$(id -g) $HOME/.kube/config
+	【
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+	】
 	  
 	3.查看pod，等待一会儿，同时可以发现像etcd，controller，scheduler等组件都以pod的方式安装成功了
 	
@@ -240,8 +254,8 @@
   4)、主节点查询节点：【kubectl get node】
 
 10、kube join，在woker01和worker02上执行之前保的命令，如下
-  【kubeadm join 192.168.3.51:6443 --token 9s9lxo.zeijg5g35x1aex7m \
-    --discovery-token-ca-cert-hash sha256:e7916a19e5c055acdf8f26aff67fb953efdfd7a55d78310cb258cf600dee9183】
+  【kubeadm join 192.168.3.51:6443 --token 5heiy9.lqe19i1r00lkqeii \
+    --discovery-token-ca-cert-hash sha256:30272b5c370a090b1d4068624a85c190163ca85967fed2d3854cb5e2b647d795】
   
   如果添加节点失败，或是想重新添加，可以在从节点使用命令：【kubeadm reset】
   

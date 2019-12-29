@@ -3,16 +3,7 @@
 1、方式1
 
   1)、移除旧的版本：
-sudo yum remove docker \
-                  docker-client \
-                  docker-client-latest \
-                  docker-common \
-                  docker-latest \
-                  docker-latest-logrotate \
-                  docker-logrotate \
-                  docker-selinux \
-                  docker-engine-selinux \
-                  docker-engine
+  【sudo yum remove docker docker-client docker-client-latest docker-common  docker-latest docker-latest-logrotate  docker-logrotate docker-selinux docker-engine-selinux docker-engine】
 				
   2)、安装一些必要的系统工具：【sudo yum install -y yum-utils device-mapper-persistent-data lvm2】
 
@@ -48,7 +39,8 @@ sudo yum remove docker \
 
 2、执行如下命令：网址，阿里云上加速地址
 sudo tee /etc/docker/daemon.json <<-'EOF'
-{
+{ 
+  "exec-opts": ["native.cgroupdriver=systemd"],
   "registry-mirrors": ["https://ea3wi4om.mirror.aliyuncs.com"]
 }
 EOF

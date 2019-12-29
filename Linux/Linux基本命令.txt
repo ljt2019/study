@@ -156,7 +156,7 @@ HOSTNAME=hadoop102
 
 ======== 查看进程 ========
  
-1、关键字查看：【ps -ef | grep redis】 ps -ef | grep 6379】
+1、关键字查看：【ps -ef | grep redis】 【ps -ef | grep 6379】
 
 2、端口号查看：【netstat -tunpl | grep 6379】 【netstat -ano | grep 6379】 
 
