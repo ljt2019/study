@@ -1,0 +1,36 @@
+
+1、切换目录并创建文件夹:【cd /root】、【mkdir maven】
+
+2、切换目录【cd /root/maven】,上传压缩包【apache-maven-3.6.2-bin.tar.gz】到centos刚创建的文件夹中
+
+3、解压：【tar -zxvf apache-maven-3.6.2-bin.tar.gz】
+
+4、配置环境变量：【vi /etc/profile】，在profile文件中添加如下信息
+  【
+export MAVEN_HOME=/root/mavem/apache-maven-3.6.2
+export MAVEN_HOME
+export PATH=$PATH:$MAVEN_HOME/bin
+  】
+  
+5、激活配置文件：【source /etc/profile】
+
+6、配置阿里云中央仓库
+
+  1)、编辑settings.xml文件：【vim /root/maven/apache-maven-3.6.2/conf/settings.xml】，在文件中加入如下信息
+  【
+  <mirror>
+    <id>alimaven</id>
+    <name>aliyun maven</name>
+    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+    <mirrorOf>central</mirrorOf>        
+  </mirror>
+  】
+  
+7、验证：【mvn -version】，成功返回信息
+  【
+Apache Maven 3.6.2 (40f52333136460af0dc0d7232c0dc0bcf0d9e117; 2019-08-27T15:06:16Z)
+Maven home: /root/maven/apache-maven-3.6.2
+Java version: 1.8.0_231, vendor: Oracle Corporation, runtime: /usr/java/jdk1.8.0_231-amd64/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "3.10.0-1062.9.1.el7.x86_64", arch: "amd64", family: "unix"
+  】

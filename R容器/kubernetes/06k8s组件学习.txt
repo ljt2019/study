@@ -363,12 +363,6 @@ spec:
 
 
 
-
-
-
-
-
-
 kind：表示要新建对象的类型
 
 spec.selector：表示需要管理的Pod的label，这里表示包含app: nginx的label的Pod都会被该RC管理

@@ -9,10 +9,10 @@
 
 3、检查是否安装成功：【java -version】
 
-4、卸载：【rpm -e --nodeps 要卸载的软件包 //软件包查询方法：rpm -qa|grep jdk】
+4、卸载：【rpm -e --nodeps jdk-8u231-linux-x64.rpm】 //软件包查询方法：rpm -qa|grep jdk】
 
 ------------------ 可以省略 ---------------------
-rpm -ivh jdk-8u131-linux-x64.rpm
+rpm -ivh jdk-8u231-linux-x64.rpm
 3：配置环境变量（高数机器jdk在哪里）
 vim /etc/profile //打开环境变量文件
 进入insert模式（按字母i）在最后面加上下段，然后按esc + ":wq"
@@ -26,6 +26,35 @@ java -version
 5：rpm卸载jdk
 rpm -qa|grep jdk   //查看版本
 ------------------ 可以省略 ---------------------
+
+
+====== yum 在线安装 ======
+1、查看yum库中都有哪些jdk版本：【yum search java|grep jdk】
+
+2、安装jdk8：【yum install java-1.8.0-openjdk】
+
+3、进入安装目录：【cd /usr/lib/jvm】，查看文件信息：【ll】,java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64
+[root@w2 jvm]# ll
+total 0
+drwxr-xr-x. 3 root root 17 Jan  1 11:57 java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64
+lrwxrwxrwx. 1 root root 21 Jan  1 11:57 jre -> /etc/alternatives/jre
+lrwxrwxrwx. 1 root root 27 Jan  1 11:57 jre-1.8.0 -> /etc/alternatives/jre_1.8.0
+lrwxrwxrwx. 1 root root 35 Jan  1 11:57 jre-1.8.0-openjdk -> /etc/alternatives/jre_1.8.0_openjdk
+lrwxrwxrwx. 1 root root 51 Jan  1 11:57 jre-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64 -> java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64/jre
+lrwxrwxrwx. 1 root root 29 Jan  1 11:57 jre-openjdk -> /etc/alternatives/jre_openjdk
+
+4、配置环境变量：【vim /etc/profile】
+  【
+#set java environment
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64
+JRE_HOME=$JAVA_HOME/jre
+CLASS_PATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib
+PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+export JAVA_HOME JRE_HOME CLASS_PATH PATH
+  】
+  
+5、使配置生效：【source /etc/profile】
+
 
 ======== JDK安装 gz方式========
  
