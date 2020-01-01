@@ -1,5 +1,5 @@
 
-======== JDK8安装 rpm方式简便======== 
+======== 方式一 JDK8安装 rpm方式简便======== 
 
 1、下载jdk：【wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u131-linux-x64.rpm】
   或者通过官网下载到上传至服务器
@@ -7,28 +7,15 @@
 2、执行安装命令：【rpm -ivh jdk-8u131-linux-x64.rpm】
 2、执行安装命令：【rpm -ivh jdk-8u231-linux-x64.rpm】
 
-3、检查是否安装成功：【java -version】
+3、检查是否安装成功：【java -version】,安装目录：【/usr/bin】
 
-4、卸载：【rpm -e --nodeps jdk-8u231-linux-x64.rpm】 //软件包查询方法：rpm -qa|grep jdk】
-
------------------- 可以省略 ---------------------
-rpm -ivh jdk-8u231-linux-x64.rpm
-3：配置环境变量（高数机器jdk在哪里）
-vim /etc/profile //打开环境变量文件
-进入insert模式（按字母i）在最后面加上下段，然后按esc + ":wq"
-JAVA_HOME=/usr/java/jdk1.8.0_131
-CLASSPATH=%JAVA_HOME%/lib:%JAVA_HOME%/jre/lib
-PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
-export PATH CLASSPATH JAVA_HOME
-source /etc/profile //重新载入
-4：检查是否安装完成
-java -version
-5：rpm卸载jdk
-rpm -qa|grep jdk   //查看版本
------------------- 可以省略 ---------------------
+4、删除rpm安装的jdk
+  1)、查看软件包：【rpm -qa | grep jdk】，jdk1.8-1.8.0_231-fcs.x86_64
+  2)、卸载软件包：【yum -y remove jdk1.8-1.8.0_231-fcs.x86_64】
 
 
-====== yum 在线安装 ======
+
+====== 方式二 yum 在线安装 ======
 1、查看yum库中都有哪些jdk版本：【yum search java|grep jdk】
 
 2、安装jdk8：【yum install java-1.8.0-openjdk】
@@ -55,19 +42,24 @@ export JAVA_HOME JRE_HOME CLASS_PATH PATH
   
 5、使配置生效：【source /etc/profile】
 
+6、查看安装情况：【java -version】
 
-======== JDK安装 gz方式========
+
+======== 方式三 JDK安装 gz方式========
  
 1、下载jdk：【wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz】
   
-2、解压到指定目录
+2、解压到指定目录：【tar 】
 
 3、配置环境变量：【vim /etc/profile】，添加如下内容：JAVA_HOME根据实际目录来
+  【
+#set java environment
 export JAVA_HOME=/usr/java/jdk1.8.0_131
 export JRE_HOME=/usr/java/jdk1.8.0_131/jre
 export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
 export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib 
+  】
 
-4、重启机器或执行命令 ：【source /etc/profile】
+4、使配置生效：【source /etc/profile】
 
-5、8.查看安装情况：【java -version】
+5、查看安装情况：【java -version】
