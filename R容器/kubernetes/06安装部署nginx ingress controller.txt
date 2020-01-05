@@ -1,0 +1,20 @@
+
+8、以Deployment方式创建Pod，该Pod为Ingress Nginx Controller，要想让外界访问，可以通过Service的NodePort或者HostPort方式，这里选择HostPort，比如指定worker01运行
+
+  1)、确保 nginx-controller 运行到w1节点上：【kubectl label node w1 name=ingress】,在yaml文件中增加配置  kind: Deployment
+      hostNetwork: true
+      nodeSelector:
+        name: ingress
+  
+  2)、搜索nodeSelector，并且要确保 worker01-kubeadm-k8s 节点上的80和443端口没有被占用，【lsof -i tcp:80】、【lsof -i tcp:443】，如果没有则安装【yum install lsof】
+
+  3)、镜像拉取需要较长的时间：【kubectl apply -f mandatory.yaml】，该文件在同目录下
+  
+  4)、【kubectl get pods -n ingress-nginx -o wide】，验证是否运行成功
+
+  5)、拉取镜像需要时间比较长：
+    可以查看里面需要哪些镜像：【cat mandatory.yaml | grep image】,可以先把镜像拉取下来再 apply【docker pull quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.26.1】
+	          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.26.1		
+    查看创建的进度：
+	【kubectl get pods -n ingress-nginx -o wide】,得到 nginx-ingress-controller-7c66dcdd6c-9p8rz
+	【kubectl describe pod nginx-ingress-controller-7c66dcdd6c-9p8rz -n ingress-nginx】

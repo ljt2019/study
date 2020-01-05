@@ -1,0 +1,82 @@
+
+https://youglish.com/pronounce/kubernetes/english
+
+k8s是对容器的编排与管理，扩缩容
+
+
+1、k8s如何操作这些container？
+  直接操作container是由docker来操作，在k8s中，操作的最小单元是Pod，Pod就是一个或多个container的组合。
+  
+2、Pod 谁来维护？ --> ReplicaSet,通过 Selector 来进行管理
+
+3、Pod 和 ReplicaSet 的状态如何维护和监控？ --> Deployment
+
+4、如何对Pod进行分类? --> Label ，具有相同label的service要是能够有个名称就好了，Service
+
+5、Pod 运行在哪里呢？当然是机器咯，比如一台centos机器，我们把这个机器称作为Node
+
+6、这个集群要配合完成一些工作，总要有一些组件的支持吧？接下来我们来想想有哪些组件，然后画一个相对完整的架构图
+
+  01-总得要有一个操作集群的客户端，也就是和集群打交道：【kubectl】
+  
+  02-请求肯定是到达 Master Node，然后再分配给 Worker Node 创建Pod之类的，关键是命令通过kubectl过来之后，是不是要认证授权一下？
+  
+  03-请求过来之后，Master Node中谁来接收？【APIServer】
+  
+  04-API收到请求之后，接下来调用哪个Worker Node创建Pod，Container之类的，得要有调度策略：【Scheduler】[https://kubernetes.io/docs/concepts/scheduling/kube-scheduler/]
+  
+  05-Scheduler通过不同的策略，真正要分发请求到不同的Worker Node上创建内容，具体谁负责？【Controller Manager】
+
+  06-Worker Node接收到创建请求之后，具体谁来负责Kubelet服务，最终Kubelet会调用Docker Engine，创建对应的容器[这边是不是也反应出一点，在Node上需要有Docker Engine，不然怎么创建维护容器？
+  
+  07-会不会涉及到域名解析的问题？【DNS】
+
+  08-是否需要有监控面板能够监测整个集群的状态？【Dashboard】
+
+  09-集群中这些数据如何保存？分布式存储【ETCD】
+
+  10-至于像容器的持久化存储，网络等可以联系一下Docker中的内容
+
+  11-官网K8S架构图【https://kubernetes.io/docs/concepts/architecture/cloud-controller/】
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

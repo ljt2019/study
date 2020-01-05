@@ -1,0 +1,191 @@
+
+1、项目构建：编写pipeline：
+
+  1)、选择一个模板【配置 --> 流水线】，例如下面的模板
+  【
+node {
+   def mvnHome
+   stage('Preparation') { // git pull code from github
+      // Get some code from a GitHub repository
+      git 'https://github.com/ljt2019/exe-shell.git'
+   }
+   stage('Maven Build') {
+      // Run the maven build
+      sh "mvn clean package"
+   }
+}
+  】
+  
+  2)、默认是拷贝在这个目录之下【/root/.jenkins/workspace/exe-shell】 Running on Jenkins in /root/.jenkins/workspace/exe-shell
+
+2、自动构建（可以不用），git push 触发 jenkins 自动构建
+
+  1)、`最好的话`:当用户进行git commit/push提交代码到github时，能够通知**jenkins自动构建**
+  
+  2)、`注意`:jenkins的ip一定要是github能够访问到的地址
+  
+  3)、在github上配置jenkins的webhook地址：【http://192.168.3.61:8080/exe-shell】
+  
+  4)、生成Personal access tokens，Jenkins访问github需要授权，所以在github上生成token交给jenkins使用，即`Personal access tokens`
+  github的Settings[个人信息右上角]-->Developer settings-->Personal access tokens-->Generate new token，注意，勾选repo和admin:repo_hook
+  最后保存好该token，比如:【d270ac47e1b21ad8a9e155f6bf3259bb611bcf94】
+
+  5)、配置GitHub Server
+    [系统管理]->[系统配置]->[找到github服务器]->[添加github服务器]，配置完成进行连接测试，返回一下信息，说明成功
+    【Credentials verified for user ljt2019, rate limit: 4998】
+
+3、 build&push镜像，
+
+  1)、切换到 workspace 目录【cd /root/.jenkins/workspace】
+
+  2)、准备一个文件，名称为【mkdir scripts】,在里边编写脚本【vim /scripts/exe-shell-build-image.sh】，内瓤如下
+  
+  【
+# 进入到 exe-shell 目录
+cd ../exe-shell
+
+# 编写Dockerfile文件
+
+cat <<EOF > Dockerfile
+FROM openjdk:8-jre-alpine
+COPY target/exe-shell.jar /exe-shell.jar
+ENTRYPOINT ["java","-jar","/exe-shell.jar"]
+EOF
+
+echo "Dockerfile created successfully!"
+
+# 基于指定目录下的Dockerfile构建镜像
+docker build -t registry.cn-hangzhou.aliyuncs.com/tiger2019/exe-shell:v1.0 .
+
+# push镜像，这边需要阿里云镜像仓库登录，在w2上登录
+docker push registry.cn-hangzhou.aliyuncs.com/tiger2019/exe-shell:v1.0
+  】
+  
+  3)、添加一个构建镜像的步骤
+  【
+  stage('Build Image') { 
+      sh "/root/.jenkins/workspace/scripts/exe-shell-build-image.sh"
+   }
+  】
+  
+  4)、文件权限赋予：【chmod +x /root/.jenkins/workspace/scripts/exe-shell-build-image.sh】
+  
+  5)、登陆阿里云(push权限)：【sudo docker login --username=1165069099@qq.com registry.cn-hangzhou.aliyuncs.com】
+
+4、Kubernetes拉取镜像运行
+
+  1)、在编写文件:【vim /root/.jenkins/workspace/scripts/exe-shell.yaml】
+  【
+# 以Deployment部署Pod
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: exe-shell
+spec: 
+  selector: 
+    matchLabels: 
+      app: exe-shell
+  replicas: 1
+  template: 
+    metadata:
+      labels: 
+        app: exe-shell
+    spec: 
+      containers: 
+      - name: exe-shell
+        image: registry.cn-hangzhou.aliyuncs.com/tiger2019/exe-shell:v1.0 
+        ports: 
+        - containerPort: 8080
+---
+# 创建Pod的Service
+apiVersion: v1
+kind: Service
+metadata: 
+  name: exe-shell
+spec: 
+  ports: 
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector: 
+    app: exe-shell
+---
+# 创建Ingress，定义访问规则
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata: 
+  name: exe-shell
+spec: 
+  rules: 
+  - host: springboot.tiger.com
+    http: 
+      paths: 
+      - path: /
+        backend: 
+          serviceName: exe-shell
+          servicePort: 80
+  】
+  
+  2)、编写 k8s-deploy-exe-shell.sh 文件：【vim /root/.jenkins/workspace/scripts/k8s-deploy-exe-shell.sh】
+  【
+kubectl delete -f /root/.jenkins/workspace/scripts/exe-shell.yaml
+
+kubectl apply -f /root/.jenkins/workspace/scripts/exe-shell.yaml
+
+echo "k8s deploy success!"
+  】
+  
+  3)、加权限【chmod +x /root/.jenkins/workspace/scripts/k8s-deploy-exe-shell.sh】，【chmod +x /root/.jenkins/workspace/scripts/exe-shell.yaml】
+
+  4)、运行 Deployment 脚本
+  【
+  stage('K8S Deploy') { 
+      sh "/root/.jenkins/workspace/scripts/k8s-deploy-exe-shell.sh"
+   }
+  】
+
+
+====== 常见构建失败问题解决 ======
+1、问题1
+【
+HTTP ERROR 403
+
+Problem accessing /job/exe-shell/1/logText/progressiveHtml. Reason:
+
+    No valid crumb was included in the request
+】
+解决方案：在jenkins 的Configure Global Security下 , 取消“防止跨站点请求伪造（Prevent Cross Site Request Forgery exploits）”的勾选。(如下图)
+  
+2、问题2
+【
++ /root/.jenkins/workspace/scripts/exe-shell-build-image.sh
+/root/.jenkins/workspace/exe-shell@tmp/durable-e670609c/script.sh: line 1: /root/.jenkins/workspace/scripts/exe-shell-build-image.sh: Permission denied
+】
+解决方案：文件权限赋予：【chmod +x /root/.jenkins/workspace/scripts/exe-shell-build-image.sh】
+
+3、问题3
+【
+unable to recognize "/root/.jenkins/workspace/scripts/exe-shell.yaml": no matches for kind "Deployment" in version "apps/v1"
+unable to recognize "/root/.jenkins/workspace/scripts/exe-shell.yaml": no matches for kind "Service" in version "v1"
+unable to recognize "/root/.jenkins/workspace/scripts/exe-shell.yaml": no matches for kind "Ingress" in version "extensions/v1beta1"
+】
+解决方案：复制主节点执行文件到其他节点：【scp /root/.kube/config 192.168.3.61:/root/.kube/config】
+
+
+
+
+
+
+
+
+
+
+
+
+echo "正在停止之前的jar"
+pid=`ps -ef | grep zx-test.jar | grep -v grep | awk '{print $1}'`
+if [ -n "$pid" ]
+then
+echo "kill -9 的pid:" $pid
+kill -9 $pid
+fi

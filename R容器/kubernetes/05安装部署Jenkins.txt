@@ -1,0 +1,58 @@
+
+基础环境准备【jdk、maven】都安装在同一台物理主机上
+
+====== jenkins 的部署 ======
+
+1、创建jenkins文件夹，将：【jenkins.war】包上传至此
+
+2、查看端口是否被占用：【ps -f | grep 8080】
+
+3、如有被占用则杀进程：【kill -9 5514】
+
+2、后台启动jenkins，并指定8080端口：【nohup java -jar jenkins.war --httpPort=8080 &】，启动成功保存密钥【d9989271412943e68a5428e4d0586b5c】
+
+3、查看日志：【tail -f nohup.out】
+  【
+Jenkins initial setup is required. An admin user has been created and a password generated.
+Please use the following password to proceed to installation:
+
+d9989271412943e68a5428e4d0586b5c
+
+This may also be found at: /root/.jenkins/secrets/initialAdminPassword
+  】
+
+4、查看密钥：【cat /root/.jenkins/secrets/initialAdminPassword】
+ 
+5、登陆网址进行初始化，需要输入密钥：【192.168.3.61:8080】，推荐安装的方式初始化
+
+
+====== 全局工具配置 ======
+
+1、系统管理 --> 全局工具配置，配置一些自己安装好的工具【jdk、maven、git】
+
+2、另外再安装【GitHub、GitLab Plugin、Git Hook Plugin】
+
+
+====== Jenkins部署时出现问题，插件安装失败 ======
+
+
+1、解决办法：根据提示，在链接 http://updates.jenkins-ci.org/download/plugins/ 中下载对应的插件，在选择【高级】选项卡上传插件至Jenkins服务器即可。
+
+2、jenkins仓库地址替换，替换最下方【升级站点】中的URL
+【https://updates.jenkins.io/update-center.json】 --> 【http://mirror.esuni.jp/jenkins/updates/update-center.json】
+
+
+详细的Jenkins的镜像地址查询：【http://mirrors.jenkins-ci.org/status.html】
+
+
+====== 全局工具配置 ======
+1、
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+
+====== 安装配置git ======
+1、安装：【yum install git】
+
+2、配置：
+  【git config --global user.name "1165069099@qq.com"】
+  【git config --global user.email "1165069099@qq.com"】
+
+3、【ssh-keygen -t rsa -C "1165069099@qq.com"】 生成公钥上传到 【github:/root/.ssh/id_rsa.pub】
+
+
+
+//查看用户名
+
+git config user.name
+
+//查看用户邮箱地址
+
+git config user.email
+
+-javaagent:C:\SoftInstalled\IntelliJ IDEA 2019.2.3\bin\jetbrains-agent.jar
