@@ -1,4 +1,0 @@
-
-1、登陆：【http://i.xiaomy.net/#/tunnel/tunnel-list】，查看令牌，例如【raznhkxg】
-
-2、直接在cmd通过 【java -jar xiaomy_nat.jar】，之后根据提示输入令牌
