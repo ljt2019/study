@@ -30,10 +30,16 @@ node {
   github的Settings[个人信息右上角]-->Developer settings-->Personal access tokens-->Generate new token，注意，勾选repo和admin:repo_hook
   最后保存好该token，比如:【d270ac47e1b21ad8a9e155f6bf3259bb611bcf94】
 
-  5)、配置GitHub Server
+  5)、配置GitHub Server，利用上一步生成的token
     [系统管理]->[系统配置]->[找到github服务器]->[添加github服务器]，配置完成进行连接测试，返回一下信息，说明成功
     【Credentials verified for user ljt2019, rate limit: 4998】
-
+	
+  6)、在【系统管理 --> 系统配置 --> Jenkins Location】中配置：【http://ljt2019.xiaomy.net/】外网映射地址，使之git与jenkins之间可以相互ping通
+	
+  7)、在构建触发器中勾选，
+    (1)、Build when a change is pushed to GitLab. GitLab webhook URL: http://ljt2019.xiaomy.net/project/exe-shell
+    (2)、GitHub hook trigger for GITScm polling
+      
 3、 build&push镜像，
 
   1)、切换到 workspace 目录【cd /root/.jenkins/workspace】

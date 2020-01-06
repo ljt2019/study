@@ -1,2 +1,2 @@
 
-1、复制主节点中的 【scp /root/.kube/config 192.168.3.62:/root/.kube/config】
+1、复制主节点中的 【scp /root/.kube/config 192.168.3.61:/root/.kube/config】

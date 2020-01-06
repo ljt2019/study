@@ -9,9 +9,10 @@
 
 3、如有被占用则杀进程：【kill -9 5514】
 
-2、后台启动jenkins，并指定8080端口：【nohup java -jar jenkins.war --httpPort=8080 &】，启动成功保存密钥【d9989271412943e68a5428e4d0586b5c】
+2、后台启动jenkins，并指定8080端口：【nohup java -jar /root/jenkins/jenkins.war --httpPort=8080 &】，
+   第一次启动成功保存密钥【d9989271412943e68a5428e4d0586b5c】
 
-3、查看日志：【tail -f nohup.out】
+3、查看日志：【tail -f /root/jenkins/nohup.out】
   【
 Jenkins initial setup is required. An admin user has been created and a password generated.
 Please use the following password to proceed to installation:
