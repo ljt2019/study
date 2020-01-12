@@ -1,0 +1,178 @@
+
+1、pod中的container共享volume，Host类型volume实战：挂载到一台cento机器上，但实际生产环境不会这么做
+
+  1)、编辑文件【volume-pod.yaml】，里边包含两个container(nginx、busybox)，并运行：【kubectl apply -f /root/volume/volume-pod.yaml】
+  【
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-pod
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: volume-pod
+      mountPath: /nginx-volume
+  - name: busybox-container
+    image: busybox
+    command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+    volumeMounts:
+    - name: volume-pod
+      mountPath: /busybox-volume
+  volumes:
+  - name: volume-pod
+    hostPath:
+      path: /tmp/volume-pod 
+  】
+
+  2)、查看pod的运行情况【kubectl get pods -o wide】
+  
+  3)、来到运行的worker节点，折腾一下是否同步，在宿主机上创建一个文件夹，进到container中是否会同步，同理...
+    【docker ps | grep volume】
+    【ls /tmp/volume-pod】
+    【docker exec -it containerid sh】
+    【ls /nginx-volume】
+    【ls /busybox-volume】
+	
+  4)、一般container中的存储或者网络的内容，不要在container层面修改，而是在pod中修改，比如下面修改一下网络
+  【
+spec:
+hostNetwork: true
+hostPID: true
+hostAliases: 
+  - ip: "192.168.8.61"
+ hostnames: 
+    - "test.jack.com" 
+containers:
+  - name: nginx-container
+ image: nginx
+  】
+
+
+====== PersistentVolume ======
+
+1、流程：pod(通过claimName来绑定pvc) --> pvc(通过storage匹配到合适的pv) --> pv --> 共享存储(nfs、StorageO等)...
+  1)、PV是K8s中的资源，volume的plugin实现，生命周期独立于Pod，封装了底层存储卷实现的细节
+  2)、有了PV，那Pod如何使用呢？为了方便使用，我们可以设计出一个PVC来绑定PV，然后把PVC交给Pod来使用即可
+  3)、PVC会匹配满足要求的PV[**是根据size和访问模式进行匹配的**]，进行一一绑定，然后它们的状态都会变成Bound
+  
+2、搭建nfs，请自行安装
+  
+3、创建PV&PVC&Nginx
+
+  1)、在nfs服务器创建所需要的目录【mkdir -p /nfs/data/nginx】
+  
+  2)、定义PV，PVC和Nginx的yaml文件【nginx-pv-demo.yaml】
+  【
+# 定义PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 2Gi    
+  nfs:
+    path: /nfs/data/nginx     
+    server: 192.168.3.51
+    
+---
+# 定义PVC，用于消费PV
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  
+---
+# 定义Pod，指定需要使用的PVC
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels: 
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: mysql
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-persistent-storage
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: nginx-persistent-storage
+        persistentVolumeClaim:
+          claimName: nginx-pvc
+  】
+
+  3)、根据yaml文件创建资源并查看资源
+    【kubectl apply -f /root/volume/nginx-pv-demo.yaml】
+    【kubectl get pvc,pv】、【kubectl get pv】、【kubectl get pvc】
+    【kubectl get pods -o wide】
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -220,8 +220,8 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 192.168.3.51:6443 --token 6xgh4j.v7xs9d795ksoo0on \
-    --discovery-token-ca-cert-hash sha256:0eca8c32117aa40d9e7a7bc48ac67239878cbb2a5be8ffc6193c7ae7fc5eb600 
+kubeadm join 192.168.3.51:6443 --token xkzfs3.kmlk9e6k9jnflpfp \
+    --discovery-token-ca-cert-hash sha256:85516f26250dfbed40e15b6109fcf1945d95d493fa6a3aa441d11c4f1726c63d
 	】
  
 	2.根据日志提示执行：
@@ -243,17 +243,18 @@ kubeadm join 192.168.3.51:6443 --token 6xgh4j.v7xs9d795ksoo0on \
   1)、calico网络插件：【https://docs.projectcalico.org/v3.9/getting-started/kubernetes/】，calico，同样在master节点上操作
   
   2)、【kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml】
+      【kubectl apply -f /root/calico/calico.yaml】,下载的情况下
   
         可省略步骤：
       【wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml】
 	  查看所使用到的镜像：【cat calico.yaml | grep image】
 	  
 
-  3)、确认一下calico是否安装成功：【kubectl get pods --all-namespaces】，查看所有pods
+  3)、确认一下calico是否安装成功：【kubectl get pods --all-namespaces】，查看所有pods，等待所有处于 Running ，执行添加从节点
   
   4)、主节点查询节点：【kubectl get node】
 
-10、kube join，在woker01和worker02上执行之前保的命令，如下
+10、kube join，在woker01和worker02上执行之前保的命令，如下（查看所有pods，等待所有处于 Running ，执行添加从节点）
   【kubeadm join 192.168.3.51:6443 --token 5heiy9.lqe19i1r00lkqeii \
     --discovery-token-ca-cert-hash sha256:30272b5c370a090b1d4068624a85c190163ca85967fed2d3854cb5e2b647d795】
   
@@ -261,7 +262,7 @@ kubeadm join 192.168.3.51:6443 --token 6xgh4j.v7xs9d795ksoo0on \
   
 11、再次查看主节点：【kubectl get nodes】，此时发现多了节点信息
 
-
+12、重启：【systemctl restart kubelet && systemctl enable kubelet】
 
 
 

@@ -8,7 +8,7 @@
   
   2)、搜索nodeSelector，并且要确保 worker01-kubeadm-k8s 节点上的80和443端口没有被占用，【lsof -i tcp:80】、【lsof -i tcp:443】，如果没有则安装【yum install lsof】
 
-  3)、镜像拉取需要较长的时间：【kubectl apply -f mandatory.yaml】，该文件在同目录下
+  3)、镜像拉取需要较长的时间：【kubectl apply -f /root/ingress_nginx_controller/mandatory.yaml】，该文件在同目录下
   
   4)、【kubectl get pods -n ingress-nginx -o wide】，验证是否运行成功
 
