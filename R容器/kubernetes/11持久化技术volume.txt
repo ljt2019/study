@@ -1,4 +1,6 @@
 
+官网：【https://kubernetes.io/docs/concepts/storage/volumes/】
+
 1、pod中的container共享volume，Host类型volume实战：挂载到一台cento机器上，但实际生产环境不会这么做
 
   1)、编辑文件【volume-pod.yaml】，里边包含两个container(nginx、busybox)，并运行：【kubectl apply -f /root/volume/volume-pod.yaml】

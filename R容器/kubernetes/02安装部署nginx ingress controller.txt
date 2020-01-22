@@ -1,5 +1,7 @@
 
-8、以Deployment方式创建Pod，该Pod为Ingress Nginx Controller，要想让外界访问，可以通过Service的NodePort或者HostPort方式，这里选择HostPort，比如指定worker01运行
+====== 在主节点上操作 ======
+
+1、以Deployment方式创建Pod，该Pod为Ingress Nginx Controller，要想让外界访问，可以通过Service的NodePort或者HostPort方式，这里选择HostPort，比如指定worker01运行
 
   1)、确保 nginx-controller 运行到w1节点上：【kubectl label node w1 name=ingress】,在yaml文件中增加配置  kind: Deployment
       hostNetwork: true

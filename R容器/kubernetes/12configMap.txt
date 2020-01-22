@@ -1,0 +1,80 @@
+
+官网：【https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/】
+
+1、概念：用来保存配置数据的键值对，也可以保存单个属性，也可以保存配置文件。所有的配置内容都存储在etcd中，创建的数据可以供Pod使用。
+
+  获取：【kubectl get configmap】、【kubectl get cm】
+  详情信息：【kubectl get configmap my-config -o yaml】
+
+2、创建方式：
+
+  1)、命令行创建：创建一个名称为【my-config】的ConfigMap，key 值时【db.port】，value值是【'3306'】
+    【kubectl create configmap my-config --from-literal=db.port='3306'】
+
+  2)、从配置文件中创建，创建一个文件，名称为【vim app.properties】
+  【
+name=tiger
+age=17
+weight=120
+  】
+  【kubectl create configmap app --from-file=./app.properties】
+  
+  3)、从目录中创建
+    【mkdir config】
+    【cd config】
+    【mkdir a】
+    【mkdir b】
+    【cd ..】
+	创建【kubectl create configmap config --from-file=config/】
+
+  
+  4)、通过yaml文件创建：【vim configmaps.yaml】并apply【kubectl apply -f configmaps.yaml】
+  【
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  special.how: very
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+  namespace: default
+data:
+  log_level: INFO
+  】
+  
+3、ConfigMap的使用
+
+  1)、通过环境变量的方式，直接传递给pod
+  使用configmap中指定的key
+  使用configmap中所有的key
+  
+  2)、通过在pod的命令行下运行的方式(启动命令中)
+  
+  3)、作为volume的方式挂载到pod内
+  
+  
+  
+  4)、注意
+    (1)、ConfigMap必须在Pod使用它之前创建
+    (2)、使用envFrom时，将会自动忽略无效的键
+    (3)、Pod只能使用同一个命名空间的ConfigMap
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
