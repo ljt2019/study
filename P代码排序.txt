@@ -1,0 +1,25 @@
+
+13、排序
+			//将空闲挪到前边排序
+			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
+				@Override
+				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
+					return o2.getUseStatus().compareTo(o1.getUseStatus());
+				}
+			});
+
+			//按编号排序非空闲设备
+			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
+				@Override
+				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
+					if(o2.getUseStatus()!=5&&o1.getUseStatus()!=5) {
+						if(Integer.valueOf(o2.getDeviceNo())<Integer.valueOf(o1.getDeviceNo())) {
+							return 1;
+						}else {
+							return -1;
+						}
+					}else {
+						return 0;
+					}
+				}
+			});

@@ -1,6 +1,5 @@
 
-delete from ups_role_permission_dataparams where role_id = #{roleId,jdbcType=INTEGER}
-在这里用到了#{},使用#时：
+delete from ups_role_permission_dataparams where role_id = #{roleId,jdbcType=INTEGER}，在这里用到了#{},使用#时：
 
 1、用来传入参数，sql在解析的时候会加上" ",当成字符串来解析 ，如这里 role_id = "roleid";
 
