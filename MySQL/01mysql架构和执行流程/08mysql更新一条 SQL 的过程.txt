@@ -1,0 +1,65 @@
+																					   
+1、问题：一条更新 SQL 是如何执行的？update 操作其实包括了更新、插入和删除
+
+  1)、事务开始，从内存或磁盘取到这条数据，返回给 Server 的执行器；
+  
+  2)、执行器修改这一行数据的值为 penyuyan；
+  
+  3)、记录 name=qingshan 到 undo log；
+  
+  4)、记录 name=penyuyan 到 redo log；
+  
+  5)、调用存储引擎接口，在内存（Buffer Pool）中修改 name=penyuyan；
+  
+  6)、事务提交。
+  
+2、内存和磁盘之间，工作着很多后台线程
+  
+  1)、master thread：负责刷新缓存数据到磁盘并协调调度其它后台进程
+  
+  2)、IO thread 分为 insert buffer、log、read、write 进程。分别用来处理 insert buffer、重做日志、读写请求的 IO 回调
+  
+  3)、purge thread：用来回收 undo 页
+  
+  4)、page cleaner thread 用来刷新脏页
+
+3、binlog 【https://dev.mysql.com/doc/refman/5.7/en/binary-log.html】
+
+  1)、以事件的形式记录了所有的 DDL 和 DML(属于逻辑日志)，可以用来做主从复制和数据恢复。
+  
+  2)、在开启了 binlog 功能的情况下，我们可以把 binlog 导出成 SQL 语句，把所有的操作重放一遍，来实现数据的恢复。
+  
+  3)、binlog 用来实现主从复制，原理就是 从服务器 读取 主服务器 的 binlog，然后执行一遍。
+  
+  4)、
+  
+  
+====== update teacher set name='盆鱼宴' where id=1; ======
+1、先查询到这条数据，如果有缓存，也会用到缓存。
+2、把 name 改成盆鱼宴，然后调用引擎的 API 接口，写入这一行数据到内存，同时记录 redo log。这时 redo log 进入 prepare 状态，然后告诉执行器，执行完成了，可以随时提交。
+3、执行器收到通知后记录binlog，然后调用存储引擎接口，设置redo log为commit状态。
+4、更新完成。
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+

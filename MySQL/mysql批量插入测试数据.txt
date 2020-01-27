@@ -1,0 +1,74 @@
+
+1、建表
+【
+CREATE TABLE `test` (
+  `id` int(11) PRIMARY KEY  AUTO_INCREMENT,
+  `name` varchar(255) COMMENT '名称',
+  `age` varchar(255) DEFAULT NULL COMMENT '年龄',
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+) ENGINE=MYISAM DEFAULT CHARSET=utf8mb4;
+】
+
+2、、怎么快速向数据库插入 100 万条数据？我们有一种先用 MyISAM 插入数据，然后修改存储引擎为 InnoDB 的操作。
+  ALTER TABLE test ENGINE = InnoDB;
+
+====== 批量插入脚本 ======
+
+代码如下:
+
+【
+#!/bin/bash
+
+i=1;
+MAX_INSERT_ROW_COUNT=$1;
+while [ $i -le $MAX_INSERT_ROW_COUNT ]
+do
+    mysql -uroot -proot afs -e "insert into afs_test (name,age,createTime) values ('HELLO$i',$i % 99,NOW());"
+    d=$(date +%M-%d\ %H\:%m\:%S)
+    echo "INSERT HELLO $i @@ $d"    
+    i=$(($i+1))
+    sleep 0.05
+done
+
+exit 0
+】
+
+假定上面的shell脚本保存为create-data.sh,可以通过下面的命令来生成数据：
+
+【sh create-data.sh 10000】，*注：参数10000是要生成的数据条数。
+
+
+====== 批量插入存储过程 ======
+
+1、新建存储过程，在命令行中创建，手动设置delimiter为//                                                    
+【
+delimiter //                                                                     
+
+create procedure per3()                                                          
+
+begin                                                                            
+
+declare num int;                                                                 
+
+set num=1;                                                                       
+
+while num < 10000 do                                                          
+
+insert into afs_test (name,age,createTime) values (concat('HELLO',i),i,NOW());                      
+
+set num=num+1;                                                                   
+
+end while;                                                                       
+
+end                                                                              
+
+//                                                                              
+】
+                                                                          
+
+2、调用存储过程【call per3();// 】  
+
+3、卸载存储过程【drop procedure per3; 】，可忽略                                
+
+由于我没有将delimiter’改回来，所以输入‘；’后并没有执行，还需要//    
+
