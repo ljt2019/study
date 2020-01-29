@@ -8,7 +8,7 @@
 
 3、插件式的存储引擎，修改存储引擎：【ALTER TABLE t ENGINE = InnoDB;】
 
-4、查看数据存放的路径【show variables like 'datadir';】
+4、查看数据存放路径【show variables like 'datadir';】，例如我本地的【C:\ProgramData\MySQL\MySQL Server 5.7\Data】
 	
 5、InnoDB：5.7版本之后默认的存储引擎，支持行级事物，回滚。
 
