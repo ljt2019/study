@@ -1,0 +1,79 @@
+
+1、官网【https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html】
+
+2、官网把锁分成了 8 类。所以我们把前面的两个行级别的锁（Shared and ExclusiveLocks），和两个表级别的锁（Intention Locks）称为锁的基本模式。
+
+3、锁粒度
+
+  1)、表锁：锁住一张表
+  
+  2)、行锁：锁住表里面的一行数据
+  
+  区别：锁的粒度越大，加锁效率越高，冲突概率也越高，并发性能低
+  
+4、锁类别
+
+  1)、共享锁(S锁  Shared Locks)：又称为读锁，多个事务可以共享一把锁，都能访问到数据，但是只能读不能修改。
+  加锁方式【select * from test lock in share mode;】
+  注意不要在加上了读锁以后去写数据，不然的话可能会出现死锁的情况
+  
+  2)、排它锁(X锁  Exclusive Locks)：又称为读锁，用来操作数据。
+  加锁方式：
+  1.自动加排他锁，在进行操作数据 增、删、改时会默认加上一个排它锁
+  2.【select * from test FOR UPDATE;】,后边加 for update
+  
+  3)、意向锁(IS锁 Intention Shared Lock)：数据引擎自己维护，用户无法手动操作意向锁。表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁。
+  
+  4)、意向排他锁(IX锁 Intention Exclusive Lock)：表示事务准备给数据加入排他锁，说明事务在一个数据行加排他锁前必须取得该表的IX锁。
+  
+5、行锁算法
+
+  1)、记录锁 Record Locks
+  
+  2)、间隙锁 Gap Locks
+  
+  3)、 临键锁 Next-key Locks
+
+5、锁的原理：到底锁住了什么？
+
+  1)、没有索引或者没有用到索引的情况下，会锁住整张表
+  
+  2)、是什么区别导致了加锁的行为的差异？其实答案就是索引。InnoDB 的行锁，就是通过锁住索引来实现的。
+  
+6、死锁
+
+  1)、锁 的释放与阻塞，锁什么时候释放？事务结束（commit，rollback）；客户端连接断开 
+  
+  2)、同一时刻只能有一个事务持有这把锁
+  
+  3)、其他的事务需要在这个事务释放锁之后才能获取锁，而不可以强行剥夺
+  
+  4)、当多个事务形成等待环路的时候，即发生死锁。
+  
+  5)、查看 锁 信息 （日志）【show status like 'innodb_row_lock_%';】
+  
+  【select * from information_schema.INNODB_TRX;】 -- 当前运行的所有事务 ，还有具体的语句
+  【select * from information_schema.INNODB_LOCKS;】-- 当前出现的锁
+  【select * from information_schema.INNODB_LOCK_WAITS;】 -- 锁等待的对应关系
+  
+  6)、找出持有锁的事务之后呢？如果一个事务长时间持有锁不释放，可以 kill 事务对应的线程 ID，也就是INNODB_TRX 表中的 【trx_mysql_thread_id】，例如执行 kill 4，kill 7，kill 8。
+  
+7、死锁的避免
+
+  1)、在程序中，操作多张表时，尽量以相同的顺序来访问（避免形成等待环路）；
+  
+  2)、批量操作单张表数据的时候，先对数据进行排序（避免形成等待环路）；
+  
+  3)、申请足够级别的锁，如果要操作数据，就申请排它锁；
+  
+  4)、尽量使用索引访问数据，避免没有 where 条件的操作，避免锁表；
+  
+  5)、如果可以，大事务化成小事务；
+  
+  6)、使用等值查询而不是范围查询查询数据，命中记录，避免间隙锁对并发的影响。
+
+  
+  
+  
+  
+  
