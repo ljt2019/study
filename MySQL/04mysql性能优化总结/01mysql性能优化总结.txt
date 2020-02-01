@@ -1,0 +1,79 @@
+
+1、一个查询的动作又是由很多个环节组成的，每个环节都会消耗时间
+
+2、连接 —— 配置优化
+
+  1)、从服务端来说，我们可以增加服务端的可用连接数
+  【show variables like 'max_connections';】 -- 修改最大连接数，当有多个应用连接的时候
+  及时释放不活动的连接。交互式和非交互式的客户端的默认超时时间都是 28800 秒，8 小时，我们可以把这个值调小
+  【show global variables like 'wait_timeout';】 --及时释放不活动的连接，注意不要释放连接池还在使用的连接
+  
+  2)、引入连接池，实现连接的重用，阿里的 Druid、Spring Boot 2.x 版本默认的连接池 Hikari、老牌的 DBCP 和 C3P0）
+  连接数=（（core_count * 2）+ Effective_spindle_count）
+  只要维护一定数量大小的连接池，其他的客户端排队等待获取连接就可以了。有的时候连接池越大，效率反而越低。Druid 的默认最大连接池大小是 8。Hikari 的默认最大连接池大小是 10。机器核数乘以 2 加 1。也就是说，4 核的机器，连接池维护 9 个连接就够了
+  当我们查看数据库的主要瓶颈时，它们可以概括为三个基本类别：CPU，Disk，Network。我们可以在其中添加内存，但是与磁盘和网络相比，带宽存在几个数量级的差异。
+  只有在阻塞为执行创造机会时，更多的线程才能更好地执行
+  
+3、缓存 —— 架构优化，运行独立的缓存服务，属于架构层面的优化
+
+4、主从 复制 —— 数据库的集群
+
+  1)、用到复制技术（replication），被复制的节点称为 master，复制的节点称为 slave。slave 本身也可以作为其他节点的数据来源，这个叫做级联复制
+  
+  2)、主从复制是怎么实现的呢？更新语句会记录 binlog，它是一种逻辑日志。有了这个 binlog，从服务器会获取主服务器的 binlog 文件，然后解析里面的 SQL语句，在从服务器上面执行一遍，保持主从的数据一致。
+  
+  3)、读写分离把数据写入 master 节点，而读的请求可以分担到slave 节点
+  
+  4)、异步复制：MySQL 默认是异步复制的。也就是说，对于主节点来说，写入 binlog，事务结束，就返回给客户端了。对于 slave 来说，接收到 binlog，就完事儿了，master 不关心 slave 的数据有没有写入成功
+  
+  5)、全同步复制：等待全部从库的事务执行完毕，才返回给客户端呢？这样的方式叫做全同步复制。从库写完数据，主库才返会给客户端，但会导致 master 节点性能下降
+  
+  6)、半同步复制：主库在执行完客户端提交的事务后不是立刻返回给客户端，而是等待至少一个从库接收到 binlog 并写到 relay log 中才返回给客户端。master 不会等待很长的时间，但是返回给客户端的时候，数据就即将写入成功了，因为它只剩最后一步了：就是读取 relay log，写入从库。
+  1.如果我们要在数据库里面用半同步复制，必须安装一个插件，这个是谷歌的一位工程师贡献的。这个插件在 mysql 的插件目录下已经有提供：【cd /usr/lib64/mysql/plugin/】
+  2.主库和从库是不同的插件，安装之后需要启用：
+  -- 主库执行
+  【INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so';】
+  【set global rpl_semi_sync_master_enabled=1;】
+  【show variables like '%semi_sync%';】
+  -- 从库执行
+  【INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so';】
+  【set global rpl_semi_sync_slave_enabled=1;】
+  【show global variables like '%semi%';】
+  注意：最好在低延时的网络中使用
+  
+  7)、基于 GTID 的复制，修改配置参数打开它，默认是关闭的：【show global variables like 'gtid_mode';】
+  
+5、分库分表
+
+  1)、垂直分库，减少并发压力。水平分表，解决存储瓶颈。把一个数据库按照业务拆分成不同的数据库：
+  
+  2)、水平分库分表的做法，把单张表的数据按照一定的规则分布到多个数据库
+  
+6、解析器：词法和语法分析，主要保证语句的正确性，语句不出错就没问题。由 Sever自己处理，跳过
+
+7、优化器：
+
+  1)、慢查询志 日志 w slow y query log，因为开启慢查询日志是有代价的（跟 bin log、optimizer-trace 一样）
+  1.默认是关闭的：【show variables like 'slow_query%';】
+  2.除了这个开关，还有一个参数，控制执行超过多长时间的 SQL 才记录到慢日志，默认是 10 秒【show variables like '%long_query_time%';】
+  3.可以直接动态修改参数（重启后失效）
+  【set @@global.slow_query_log=1;】 -- 1 开启，0 关闭，重启后失效
+  【set @@global.long_query_time=3;】 -- mysql 默认的慢查询时间是 10 秒，另开一个窗口后才会查到最新值
+  4.或者修改配置文件 my.cnf
+  【slow_query_log = ON】
+  【long_query_time=2】
+  【slow_query_log_file =/var/lib/mysql/localhost-slow.log】
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
