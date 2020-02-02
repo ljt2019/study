@@ -1,0 +1,96 @@
+
+====== 执行计划(模拟优化器去执行sql语句查询语句的过程) ======
+
+1、id：查询序列编号，id 值不同的时候，先查询 id 值大的（先大后小）
+
+  1)、id 值相同时，表的查询顺序是从上往下顺序执行，小标驱动大表的思想
+  举例：假如有 a、b、c 三张表，分别有 2、3、4 条数据，如果做三张表的联合查询，当查询顺序是 a→b→c 的时候，它的笛卡尔积是：2*3*4=6*4=24。如果查询顺序是 c→b→a，它的笛卡尔积是 4*3*2=12*2=24。因为 MySQL 要把查询的结果，包括中间结果和最终结果都保存到内存，所以 MySQL会优先选择中间结果数据量比较小的顺序进行查询。所以最终联表查询的顺序是 a→b→c。这个就是为什么 teacher 表插入数据以后查询顺序会发生变化。
+  
+2、select_type：查询类型,一些常见的查询类型如下
+
+  1)、SIMPLE：简单查询，不包含子查询，不包含关联查询 union
+  
+  2)、PRIMARY：子查询 SQL 语句中的主查询，也就是最外面的那层查询
+  
+  3)、SUBQUERY：子查询中所有的内层查询都是 SUBQUERY 类型的
+  
+  4)、DERIVED：衍生查询，表示在得到最终查询结果之前会用到临时表。例如：对于关联查询，先执行右边的 table（UNION），再执行左边的 table，类型是 DERIVED
+  
+  5)、UNION：用到了 UNION 查询
+  
+  6)、UNION RESULT：主要是显示哪些表之间存在 UNION 查询。<union2,3>代表 id=2 和 id=3 的查询存在 UNION
+  
+3、type 连接类型【https://dev.mysql.com/doc/refman/5.7/en/explain-output.html】性能比较：system > const > eq_ref > ref > range > index > all
+
+  1)、system：system 是 const 的一种特例，只有一行满足条件。例如：只有一条数据的系统表【EXPLAIN SELECT * FROM mysql.proxies_priv;】
+  
+  2)、const：主键索引或者唯一索引，只能查到一条数据的 SQL
+  
+  3)、eq_ref：通常出现在多表的 join 查询，表示对于前表的每一个结果,，都只能匹配到后表的一行结果。一般是唯一性索引的查询（UNIQUE 或 PRIMARY KEY）。eq_ref 是除 const 之外最好的访问类型
+  
+  4)、ref：查询用到了非唯一性索引，或者关联操作只使用了索引的最左前缀。例如：使用 tcid 上的普通索引查询
+  
+  5)、range：索引范围扫描，如果 where 后面是 between and 或 <或 > 或 >= 或 <=或 in 这些，不走索引一定是全表扫描（ALL），所以先加上普通索引
+  
+  6)、index：Full Index Scan，查询全部索引中的数据（比不走索引要快）
+  
+  7)、all：Full Table Scan，如果没有索引或者没有用到索引，type 就是 ALL。代表全表扫描
+  
+  8)、NULL：不用访问表或者索引就能得到结果，例如：【EXPLAIN select 1 from dual where 1=1;】
+  
+  10)、小结：一般来说，需要保证查询至少达到 range 级别，最好能达到 ref。ALL（全表扫描）和 index（查询全部索引）都是需要优化的
+  
+4、possible_key 、key
+
+  1)、可能用到的索引和实际用到的索引。如果是 NULL 就代表没有用到索引。possible_key 可以有一个或者多个，可能用到索引不代表一定用到索引
+  
+  2)、
+  
+5、key_len：索引的长度（使用的字节数）。跟索引字段的类型、长度有关
+
+6、rows：MySQL 认为扫描多少行才能返回请求的数据，是一个预估值。一般来说行数越少越好。
+
+7、filtered：这个字段表示存储引擎返回的数据在 server 层过滤后，剩下多少满足查询的记录数量的比例，它是一个百分比
+
+8、ref：使用哪个列或者常数和索引一起从表中筛选数据
+
+9、Extra：执行计划给出的额外的信息说明
+
+  1)、using index：用到了覆盖索引，不需要回表。例如【EXPLAIN SELECT tid FROM teacher ;】
+  
+  2)、using where：使用了 where 过滤，表示存储引擎返回的记录并不是所有的都满足查询条件，需要在 server 层进行过滤（跟是否使用索引没有关系）
+  
+  3)、Using x index condition （索引 条件下推 ）【https://dev.mysql.com/doc/refman/5.7/en/index-condition-pushdown-optimization.html】
+  
+  4)、using filesort：不能使用索引来排序，用到了额外的排序（跟磁盘或文件没有关系）。需要优化
+  
+  5)、using temporary：用到了临时表。例如（以下不是全部的情况）
+  1.distinct 非索引列【EXPLAIN select DISTINCT(tid) from teacher t;】
+  2.group by 非索引列【EXPLAIN select tname from teacher group by tname;】
+  3.使用 join 的时候，group 任意列【EXPLAIN select t.tid from teacher t join course c on t.tid = c.tid group by t.tid;】，需要优化，例如创建复合索引
+
+10、对于具体的 SQL 语句的优化，MySQL 官网也提供了很多建议，这个是我们在分析具体的 SQL 语句的时候需要注意的，也是大家在以后的工作里面要去慢慢地积累的
+  【https://dev.mysql.com/doc/refman/5.7/en/optimization.html】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
