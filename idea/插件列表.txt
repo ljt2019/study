@@ -1,8 +1,9 @@
 
 ====== 后端插件列表 ======
+
 1、CodeGlance
 
-2、Free MyBatis plugin
+2、Free MyBatis plugin ，自动跳转 Mapper 文件
 
 3、Lombok
 
