@@ -1,0 +1,38 @@
+
+====== 线程认识 ======
+
+1、进程(Process)：是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。
+
+1、线程的引入：60年代，在OS中能拥有资源和独立运行的基本单位是进程，然而随着计算机技术的发展，进程出现了很多弊端，一是由于进程是资源拥有者，创建、撤消与切换存在较大的时空开销，因此需要引入轻型进程；二是由于对称多处理机（SMP）出现，可以满足多个运行单位，而多个进程并行开销过大。因此在80年代，出现了能独立运行的基本单位——线程（Threads）。
+
+2、线程(thread)：操作系统运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。
+
+3、某一个作业因为等待磁盘或者其他 I/O 操作而暂停时，那 CPU 就只能阻塞直到该 I/O 完成，对于 CPU 操作密集型的程序，I/O 操作相对较少，因此浪费的时间也很少。但是对于 I/O 操作较多的场景来说，CPU 的资源是属于严重浪费的。
+
+
+====== 线程的状态 ======
+
+1、NEW(新建)：A thread that has not yet started is in this state.
+  初始状态，线程被构建，但是还没有调用 start 方法
+
+2、RUNNABLE(运行)：A thread executing in the Java virtual machine is in this state.
+  运行状态，JAVA 线程把操作系统中的就绪和运行两种状态统一称为“运行中”
+
+3、BLOCKED(阻塞)：A thread that is blocked waiting for a monitor lock is in this state.
+  阻塞状态，表示线程进入等待状态,也就是线程因为某种原因放弃了 CPU 使用权，阻塞也分为几种情况
+
+4、WAITING(等待)：A thread that is waiting indefinitely for another thread to perform a particular action is in this state.
+
+5、TIMED_WAITING(带超时时间的等待)：A thread that is waiting for another thread to perform an action for up to a specified waiting time is in this state.
+
+6、TERMINATED(终止)：A thread that has exited is in this state.
+
+
+
+
+
+
+
+
+
+

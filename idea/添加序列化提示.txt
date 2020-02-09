@@ -1,6 +1,0 @@
-
-1、类实现Serializable接口 【implements Serializable】
-
-2、【Ctrl+Alt+S】打开setting窗口后搜索 【serializable class without ‘serialVersionUID’】 也可以找到这个选项， 打上 √ 选项
-
-3、然后鼠标选中类名，按下快捷键【Alt+Entry】

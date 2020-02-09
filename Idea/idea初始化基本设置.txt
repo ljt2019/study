@@ -1,0 +1,97 @@
+
+快捷键进入设置界面：【Ctrl+Alt+S】
+
+========= 自动导包 =========
+1、搜索：【Auto Import】，勾选以下两选项
+2、Add unambiguous imports on fly
+3、Optimize import and Completion
+  
+========= 自定义模板 =========
+
+1、快捷键模板：【Ctrl+Alt+S --> Editor --> Live Templates】，创建一个自己的模板组，之后在组里边创建模板  
+public String $END$(String para){
+    System.out.println("开始校验请求参数："+para);
+    return null;
+}
+
+2、类注释模板：【Ctrl+Alt+S --> Editor --> File And Code Templates -->includes】，在File Header 中加入下边内容
+/**
+ * 
+ * @description: ${description}
+ * @author: ${USER}
+ * @create: ${YEAR}-${MONTH}-${DAY} ${HOUR}:${MINUTE}
+ */
+ 
+
+====== 添加序列化提示 ======
+1、类实现Serializable接口 【implements Serializable】
+2、搜索【serializable class without ‘serialVersionUID’】 也可以找到这个选项， 打上 √ 选项
+3、然后鼠标选中类名，按下快捷键【Alt+Entry】
+
+
+========= IDEA中的Linux远程管理工具 =========
+1、【Ctrl+Alt+S --> Build,Execution,Deployment --> Deployment】,点击+号创建一台主机连接，type中选中加密方式(SFTP)
+2、启动ssh工具：【Tools --> Start SSH Session】，在这里可以以命令行的方式部署项目
+3、Linux视图目录：【Tools --> Deployment --> Browse Remote Host】,可以在这里直接复制粘贴的方式上传下载文件
+
+
+====== 后端插件列表 ======
+插件安装，索索【Plugins】
+
+1、【JRebel for IntelliJ】：热部署，快捷键是control+F9/command+F9
+  
+2、【GsonFormat】：一键根据json文本生成java类
+  
+3、【GenerateAllSetter】：一键调用一个对象的所有set方法并且赋予默认值 
+
+4、【Lombok】：自动get/set方法，pom中引入对应jar包
+
+5、【Free MyBatis plugin】：mapper的xml文件中来回跳转
+
+4、【Mybatis Log Plugin】：sql日志查看
+  
+5、【CodeGlance】：在编辑区的右侧显示的代码地图
+
+6、【Rainbow Brackets】：彩虹颜色的括号 看着很舒服
+
+7、【active-power-mode】：这是一款让你在编码的时候，整个屏幕都为之颤抖的插件
+
+8、【Nyan progress bar】：设置idea背景图片的插件，固体的图片/随机变化背景图片，以及设置图片的透明度等
+
+9、【Material Theme UI】：切换/自定义颜色。默认很漂亮了，如需修改配色：Tools->Material Theme
+
+
+
+6、RestfulToolkit
+
+
+
+====== 自动热部署方式去 ======
+1、引入jar：
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>provided</scope>
+            <!-- optional=true, 依赖不会传递, 该项目依赖devtools;
+                之后依赖boot项目的项目如果想要使用devtools, 需要重新引入 -->
+            <optional>true</optional>
+        </dependency>
+			
+2、在yml文件上配如下：
+spring: 
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+	  
+3、设置idea运行前自动编译：【ctrl + shift + alt + /,选择Registry,勾上 Compiler autoMake allow when app running】
+
+4、编译插件：设置 fork 为 true
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration> 
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+        </plugins>

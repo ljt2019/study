@@ -1,4 +1,0 @@
-
-Auto Import，勾选以下两选项
-  1、Add unambiguous imports on fly
-  2、Optimize import and Completion
