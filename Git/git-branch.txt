@@ -1,0 +1,26 @@
+
+前序：分支在实际中有什么用呢？假设你准备开发一个新功能，但是需要两周才能完成，第一周你写了50%的代码，如果立刻提交，由于代码还没写完，不完整的代码库会导致别人不能干活了。如果等代码全部写完再一次提交，又存在丢失每天进度的巨大风险。
+
+1、master才是指向提交的，所以，HEAD指向的就是当前分支。
+
+2、查看分支：git branch
+
+3、创建分支：git branch <name>
+
+4、切换分支：git checkout <name>
+
+5、创建+切换分支：git checkout -b <name>
+
+6、合并某分支到当前分支：git merge <name>
+
+7、删除分支：git branch -d <name>
+
+8、当Git无法自动快速合并分支时【各分支对同一个文件做修改且都提交】，就必须首先手动解决冲突。解决冲突后，再提交，合并完成。
+
+9、快速合并，删除分支后，会丢掉分支信息：git merge <name>
+
+10、禁用Fast forward(快速合并)：git merge --no-ff -m "merge with no-ff" temp
+
+11、git log --graph --pretty=oneline --abbrev-commit
+
+12、将本地分支推送至远程非主分支：git push origin 2018_local:pro_2018_remote

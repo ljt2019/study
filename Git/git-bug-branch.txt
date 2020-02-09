@@ -1,0 +1,10 @@
+
+1、bug分支：在分支上进行着的任务还未提交时，可以【git stash】隐藏起来，切换主分支新建分支修复完bug，并合并到master分支之后再切回之前恢复现场。【因为切换分支时必须commit或者stash】
+
+2、恢复现场同时将stash内容删除：git stash pop
+
+3、查看stash内容：git stash list
+
+4、恢复指定stash：git stash apply stash@{0} 
+
+5、

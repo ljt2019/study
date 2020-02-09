@@ -1,0 +1,33 @@
+
+1、tag就是一个让人容易记住的有意义的名字，它跟某个commit绑在一起
+
+2、使用步骤：
+
+   1)、切换到需要打标签的分支上：git checkout <name>
+
+   2)、 打标签：git tag <name> 【默认打的是最新的commit】；对特定历史commit进行打标签：git tag <name> commit_id
+
+   3)、 查标签列表：git tag
+
+   4)、 打标签：git tag <name>
+
+   5)、 查标签详情：git show <name>
+
+   6)、 创建带有标说明的标签：git tag -a <name> -m "说明文字" commit_id
+
+   7)、 查标签详情：git show <name>
+
+   8)、 将标签版本推送到远程：git push origin <tag_name>
+
+   9)、 删除本地标签：git tag -d <name>
+
+   10)、删除远程标签(前提是先删除本地)：git push origin :refs/tags/<tagname>
+
+   11)、一次性推送全部尚未推送到远程的本地标签：git push origin --tags
+
+
+
+
+
+
+

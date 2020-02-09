@@ -1,0 +1,12 @@
+
+1、Git显示颜色：git config --global color.ui true
+
+2、git别名：git config --global alias.st status
+
+3、当然还有别的命令可以简写，很多人都用co表示checkout，ci表示commit，br表示branch：
+
+4、撤销操作：git config --global alias.unstage 'reset HEAD'
+
+5、日志格式化显示：git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+6、显示最后一次提交：git config --global alias.last 'log -1'

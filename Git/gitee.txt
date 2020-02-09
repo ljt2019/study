@@ -1,0 +1,4 @@
+
+1、将已有仓库通过ssh协议与之关联：git remote add origin git@gitee.com:liaoxuefeng/learngit.git
+
+在本机user\user_name下直接创建SSH Key就解决了.

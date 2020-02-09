@@ -1,0 +1,33 @@
+
+====== 基本认知 ======
+
+1、工作区(.git 文件夹)  --  版本库(缓存区、提交区)
+
+
+
+
+====== 基本命令 ======
+
+1、当前工作区的状态：【git status】
+
+2、记录每次commit日志：【git reflog】、【git log】
+
+3、退回上一个版本：【git reset --hard HEAD^】
+   退回上上一个版本：【git reset --hard HEAD^^】
+   退回往上100个版本：【git reset --hard HEAD~100】
+   退回到指定版本：【git reset --hard commit_id】 
+
+4、添加文件到暂缓区：【git add filename】、【git add .】
+
+5、添加文件到暂缓区：【】
+
+6、拉取：【git pull】
+
+
+====== 全局配置 ======
+
+1、git账户配置
+  【git config --global user.name "linjitai"】
+  【git config --global user.email "1165069099@qq.com"】
+
+2、将目录初始化为git可管理的目录：git init
