@@ -40,7 +40,7 @@ public String $END$(String para){
 
 1、【JRebel for IntelliJ】：热部署，快捷键是control+F9/command+F9
   
-2、【GsonFormat】：一键根据json文本生成java类
+2、【GsonFormat】：一键根据json文本生成java类，快捷键：【Alt+s】
   
 3、【GenerateAllSetter】：一键调用一个对象的所有set方法并且赋予默认值 
 
@@ -54,7 +54,7 @@ public String $END$(String para){
 
 6、【Rainbow Brackets】：彩虹颜色的括号 看着很舒服
 
-7、【active-power-mode】：这是一款让你在编码的时候，整个屏幕都为之颤抖的插件
+7、【active-power-mode】：这是一款让你在编码的时候，整个屏幕都为之颤抖的插件，尽量不要，消耗性能
 
 8、【Nyan progress bar】：设置idea背景图片的插件，固体的图片/随机变化背景图片，以及设置图片的透明度等
 
