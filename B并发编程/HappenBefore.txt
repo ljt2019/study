@@ -1,0 +1,16 @@
+
+1、意思表示的是前一个操作的结果对于后续操作是可见的，表达多个线程之间对于内存的可见性。
+
+2、JMM 中 有 哪些方法建立 happen- -e before 规则
+
+  1)、【程序顺序规则】一个线程中的每个操作，happens-before 于该线程中的任意后续操作; 可以简单认为是 as-if-serial。
+  
+  2)、【volatile 变量规则】对于 volatile 修饰的变量的写的操作，一定 happen-before 后续对于 volatile 变量的读操作。
+  
+  3)、【传递性规则】如果 1 happens-before 2; 3happens-before 4; 那么传递性规则表示。
+  
+  4)、【start 规则】如果线程 A 执行操作 ThreadB.start(),那么线程 A 的 ThreadB.start()操作 happens-before 线程 B 中的任意操作。
+  
+  5)、【join 规则】如果线程 A 执行操作 ThreadB.join()并成功返回，那么线程 B 中的任意操作 happens-before 于线程A 从 ThreadB.join()操作成功返回。
+  
+  6)、【监视器锁的规则】对一个锁的解锁，happens-before 于随后对这个锁的加锁

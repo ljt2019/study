@@ -1,0 +1,6 @@
+
+1、例如 App.java 文件确保是最新编译，App.class
+
+2、定位到App.class文件所在位置，鼠标右键，Open in terminal
+
+3、敲击命令【javap -v App.class】
