@@ -16,3 +16,49 @@
   1)、独占锁：每次只能有一个线程持有锁，比如 ReentrantLock 就是以独占方式实现的互斥锁
   
   2)、共享锁：允许多个线程同时获取锁，并发访问共享资源，比如ReentrantReadWriteLock
+
+2、基本实现
+
+  1)、锁的基本要素
+    1.一个共享的数据记录锁的状态(有锁/无锁)
+	compareAndSetState(0, 1)
+    2.State:锁标记 0 是无锁，>=1 是有锁，可能重入
+	CAS(obj,offset,expect,update)
+	
+	
+CAS（Compare-and-Swap），即比较并替换，是一种实现并发算法时常用到的技术。
+
+自旋
+private Node enq(final Node node) {
+        for (;;) {
+            Node t = tail;
+            if (t == null) { // Must initialize
+                if (compareAndSetHead(new Node()))
+                    tail = head;
+            } else {
+                node.prev = t;
+                if (compareAndSetTail(t, node)) {
+                    t.next = node;
+                    return t;
+                }
+            }
+        }
+    }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
