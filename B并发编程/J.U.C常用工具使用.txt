@@ -16,7 +16,7 @@
 
 2、countdownlatch 提供了两个方法，一个是 countDown，一个是 await，countdownlatch 初始化的时候需要传入一个整数，在这个整数倒数到 0 之前，调用了 await 方法的程序都必须要等待，然后通过 countDown 来倒数。
 
-3、从代码的实现来看，有点类似 join 的功能，但是比 join 更加灵活。CountDownLatch 构造函数会接收一个 int 类型的参数作为计数器的初始值，当调用 CountDownLatch 的countDown 方法时，这个计数器就会减一。通过 await 方法去阻塞去阻塞主流程。
+3、从代码的实现来看，有点类似 join 的功能，但是比 join 更加灵活。CountDownLatch 构造函数会接收一个 int 类型的参数作为计数器的初始值，当调用 CountDownLatch 的countDown 方法时，这个计数器就会减一。通过 await 方法去阻塞去阻塞主流程(主线程)。
 
 
 

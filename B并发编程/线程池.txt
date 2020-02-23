@@ -1,0 +1,64 @@
+
+====== 线程池 ======
+
+使用场景：【想要频繁的创建和销毁线程的时候】
+
+1、线程池的概念：线程池就是提前创建若干个线程，如果有任务需要处理，线程池里的线程就会处理任务，处理完之后线程并不会被销毁，而是等待下一个任务。由于创建和销毁线程都是消耗系统资源的，
+
+2、线程池的优势 
+
+  1)、降低创建线程和销毁线程的性能开销。
+  
+  2)、提高响应速度，当有新任务需要执行是不需要等待线程创建就可以立马执行。
+  
+  3)、合理的设置线程池大小(限流)可以避免因为线程数超过硬件资源瓶颈带来的问题。
+  
+3、Java 中提供的线程池 Api Executors
+
+1)、【newFixedThreadPool】：该方法返回一个固定数量的线程池，当有一个任务提交时，若线程池中空闲，则立即执行，若没有，则会被暂缓在一个任务队列中，等待有空闲的线程去执行。
+  用途：FixedThreadPool 用于负载比较大的服务器，为了资源的合理利用，需要限制当前线程数量。
+  ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0L, TimeUnit.MILLISECONDS,  new LinkedBlockingQueue<Runnable>())
+  
+  2)、【newSingleThreadExecutor】：创建一个线程的线程池，若空闲则执行，若没有空闲线程则暂缓在任务队列中。
+  ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())
+  3)、【newCachedThreadPool】：根据实际情况调整线程个数，不限制最大线程数，若用空闲的线程则执行任务，若无任务则不创建线程。并且每一个空闲线程会在 60 秒后自动回收。
+  ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>())
+  
+  4)、【newScheduledThreadPool】: 创建一个可以指定线程的数量的线程池，但是这个线程池还带有延迟和周期性执行任务的功能，类似定时器。
+  ThreadPoolExecutor(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS, new DelayedWorkQueue(), threadFactory)
+  
+
+====== ThreadPoolExecutor 线程池的核心 ======
+
+1、线程池参数：
+  ThreadPoolExecutor(int corePoolSize,                  //核心线程数
+                     int maximumPoolSize,               //最大线程数
+                     long keepAliveTime,                //超时时间,超出核心线程数量以外的线程空余存活时间
+                     TimeUnit unit,                     //存活时间单位
+                     BlockingQueue<Runnable> workQueue, //保存执行任务的队列
+  				   ThreadFactory threadFactory,         //创建新线程使用的工厂
+                     RejectedExecutionHandler handler)  //当任务无法执行的时候的处理方式
+
+2、execute();//任务提交
+   submit(); //带有返回值的任务提交
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
