@@ -36,7 +36,7 @@
                      long keepAliveTime,                //超时时间,超出核心线程数量以外的线程空余存活时间
                      TimeUnit unit,                     //存活时间单位
                      BlockingQueue<Runnable> workQueue, //保存执行任务的队列
-  				   ThreadFactory threadFactory,         //创建新线程使用的工厂
+  				     ThreadFactory threadFactory,       //创建新线程使用的工厂
                      RejectedExecutionHandler handler)  //当任务无法执行的时候的处理方式
 
 2、execute();//任务提交
@@ -44,7 +44,14 @@
   
   
   
-  
+六、如何设置线程数
+那我们如何分配线程？我们提供一个公式：
+
+最佳线程数目 = （（线程等待时间+线程CPU时间）/线程CPU时间 ）* CPU数目
+
+备注这个公式也是前辈们分享的，当然之前看了淘宝前台系统优化实践的文章，和上面的公式很类似，不过在CPU数目那边，他们更细化了，上面的公式只是参考。不过不管什么公式，最终还是在生产环境中运行后，再优化调整。
+
+我们继续上面的任务，我们的服务器CPU核数为4核，一个任务线程cpu耗时为20ms，线程等待（网络IO、磁盘IO）耗时80ms，那最佳线程数目：( 80 + 20 )/20 * 4 = 20。也就是设置20个线程数最佳。
   
   
   

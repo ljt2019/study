@@ -23,3 +23,15 @@
 					}
 				}
 			});
+			
+			// 直接在这里添加我们的排序规则
+			Collections.sort(sortList, new Comparator<SeparateClassRuleDto>() {
+				public int compare(SeparateClassRuleDto arg0, SeparateClassRuleDto arg1) {
+					return arg0.getYxj().compareTo(arg1.getYxj());
+				}
+			});
+			
+	//int 类型不需要 compareTo
+	public int compareTo(ClassStudentScoreInfoVo o) {
+        return o.scoreSum - this.scoreSum;
+    }
