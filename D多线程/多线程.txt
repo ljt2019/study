@@ -61,3 +61,27 @@ public class MyCallable implements Callable<Object> {
     count.incrementAndGet();
 	
 2、
+
+
+  CountDownLatch countDownLatch = new CountDownLatch(scoreJobsCoeds.length);
+  ExecutorService executorService = Executors.newFixedThreadPool(5);
+  
+  for (String scoreJobCode : scoreJobsCoeds) {
+  	//开启多线程执行
+  	executorService.execute(() -> {
+  		try {
+  			singleApproval(userId, userName, ip, approvalOption, approvalStatus, updateTotal, scoreJobCode);
+  		} finally {
+  			countDownLatch.countDown();
+  		}
+  	});
+  }
+  
+  //关闭线程
+  executorService.shutdown();
+  try {
+  	//主线程阻塞等待辅助线程执行完毕再继续执行
+  	countDownLatch.await();
+  } catch (InterruptedException e) {
+  	e.printStackTrace();
+  }
