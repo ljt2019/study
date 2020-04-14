@@ -60,9 +60,7 @@ public class MyCallable implements Callable<Object> {
     public static AtomicInteger count = new AtomicInteger(0);
     count.incrementAndGet();
 	
-2、
-
-
+2、多线程
   CountDownLatch countDownLatch = new CountDownLatch(scoreJobsCoeds.length);
   ExecutorService executorService = Executors.newFixedThreadPool(5);
   
@@ -85,3 +83,7 @@ public class MyCallable implements Callable<Object> {
   } catch (InterruptedException e) {
   	e.printStackTrace();
   }
+  
+3、CompletableFuture<Map<String, Object>> future = CompletableFuture.supplyAsync(()->{
+				return orderService.findOrderSum(parameter,pageParameter);
+			});

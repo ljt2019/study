@@ -1,37 +1,37 @@
 
-13、排序
-			//将空闲挪到前边排序
-			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
-				@Override
-				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
-					return o2.getUseStatus().compareTo(o1.getUseStatus());
-				}
-			});
-
-			//按编号排序非空闲设备
-			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
-				@Override
-				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
-					if(o2.getUseStatus()!=5&&o1.getUseStatus()!=5) {
-						if(Integer.valueOf(o2.getDeviceNo())<Integer.valueOf(o1.getDeviceNo())) {
-							return 1;
-						}else {
-							return -1;
-						}
-					}else {
-						return 0;
-					}
-				}
-			});
-			
-			// 直接在这里添加我们的排序规则
-			Collections.sort(sortList, new Comparator<SeparateClassRuleDto>() {
-				public int compare(SeparateClassRuleDto arg0, SeparateClassRuleDto arg1) {
-					return arg0.getYxj().compareTo(arg1.getYxj());
-				}
-			});
-			
-	//int 类型不需要 compareTo
-	public int compareTo(ClassStudentScoreInfoVo o) {
-        return o.scoreSum - this.scoreSum;
-    }
+1、示例代码一
+  【
+Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
+	@Override
+	public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
+		return o2.getUseStatus().compareTo(o1.getUseStatus());
+	}
+});
+  】
+  
+2、示例代码二
+  【
+Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
+	@Override
+	public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
+		if(o2.getUseStatus()!=5&&o1.getUseStatus()!=5) {
+			if(Integer.valueOf(o2.getDeviceNo())<Integer.valueOf(o1.getDeviceNo())) {
+				return 1;
+			}else {
+				return -1;
+			}
+		}else {
+			return 0;
+		}
+	}
+});
+  】
+					
+3、示例代码三 --> int 类型不需要 compareTo
+  【
+public int compareTo(ClassStudentScoreInfoVo o) {
+    return o.scoreSum - this.scoreSum;
+}
+  】
+	
+	

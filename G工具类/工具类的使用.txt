@@ -1,30 +1,4 @@
 
-1、时间格式转换工具：
-    DateTimeUtils.paseTimeStr(Long timestamp);//将时间戳转为时分秒
-	org.apache.commons.lang3.time.DateUtils
-	org.apache.commons.lang3.time.DateFormatUtils
-
-2、关于json数据：JsonUtils
-例如：List<String> images = JsonUtils.toListHasCatch(gymHouseInDTO.getImages(), String.class);
-      List<TagCategory> tagCategories = JsonUtils.toListHasCatch(symptom.getTagCategory(), TagCategory.class);
-	  List<GoodInfoInDTO> goodInfoInDTOList = JsonUtils.toList(foodTherapy.getGoodInfo(), GoodInfoInDTO.class);【json --> List<Object>】
-	  JsonUtils.toJson(param.getImagelist());【List<Object> --> json】JsonUtils.toJson(arInDTO)【打印日志用到】
-	  JsonUtils.jsonArrayToString(foodTherapy.getSymptomIds()); 【将json格式的数据中的多余字符去掉】
-	  GoodDTO goodDTO = JsonUtils.fromJson(good,GoodDTO.class)【json --> Object】
-	  //将结果封装到 指定的类型中
-      WechatOutDTO wechatOutDTO = com.alibaba.fastjson.JSONObject.parseObject(result, WechatOutDTO.class);
-	  
-2、后台获取当前用户信息：ShiroUtils【ShiroUtils.getLoginUserId()】
-
-3、app获取当前用户信息:AppPricipalUtil【静态方法方式，在service层取用】
-                       SSOAuthenticationToken【以参数形式传进方式，在controller层取用】
-
-4、获得权益卡数据：EquityCardDTO equityCardDTO = sysConfigService.queryCard();
-
-5、订单编码规则：OrderUtil
-
-6、常量工具类：CommonConstant、BigDecimalUtils
-
 7、属性复制工具：org.springframework.beans.BeanUtils.copyProperties (param,gym);   将前者的值复制给后者
 
 8、分组统计问题数：【String:评分结果id   Long：评分结果对应的题目的数量】
@@ -50,30 +24,6 @@
 
 12、private static final List<Integer> DATE_TYPE = Arrays.asList(1, 2, 3);
 
-13、排序
-			//将空闲挪到前边排序
-			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
-				@Override
-				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
-					return o2.getUseStatus().compareTo(o1.getUseStatus());
-				}
-			});
-
-			//按编号排序非空闲设备
-			Collections.sort(collect, new Comparator<GymDeviceDetailOutDTO>() {
-				@Override
-				public int compare(GymDeviceDetailOutDTO o1, GymDeviceDetailOutDTO o2) {
-					if(o2.getUseStatus()!=5&&o1.getUseStatus()!=5) {
-						if(Integer.valueOf(o2.getDeviceNo())<Integer.valueOf(o1.getDeviceNo())) {
-							return 1;
-						}else {
-							return -1;
-						}
-					}else {
-						return 0;
-					}
-				}
-			});
 
 14、时区转换：@JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8") 【记得时区转换】
              ,DATE_FORMAT(sc.create_time,'%Y-%m-%d %H:%i:%s') AS intoTime  【sql中不需要这个似乎也可以】
@@ -118,12 +68,7 @@
 20、【非spring管理Bean获得spring管理Bean工具类】SpringUtil	
     @Autowired
     private static SSOUrlConfigProperties ssoUrlConfigProperties =SpringUtil.getBean(SSOUrlConfigProperties.class);
-
-    @Autowired
-    private static RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
-		
+	
 org.apache.commons.collections.CollectionUtils.sizeIsEmpty(memberMedalList)	
 
-
-mvn install:install-file -DgroupId=com.alipay -DartifactId=sdk-Java -Dversion=20170607114101 -Dpackaging=jar -Dfile=alipay-sdk-java20170607114101.jar
 
