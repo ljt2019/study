@@ -74,11 +74,20 @@
 ====== 高效的Reactor线程模型 ======
 
 1、Reactor单线程模型。
+  EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+  ServerBootstrap server = new ServerBootstrap();
+  server.group(bossGroup);
 
 2、Reactor多线程模型。
+  EventLoopGroup bossGroup = new NioEventLoopGroup(128);
+  ServerBootstrap server = new ServerBootstrap();
+  server.group(bossGroup);
 
 3、主从Reactor多线程模型。
-
+  EventLoopGroup bossGroup = new NioEventLoopGroup();
+  EventLoopGroup workerGroup = new NioEventLoopGroup();
+  ServerBootstrap b = new ServerBootstrap();
+  b.group(bossGroup, workerGroup);
 
 ====== 高效的并发编程 ======
 
@@ -101,7 +110,13 @@
 
 
 ====== 灵活的TCP参数配置能力 ======
+  合理设置 TCP 参数在某些场景下对于性能的提升可以起到显著的效果，例如 SO_RCVBUF 和 SO_SNDBUF。如果设置不当，对性能的影响是非常大的。下面我们总结下对性能影响比较大的几个配置项：
+  
+1、1) SO_RCVBUF 和 SO_SNDBUF：通常建议值为 128K 或者 256K；
 
+2、SO_TCPNODELAY：NAGLE 算法通过将缓冲区内的小封包自动相连，组成较大的封包，阻止大量小封包的发送阻塞网络，从而提高网络应用效率。但是对于时延敏感的应用场景需要关闭该优化算法；
+
+3、软中断：如果 Linux 内核版本支持 RPS（2.6.35 以上版本），开启 RPS 后可以实现软中断，提升网络吞吐量。RPS根据数据包的源地址，目的地址以及目的和源端口，计算出一个 hash 值，然后根据这个 hash 值来选择软中断运行的cpu，从上层来看，也就是说将每个连接和 cpu 绑定，并通过这个 hash 值，来均衡软中断在多个 cpu 上，提升网络并行处理性能。
 
 
 ====== Netty核心组件之Channel启动 ======
@@ -120,6 +135,111 @@
 3、doBind();绑定端口；
 
 4、register();注册到Selector。
+
+
+1、无锁化的串行设计理念：Netty 的 NioEventLoop 读取到消息之后，直接调用 ChannelPipeline的 fireChannelRead(Object msg)，只要用户不主动切换线程，一直会由 NioEventLoop 调用到用户的 Handler，期间不进行线程切换，这种串行化处理方式避免了多线程操作导致的锁的竞争，从性能角度看是最优的。
+
+2、Netty 有一个强大和灵活之处就是基于 Pipeline 的自定义 handler 机制。基于此，我们可以像添加插件一样自由组合各种各样的 handler 来完成业务逻辑。例如我们需要处理 HTTP 数据，那么就可以在 pipeline 前添加一个针对 HTTP编、解码的 Handler，然后接着添加我们自己的业务逻辑的 handler，这样网络上的数据流就向通过一个管道一样, 从不同的 handler 中流过并进行编、解码，最终在到达我们自定义的 handler 中。
+
+
+调用 AbstractNioMessageChannel 的 doReadMessages()方法。总结一下：
+1、Netty 中 Selector 事件轮询是从 EventLoop 的 execute()方法开始的。
+2、在 EventLoop 的 execute()方法中，会为每一个任务创建一个独立的线程，并保存到无锁化串行任务队列。
+3、线程任务队列的每个任务实际调用的是 NioEventLoop 的 run()方法。
+4、在 run 方法中调用 processSelectedKeys()处理轮询事件。
+
+
+通常来说，NioEventLoop 负责执行两个任务：第一个任务是作为 IO 线程，执行与 Channel 相关的 IO 操作，包括调用 Selector 等待就绪的 IO 事件、读写数据与数据的处理等；而第二个任务是作为任务队列，执行 taskQueue 中的任务，例如用户调用 eventLoop.schedule 提交的定时任务也是这个线程执行的。
+
+大家应该发现了规律：inbound 类似于是事件回调（响应请求的事件），而 outbound 类似于主动触发（发起请求的事件）。注意，如果我们捕获了一个事件，并且想让这个事件继续传递下去，那么需要调用 Context 对应的传播方法fireXXX，例如：
+
+
+
+
+====== 及时通信软件Web版，netty实现 ======
+
+一、自定义报文协议
+
+1、上行命令：指服务器向客户端发送的消息内容
+
+  1)、SYSTEM：系统
+	[命令类型][命令发送时间][命令接收人] - 系统提示内容
+	[SYSTEM][124343423123][Tiger] – Student加入聊天室
+	
+2、下行命令：指客户端想服务器发送的命令
+
+  1)、LOGIN：登录
+    [命令类型][命令发送时间][命令发送人][终端类型]
+    [LOGIN][124343423123][Tiger][WebSocket]
+	
+  2)、FLOWER：发送送鲜花特效
+    [命令类型][命令发送时间][命令发送人][终端类型][命令接收人]
+    [FLOWER][124343423123][you][WebSocket][ALL]
+
+  3)、CHAT：聊天
+    [命令类型][命令发送时间][命令发送人][命令接收人] – 聊天内容
+	[CHAT][124343423123][Tiger][ALL] - 大家好，我是Tiger！
+	
+  4)、LOGOUT：注销
+    [命令类型][命令发送时间][命令发送人]
+	[LOGOUT][124343423123][Tiger]
+
+二、环境准备
+
+1、Netty版本： 4.1.6.Final
+
+2、FastJSON：1.2.4
+
+3、MsgPack：0.6.12
+
+4、Lombok：1.16.10
+
+三、协议支持
+
+1、同时支持 WebSocket、Socket、HTTP
+
+2、自定义报文协议IMP，IMMessage
+
+3、序列化框架MsgPack
+
+4、自定义编解码器：IMDecoder、IMEncoder
+
+5、用户交互终端：控制台、浏览器
+
+
+====== netty中的设计模式 ======
+
+1、单例模式：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
