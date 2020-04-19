@@ -1,0 +1,181 @@
+
+学习方法：【场景】-->【需求】-->【解决方案】-->【应用】-->【原理】
+
+
+====== IOC(inversion of controller) ======
+
+1、本质就是把类的内置对象的控制权交给了容器
+
+2、实现IOC的技术手段：
+
+  1)、依赖查找(Dependency Lookup)：容器中的受控对象通过容器的API来查找自己所依赖的资源和协作对象。这种方式虽然降低了对象间的依赖，但是同时也使用到了容器的API，造成了我们无法在容器外使用和测试对象。 依赖查找是一种更加传统的IoC实现方式。
+
+  2)、依赖注入(Dependency Injection)：依赖注入就是将服务注入到使用它的地方。对象只提供普通的方法让容器去决定依赖关系，容器全权负责组件的装配，它会把符合依赖关系的对象通过属性（JavaBean中的setter）或者是构造子传递给需要的对象。组件之间的依赖关系由容器在应用系统运行期来决定，由容器动态地将某种依赖关系的目标对象实例注入到应用系统中的各个关联的组件之中。
+
+====== 什么是 springboot ======
+
+  1、springboot是基于 “约定优于配置” 的理念服务于spring框架的框架，springboot能够帮助使用spring框架的开发者快速高效构建一个基于spring框架以及spring生态的应用解决方案。把脚手架市场给规范化(之前很多公司都有自己的脚手架，现在不需要，springboot帮助我们做好了)
+  
+  2、AutoConfiguration、Starter、Actuator、SpringBoot CLI
+  
+====== 约定优于配置 ======
+
+  1)、maven 的目录结构
+    1.默认有 resources 文件夹存放配置文件。
+    2.默认打包方式为 jar。
+  
+  2)、默认提供 application.properties/yml 配置文件文件，通过spring.profiles.active 属性来决定运行环境时读取的配置文件。
+  
+  3)、@EnableAutoConfiguration 默认对于依赖的 starter 进行自动装载。
+  
+  4)、通过starter集成各式各样的框架。
+
+
+====== @Import ======
+
+1、把多个容器的配置合并在一个配置中
+  【
+@Import(OtherConfig.class)
+@Configuration
+public class SpringConfig {
+    @Bean
+    public DefaultBean defaultBean(){
+        return new DefaultBean();
+    }
+}
+  】
+  
+====== 条件动态注入(根据上下文激活不同的Bean) ======
+
+1、实现【ImportSelector】接口，在【selectImports】方法中编写注入逻辑，实现条件注入的基础
+  【
+public class CacheImportSelector implements ImportSelector {
+
+    @Override
+    public String[] selectImports(AnnotationMetadata annotationMetadata) {
+        Map<String, Object> attributes =
+                annotationMetadata.getAnnotationAttributes(EnableDefineService.class.getName());
+        //动态注入bean :自己去实现判断逻辑实现动态配置
+        System.out.println("attributes = " + attributes);
+
+        return new String[]{CacheService.class.getName()}; //返回的是一个固定的CacheService
+    }
+}
+  】
+
+2、实现【ImportBeanDefinitionRegistrar】接口，在【registerBeanDefinitions】
+  【
+public class LoggerDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
+
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry beanDefinitionRegistry) {
+        Class beanClass=LoggerService.class;
+        RootBeanDefinition beanDefinition=new RootBeanDefinition(beanClass);
+        String beanName=StringUtils.uncapitalize(beanClass.getSimpleName());
+        beanDefinitionRegistry.registerBeanDefinition(beanName,beanDefinition);
+    }
+}
+  】
+
+  
+====== @SpringBootApplication 解析 ======
+
+  本质上由三个注解构成
+
+1、【@Configuration】：java配置类任何一个标注了@Configuration的Java类定义都是一个JavaConfig 配置类。而在这个配置类中，任何标注了@Bean的方法，它的返回值都会作为Bean定义注册到Spring 的IOC容器，方法名默认成为这个Bean的id。
+  【
+  AnnotationConfigApplicationContext applicationContext=new AnnotationConfigApplicationContext(Xx.class);
+  //Dependency Lookup 方式查找Bean
+  DemoClass demoClass = (DemoClass) applicationContext.getBean("configurationDemoBean");
+  String[] defNames=applicationContext.getBeanDefinitionNames();
+  】
+
+2、【@ComponentScan】：扫描指定路径下的标识了需要装配的类，自动装配到spring的Ioc容器中
+
+3、【@EnableAutoConfiguration】：主要作用是帮助springboot应用把所有符合条件的@Configuration 配置都加载到当前SpringBoot创建并使用的IoC 容器中。是JavaConfig框架上更进一步的完善，避免配置大量的代码从而降低使用的难度，Enable 开头的注解，都会带有一个@Import 的注解（把多个容器的配置合并在一个配置中）
+
+  1)、AutoConfigurationImportSelector
+  
+
+====== SPI（扩展点）SpringFactoriesLoader ======
+
+1、SpringFactoriesLoader 的作用是从【classpath/META-INF/spring.factories】文件中，根据 key 来加载对应的类到 spring IoC 容器中。
+  【
+  org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.tiger.core.TigerConfig
+  】
+
+2、先扫描【spring-autoconfiguration-metadata.properties】，最扫描【spring.factories 】对应的类时，会结合前面的元数据进行过滤，为什么要过滤呢？ 原因是很多的@Configuration 其实是依托于其他的框架来加载的，如果当前的 classpath 环境下没有相关联的依赖，则意味着这些类没必要进行加载，条件过滤可以有效的减少@configuration 类的数量。
+
+
+====== starter（集成） ======
+
+1、命名方式，官方【spring-boot-starter-{name}】,非官方【{name}-spring-boot-starter】
+
+2、
+  
+
+====== 常见的日志框架 ======
+
+1、日志系统 Log4j：Apache最先推出的日志系统。
+
+2、日志系统 JUL(Java Util Logging)：Apache建议将其Log4j加入标准库，sun拒绝自己模仿Log4j推出的日志系统。
+
+3、日志框架 Commons Logging：Apache推出的日志框架，结束 Log4j 与 JUL 混乱的局面。
+
+5、日志框架 Slf4j：Log4J 的作者觉得 Commons Logging 不够优秀而开发的日志框架，同时提供默认实现 Logback。
+
+6、日志系统 Log4j2：Apache为了与 slf4j以及它的实现logback 而新开发的日志系统Log4j2。
+
+
+====== 日志框架的应用场景 ======
+
+1、为系统提供错误以及日常的定位。
+
+2、对访问的记录进行跟踪。
+
+3、基于日志的收集以及分析了解用户的用户画像，比如兴趣爱好、点击行为等。
+
+
+====== 多数据源配置方式 ======
+1、
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

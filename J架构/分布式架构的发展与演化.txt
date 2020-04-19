@@ -140,7 +140,7 @@
 
 ====== 架构的发展过程 ======
 
-1)、SOA --》微服务 -》serviceMesh
+1)、SOA --》微服务 -》ServiceMesh
 
 
 
