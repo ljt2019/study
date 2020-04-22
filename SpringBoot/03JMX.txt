@@ -1,0 +1,16 @@
+
+监控，可控可控
+JMX -> 内存、中间件、硬件信息
+应用监控 -> cat、slueth+zipkin
+
+1、为Java程序开启JMX很简单，只要在运行Java程序的命令后面指定如下命令即可
+  【
+-Djava.rmi.server.hostname=127.0.0.1
+-Dcom.sun.management.jmxremote.port=1000
+-Dcom.sun.management.jmxremote.ssl=false
+-Dcom.sun.management.jmxremote.authenticate=false
+  】
+  
+2、JConsole通过JMX展示的信息都是Java程序的通用信息，如内存情况、线程情况、类加载情况等，换言之，只要是Java程序就都具备这些信息。这些信息为我们优化程序性能、排查BUG非常有用，而JMX就是获取这些信息的基础，因此它是一种非常有用的技术。
+
+

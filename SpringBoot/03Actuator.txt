@@ -1,0 +1,24 @@
+
+1、应用场景
+  微服务应用开发完成以后，最终目的是为了发布到生产环境上给用户试用，开发结束并不意味着研发的生命周期结束，更多的时候他只是一个开始，因为服务在本地测试完成以后，并不一定能够非常完善的考虑到各种场景。所以需要通过运维来保障服务的稳定。
+
+2、引入 actuator starter包：监控【spring-boot-starteractuator】
+  【
+        <!-- 监控 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+  】
+
+3、启动项目访问【http://localhost:8080/actuator】可以看到非常多的 Endpoint
+配置信息
+  【
+management.server.port=9999
+management.endpoints.web.exposure.include=*
+management.endpoint.health.show-details=always
+management.endpoint.shutdown.enabled=true
+  】
+  
+
+====== JMX ======

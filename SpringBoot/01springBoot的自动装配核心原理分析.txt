@@ -1,6 +1,9 @@
 
 学习方法：【场景】-->【需求】-->【解决方案】-->【应用】-->【原理】
 
+阶段一：怎么使用
+阶段二：了解原理（沉淀）
+阶段三：推导
 
 ====== IOC(inversion of controller) ======
 
@@ -136,8 +139,6 @@ public class LoggerDefinitionRegistrar implements ImportBeanDefinitionRegistrar 
 3、基于日志的收集以及分析了解用户的用户画像，比如兴趣爱好、点击行为等。
 
 
-====== 多数据源配置方式 ======
-1、
 
 
 
