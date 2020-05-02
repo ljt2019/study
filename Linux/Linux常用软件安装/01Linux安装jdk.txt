@@ -1,7 +1,7 @@
 
 查询包含【java】字符的东西：【whereis java】
 
-======== 方式一 JDK8安装 rpm方式简便======== 
+======== 方式一 JDK8安装 rpm方式简便 ======== 
 
 1、下载jdk：【wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u131-linux-x64.rpm】
   或者通过官网下载到上传至服务器

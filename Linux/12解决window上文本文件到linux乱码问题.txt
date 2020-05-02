@@ -1,0 +1,4 @@
+
+1、原因：由于window上的txt编辑器用的编码格式和显示的CRT不是同一编码造成的。
+
+2、解决方法【iconv -f gbk -t utf8 01Linux基本命令.txt > 01Linux基本命令.txt.utf8】
