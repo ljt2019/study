@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
   # end
     config.vm.provider "virtualbox" do |vb|
         vb.memory = "2048"
-        vb.name= "tiger-centos7"
+        vb.name= "single-centos7"
         vb.cpus= 2
     end
   #

@@ -1,0 +1,28 @@
+  cat /etc/hosts
+  
+  1)、master节点：
+  【sudo hostnamectl set-hostname m】sudo hostnamectl set-hostname
+  
+  2)、两个worker分别
+  【sudo hostnamectl set-hostname w1】
+  【sudo hostnamectl set-hostname w2】
+  
+  3)、三个节点都在hosts文件上加上：【vi /etc/hosts】，主机联网ip网段
+  【
+192.168.43.51 m
+192.168.43.61 w1
+192.168.43.62 w2
+  】
+  
+  4)、使之生效：【】
+  
+
+  永久修改 hostname：vi /etc/sysconfig/network，最后增加一行，比如 【hostname=m】 这种
+  
+  
+  永久修改，经验证，此方法才有效 worker01-kubeadm-k8s  
+  【vi /etc/hosts】
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 改为
+127.0.0.1   localhost m localhost4 localhost4.localdomain4
+
+  

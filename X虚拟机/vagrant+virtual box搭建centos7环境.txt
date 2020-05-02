@@ -3,11 +3,10 @@
 1、安装Vagrant
   访问Vagrant官网：【https://www.vagrantup.com/】，下载对应版本
   
-2、下载安装virtual box
-  访问VirtualBox官网：【https://www.virtualbox.org/】，下载对应版本
+2、下载安装【virtual box】，到官网【https://www.virtualbox.org/】，下载对应版本
   
-2、将 virtualbox.box 文件添加到vagrant管理的镜像中
-  1)、下载网盘中的镜像文件 virtualbox.box 文件，在官网可以下载
+2、将【virtualbox.box】文件添加到vagrant管理的镜像中
+  1)、下载网盘中的镜像文件【virtualbox.box】文件，在官网可以下载
   2)、保存到磁盘的某个目录，比如【C:\SoftInstalled\Vagrant\virtualbox.box】
   3)、添加镜像并起名叫 centos/7，执行命令：【vagrant box add centos/7 C:\SoftInstalled\Vagrant\virtualbox.box】
   4)、【vagrant box list】 查看本地的box[这时候可以看到centos/7]
@@ -18,9 +17,9 @@
   2)、在此目录下打开cmd，运行 【vagrant init centos/7】
   3)、此时会在当前目录下生成 Vagrantfile，进入Vagrantfile文件，修改信息，如下：
   【
-config.vm.box = "centos/7"
-config.vm.network "public_network"
-config.vm.provider "virtualbox" do |vb|
+  config.vm.box = "centos/7"
+  config.vm.network "public_network"
+  config.vm.provider "virtualbox" do |vb|
   vb.memory = "2048"
   vb.name= "tiger-centos7"
   vb.cpus= 2
@@ -57,17 +56,17 @@ config.vm.provider "virtualbox" do |vb|
 	密码:vagrant
 	文件:Identityfile指向的文件private-key
 	
-02 使用root账户登录
+02 使用root账户登录，执行一下命令进行操作
 
-  1)、【vagrant ssh】   进入到虚拟机中
+  1)、【vagrant ssh [主机名]】进入到虚拟机中
   
   2)、【sudo -i】
   
-  3)、【vi /etc/ssh/sshd_config】，修改 PasswordAuthentication yes
+  3)、【vi /etc/ssh/sshd_config】修改 PasswordAuthentication yes
   
-  4)、【passwd】 修改密码，比如abc123
+  4)、【passwd】 修改密码，比如 123456
   
-  5)、【systemctl restart sshd】
+  5)、【systemctl restart sshd】注意这个步骤不能少
   
   6)、使用xshell登陆，账号 root ，密码 123456 进行登录
 	

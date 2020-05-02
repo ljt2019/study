@@ -1,0 +1,57 @@
+
+安装文件存于这个目录下【C:\Users\tiger\VirtualBox VMs】
+
+====== centos7中安装以及启动 zookeeper（前提是有jdk环境） ======
+
+1、下载安装包【apache-zookeeper-3.6.0-bin.tar】
+
+2、创建目录【mkdir zookeeper】，将安装包上传至服务器的zookeeper目录下，解压到文件夹【tar zxvf apache-zookeeper-3.6.0-bin.tar】
+
+3、进入目录【cd /root/zookeeper/apache-zookeeper-3.6.0-bin/bin】，启动【sh zkServer.sh start】
+
+4、命令行进入客户端【sh zkCli.sh】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
