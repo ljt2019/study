@@ -86,6 +86,10 @@ sync; sync; sync; reboot
 
 12、【ifconfig】获取网卡配置与网络状态信息
 
+13、配置主机名称【echo "zookeeper-leader" > /etc/hostname】之后重启机器即可，替换前最好先备份之前的文件【cp -a /etc/hostname /etc/hostname_bck】
+
+14、使修改生效【systemctl restart sshd】
+
 
 ====== history ======
 
@@ -119,10 +123,7 @@ sync; sync; sync; reboot
 
 6、【cut [参数] 文本】于按“列”提取文本字符，例如提取系统中所有用户名【cut -d: -f1 /etc/passwd】
 
-
-====== 文本编辑命令 ======
-
-1、【tr [原始字符] [目标字符]】可以使用正则表达，例如【cat filename | tr [a-z] [A-Z]】,将所有小写替换成大写
+7、【tr [原始字符] [目标字符]】可以使用正则表达，例如【cat filename | tr [a-z] [A-Z]】,将所有小写替换成大写
 
 
 ====== 文件目录管理器 ======
@@ -133,7 +134,7 @@ sync; sync; sync; reboot
 
 3、【cp [选项] 源文件 目标文件】
    将档案的所以特性都一起复制过来【cp -a /etc /tmp】，尤其是在备份的情况下！
-   
+     
 4、【mv [选项] 源文件 [目标路径|目标文件名]】剪切文件或将文件重命名
     /tmp 可以将多个数据一次复制到同一个目录去！最后面一定是目录！
    【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
@@ -143,6 +144,20 @@ sync; sync; sync; reboot
 6、【dd [参数]】按照指定大小和个数的数据块来复制文件或转换文件
 
 7、【file 文件名】查看文件类型
+
+8、建立软连接：【ln -s /usr/java/jdk1.8.0_60/ /usr/jdk】
+
+
+====== 远程安全传输 ======
+
+1、远程传输【scp [参数] 本地文件 远程帐户@远程 IP 地址:远程目录】
+  1)、【-v】 显示详细的连接进度
+  2)、【-P】 指定远程主机的 sshd 端口号
+  3)、【-r】 用于传送文件夹
+  4)、【-6】 使用 IPv6 协议
+  
+2、【scp -r /root/lrzsz-0.12.20.tar.gz 192.168.3.61:/root/lrzsz-0.12.20.tar.gz】
+   【scp -r jdk-8u131-linux-x64.rpm 192.168.240.128:/root/software】
 
 
 ====== 搜索命令 ======
@@ -154,49 +169,95 @@ sync; sync; sync; reboot
    【find /etc -name "host*" -print】指定目录/etc下查找以host开头的文件
    【find /etc -name "host*" -exec cp -a {} /root/tiger/ \;】查找出目标文件并复制到指定目录下
 
+3、【locate /etc/host*】比较快，实是“find -name”的另一种写法，为避免查不到最新文件，先使用【updatedb】命令，手动更新数据库（/var/lib/locatedb）
 
-======== 文件编辑 ========
+3、【whereis】只能用于程序名的搜索，而且只搜索二进制文件（参数-b）、man说明文件（参数-m）和源代码文件（参数-s）,如果省略参数，则返回所有信息。
 
-1、进入编辑器：【vim filename】
 
-  1)、保存退出：【Esc --> :x--> enter】文件没改动时属性不变 、【Esc --> :wq--> enter】不管如何属性都会更新
+======== 文件编辑 vim ========
+
+1、Vim 编辑器中设置了三种模式—命令模式、末行模式和编辑模式
+
+  1)、命令模式【vim filename】：控制光标移动，可对文本进行复制、粘贴、删除和查找等工作
+    【dd】 删除（剪切）光标所在整行
+    【5dd】 删除（剪切）从光标处开始的 5 行
+    【yy】 复制光标所在整行
+    【5yy】 复制从光标处开始的 5 行
+    【u】 撤销上一步的操作
+    【p】 将之前删除（dd）或复制（yy）过的数据粘贴到光标后面
+	
+  2)、输入模式：正常的文本录入，在命令模式下输入一下3个命令可进入输入模式
+    【i】当前光标前
+    【a】当前光标后
+    【o】当前光标下面创建一个空行
   
-  2)、不保存退出：【Esc --> :q! --> enter】?
-  
-  3)、强制退出：【Esc --> :! --> enter】
-  
-  4)、正常退出：【Esc --> :q --> enter】
-  
-  5)、保存：【Esc --> :w】
-  
-  6)、搜索：【/keyword --> enter】
-  
-  7)、把编辑处理后的结果写到指定的文件中保存【:w filename】
+  3)、末行模式：保存或退出文档，以及设置编辑环境
+    保存退出：【Esc --> :x--> enter】文件没改动时属性不变 、【Esc --> :wq--> enter】不管如何属性都会更新
+    【:w】 保存
+    【:q】 退出
+    【:q!】 强制退出（放弃对文档的修改内容）
+    【:wq!】 强制保存退出
+    【:set nu】 显示行号
+    【:set nonu】 不显示行号
+    【:命令】 执行该命令
+    【:整数】 跳转到该行
+	【:s/one/two】 将当前光标所在行的第一个 one 替换成 two
+    【:s/one/two/g】 将当前光标所在行的所有 one 替换成 two
+    【:%s/one/two/g】 将全文中的所有 one 替换成 two
+    【?字符串】 在文本中从下至上搜索该字符串
+    【/字符串】 在文本中从上至下搜索该字符串
+	【:w filename】辑处理后的结果写到指定的文件中保存
+	
+	
+====== echo ======
 
-2、远程复制：【scp -r /root/lrzsz-0.12.20.tar.gz 192.168.3.61:/root/lrzsz-0.12.20.tar.gz】、
-             【scp -r jdk-8u131-linux-x64.rpm 192.168.240.128:/root/software】
-
-3、建立软连接：【ln -s /usr/java/jdk1.8.0_60/ /usr/jdk】
+1、【echo $SHELL】，提取变量
 
 
-5、设置ip地址为静态地址：最简单方式：【sudo ifconfig ens33 192.168.240.102】
-本实验为 ifcfg-ens33【vim /etc/sysconfig/network-scripts/ifcfg-ens33】
-修改如下5项内容：，之后重启网卡【service network restart】
-ONBOOT="yes"
-BOOTPROTO="static"
-IPADDR="192.168.240.100"
-GATEWAY="192.168.240.2"
-DNS1="192.168.240.2"
- 	   
-6、修改主机名：最简单的方法【sudo hostnamectl set-hostname hadoop101】
-  1)、【vim /etc/sysconfig/network】，添加如下内容
-NETWORKING=yes
-HOSTNAME=hadoop102
 
-7、分布式配置映射：【vim /etc/hosts】，添加如下内容
-192.168.11.101 hadoop101
-192.168.11.102 hadoop102
-192.168.11.103 hadoop103
+====== 网卡信息 ======
+
+1、网卡文件所在目录【cd /etc/sysconfig/network-scripts】
+
+2、具体的网卡配置信息【cat cat ifcfg-eth1】
+
+
+====== shell 脚本 ======
+
+1、运行脚本命令【bash test.sh】
+
+2、【./test.sh】
+
+3、用户参数，变量之间可以使用空格间隔。例如
+
+  1)、【$0】当前 Shell 脚本程序的名称，
+  
+  2)、【$#】总共有几个参数，
+  
+  3)、【$*】所有位置的参数值，
+  
+  4)、【$?】显示上一次命令的执行返回值，
+  
+  5)、【$1、$2、$3……】分别对应着第 N 个位置的参数值
+  
+4、一个简单的脚本案例，第一行的脚本声明（#!）用来告诉系统使用哪种 Shell 解释器来执行该脚本；第二行的注释信息（#）
+
+  1)、创建脚本文件【vim test.sh】
+  
+  2)、写入如下内容
+  【
+#!/bin/bash
+#create by tiger
+echo "当前脚本名称为$0"
+echo "上次命令的返回值$?"
+echo "总共有$#个参数，分别是$*。"
+echo "第 1 个参数为$1，第 5 个为$5。" 
+  】
+  
+  3)、执行脚本【bash test.sh parameter1 parameter2 parameter3 parameter4 parameter5 parameter6】
+
+5、判断用户参数 
+
 
 
 ======== 查看进程 ========
@@ -208,7 +269,7 @@ HOSTNAME=hadoop102
 3、查看所有进程：【netstat -ntlp】 
  
 
-======== 修改连接名 ========
+======== 修改 hostname ========
  
 1、[root@localhost ~]# 【vim /etc/sysconfig/network】 ，进入加入下面信息
 NETWORKING=yes
@@ -218,24 +279,39 @@ HOSTNAME=redis101
 
 3、关闭连接重开，出现：[root@redis101 ~]#
 
+4、配置主机名称【echo "zookeeper-leader" > /etc/hostname】之后重启机器即可，替换前最好先备份之前的文件【cp -a /etc/hostname /etc/hostname_bck】
 
-======== 防火墙 ========
 
-1、临时关闭防火墙 ：【systemctl stop firewalld】
+======== 防火墙(rhel7) firewalld（一种定义防火墙策略门面手段） ========
 
-2、永久防火墙开机自关闭 ：【systemctl disable firewalld】
+1、临时关闭 ：【systemctl stop firewalld】
 
-3、临时打开防火墙 ：【systemctl start firewalld】
+2、临时开启 ：【systemctl start firewalld】
 
-4、防火墙开机启动 ：【systemctl enable firewalld】
+3、取消开机启动 ：【systemctl disable firewalld】
 
-5、查看防火墙状态 ：【systemctl status firewalld】
+4、开机启动 ：【systemctl enable firewalld】
 
-6、添加指定端口到防火墙中：【iptables -I INPUT -p 协议 --dport 端口号 -j ACCEPT】例如：
+5、查看状态 ：【systemctl status firewalld】
+
+6、开放防火墙8321端口：【firewall-cmd --permanent --add-port=8321/tcp && firewall-cmd --reload】
+
+====== 防火墙(rhel6) iptables ======
+
+1、iptables 服务把用于处理或过滤流量的策略条目称之为规则，多条规则可以组成一个规则链，而规则链则依据数据包处理位置的不同进行分类，具体如下：
+  1)、在进行路由选择前处理数据包（PREROUTING）；
+  2)、处理流入的数据包（INPUT）；
+  3)、处理流出的数据包（OUTPUT）；
+  4)、处理转发的数据包（FORWARD）；
+  5)、在进行路由选择后处理数据包（POSTROUTING）。
+  一般来说，从内网向外网发送的流量一般都是可控且良性的，因此我们使用最多的就是INPUT 规则链，该规则链可以增大黑客人员从外网入侵内网的难度
+
+2、添加指定端口到防火墙中：【iptables -I INPUT -p 协议 --dport 端口号 -j ACCEPT】例如：
 	1)、【iptables -I INPUT -p udp --dport 8321 -j ACCEPT】
 	2)、【iptables -I INPUT -p tcp --dport 8080 -j ACCEPT】  
 
-7、开放防火墙8321端口：【firewall-cmd --permanent --add-port=8321/tcp && firewall-cmd --reload】
+
+
 
 1、修改网卡配置文件 /etc/sysconfig/network-scripts/ifcfg-enp0s3 此处我虚拟机网卡是enp0s3，其它虚拟机可能是别的名字。
 2、重启网卡生效：【service network restart】
@@ -252,21 +328,13 @@ HOSTNAME=redis101
 4、开机关闭SELinux：【修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled ，重启机器即】 
 
 
-======== &的一些含义 ======== 
+======== & 的一些含义 ======== 
 
 1、三个命令同时执行：【command1 & command2 & command3】
 
 2、不管前面命令执行成功没有，后面的命令继续执行：【command1; command2; command3】
 
 3、只有前面命令执行成功，后面命令才继续执行：【command1 && command2】 
-
-
-====== echo ======
-
-1、【echo $SHELL】，提取变量
-
-2、
-
 
 
 

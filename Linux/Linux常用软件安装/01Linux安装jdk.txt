@@ -6,7 +6,6 @@
 1、下载jdk：【wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u131-linux-x64.rpm】
   或者通过官网下载到上传至服务器
 
-2、执行安装命令：【rpm -ivh jdk-8u131-linux-x64.rpm】
 2、执行安装命令：【rpm -ivh jdk-8u231-linux-x64.rpm】
 
 3、检查是否安装成功：【java -version】,安装目录：【cd /usr/java】

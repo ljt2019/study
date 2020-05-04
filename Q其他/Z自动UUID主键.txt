@@ -13,14 +13,5 @@
 		values (#{pkid,jdbcType=VARCHAR}, #{id}, #{created_at}, #{updated_at})
 	</insert>
 	
-2、sql语句
-INSERT INTO order_info
-VALUES
-	(
-		REPLACE (UUID(), "-", ""),
-		REPLACE (UUID(), "-", ""),
-		'名称',
-		1,
-		now(),
-		now()
-	);
+2、mysql sql语句【REPLACE (UUID(), "-", "")】
+  【INSERT INTO order_info VALUES(REPLACE (UUID(), "-", ""),'名称',1,now());】

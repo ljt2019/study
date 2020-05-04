@@ -62,11 +62,11 @@
   
   2)、【sudo -i】
   
-  3)、【vi /etc/ssh/sshd_config】修改 PasswordAuthentication yes
+  3)、编辑【vi /etc/ssh/sshd_config】修改 【PasswordAuthentication yes】，退出。
   
   4)、【passwd】 修改密码，比如 123456
   
-  5)、【systemctl restart sshd】注意这个步骤不能少
+  5)、【systemctl restart sshd】修改配置文件后保存并重启 sshd 服务程序
   
   6)、使用xshell登陆，账号 root ，密码 123456 进行登录
 	

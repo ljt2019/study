@@ -3,7 +3,7 @@
 
 2、切换目录【cd /root/maven】,上传压缩包【apache-maven-3.6.2-bin.tar.gz】到centos刚创建的文件夹中
 
-3、解压：【tar -zxvf apache-maven-3.6.2-bin.tar.gz】
+3、解压：【tar -xzvf apache-maven-3.6.2-bin.tar.gz】
 
 4、配置环境变量：【vi /etc/profile】，在profile文件中添加如下信息
   【

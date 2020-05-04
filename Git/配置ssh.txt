@@ -1,0 +1,12 @@
+
+进入git客户端操作如下步骤
+
+1、生成公钥和私钥【ssh-keygen -t rsa -C "1165069099@qq.com"】
+
+2、连续三次回车，设置的密码为空，并创建了key
+
+3、得到id_rsa(私钥)和id_rsa.pub(公钥)两个文件夹【C:\Users\tiger\.ssh】，一般是在当前用户的.ssh目录下
+
+4、将公钥添加进github或者bitbucket，在SSH and GPG Keys中创建【SSH keys】，将id_rsa.pub中的文字复制进去保存
+
+5、连接测试【ssh -T git@github.com】，提示说明成功【Hi ljt2019! You've successfully authenticated, but GitHub does not provide shell access.】
