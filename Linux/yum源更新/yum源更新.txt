@@ -1,0 +1,43 @@
+
+如果网路良好先检查
+
+====== 阿里源 ======
+
+1、进入yum源目录【cd /etc/yum.repos.d】
+
+2、修改名称备份旧源【mv CentOS-Base.repo CentOS-Base.repo.old】
+
+3、从阿里云下载yum源(也可以下载163、sohu等源)【wget http://mirrors.aliyun.com/repo/Centos-7.repo】
+
+4、修改下载下来的源名称【mv Centos-7.repo CentOS-Base.repo】
+
+5、清理缓存【yum clean all】，提高搜索安装效率【yum makecache】，更新【yum update -y】
+  
+6、如果还是不行，那就需要安装执行这个命令【yum install epel-release -y】
+  
+
+====== 163源 ======
+163源官网【http://mirrors.163.com/.help/centos.html】
+
+1、【cd /etc/yum.repos.d】
+
+2、【wget http://mirrors.163.com/.help/CentOS7-Base-163.repo】
+
+3、【mv CentOS7-Base-163.repo CentOS7-Base.repo】
+
+4、【yum clean all】
+
+此处配置的163源
+
+最后在使用yum 就可以了。
+
+如果执行【yum -y install htop】
+还是出现
+Loaded plugins: fastestmirror, refresh-packagekit, security
+Loading mirror speeds from cached hostfile
+Setting up Install Process
+No package gcc available.
+Error: Nothing to do
+
+那就需要安装执行这个命令【yum install epel-release -y】
+

@@ -311,13 +311,28 @@ HOSTNAME=redis101
 	2)、【iptables -I INPUT -p tcp --dport 8080 -j ACCEPT】  
 
 
-
-
 1、修改网卡配置文件 /etc/sysconfig/network-scripts/ifcfg-enp0s3 此处我虚拟机网卡是enp0s3，其它虚拟机可能是别的名字。
 2、重启网卡生效：【service network restart】
 
 
-======== SELinux ========
+======== & 的一些含义 ======== 
+
+1、三个命令同时执行：【command1 & command2 & command3】
+
+2、不管前面命令执行成功没有，后面的命令继续执行：【command1; command2; command3】
+
+3、只有前面命令执行成功，后面命令才继续执行：【command1 && command2】
+
+======== SELinux（Security-Enhanced Linux）是 ========
+
+1、目的：SELinux 技术的目的是为了让各个服务进程都受到约束，使其仅获取到本应获取的资源。“SELinux 域”和“SELinux 安全上下文”称为是 Linux 系统中的双保险，系统内的服务程序只能规规矩矩地拿到自己所应该获取的资源，这样即便黑客入侵了系统，也无法利用系统内的服务程序进行越权操作。
+
+2、SELinux 服务有三种配置模式
+
+  1)、【enforcing】：强制启用安全策略模式，将拦截服务的不合法请求。
+  2)、【permissive】：遇到服务越权访问时，只发出警告而不强制拦截。
+  3)、【disabled】：对于越权的行为不警告也不拦截。
+
  
 1、临时关闭SELinux：【setenforce 0】
 
@@ -327,14 +342,8 @@ HOSTNAME=redis101
 
 4、开机关闭SELinux：【修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled ，重启机器即】 
 
+ yum -y update
 
-======== & 的一些含义 ======== 
-
-1、三个命令同时执行：【command1 & command2 & command3】
-
-2、不管前面命令执行成功没有，后面的命令继续执行：【command1; command2; command3】
-
-3、只有前面命令执行成功，后面命令才继续执行：【command1 && command2】 
 
 
 
