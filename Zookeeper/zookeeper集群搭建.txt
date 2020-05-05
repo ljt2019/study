@@ -1,7 +1,7 @@
 
 安装文件存于这个目录下【C:\Users\tiger\VirtualBox VMs】
 
-====== centos7中安装以及启动 zookeeper（前提是有jdk环境） ======
+====== zookeeper 单机（前提是有jdk环境） ======
 
 1、下载安装包【apache-zookeeper-3.6.0-bin.tar】
 
@@ -12,22 +12,50 @@
 4、命令行进入客户端【sh zkCli.sh】
 
 
+====== zookeeper 集群 ======
 
+前提有三台节点，虚拟或者云都行，本实验采用vagrant+virtual box搭建centos7环境，请实验者自行搭建
 
+1、到官网下载镜像到指定目录【wget https://mirrors.cnnic.cn/apache/zookeeper/zookeeper-3.6.1/apache-zookeeper-3.6.1-bin.tar.gz -P /usr/local/software/zookeeper/ 】
+  【http://mirror.bit.edu.cn/apache/zookeeper/】，找到合适的版本
 
+3、解压指定目录【tar -xzvf apache-zookeeper-3.6.0-bin.tar.gz -C /usr/local/software/zookeeper/】
 
+4、进入conf目录【cd /usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/conf】
 
+5、将 zoo_sample.cfg 文件复制并重命名为 zoo.cfg 文件【cp -a zoo_sample.cfg zoo.cfg】
 
+6、编辑zoo.cfg配置文件【vim /usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/conf/zoo.cfg】
+三台节点配置文件统一
+  【
+dataLogDir=/usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/logs
+dataDir=/usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/data
+# the port at which the clients will connect
+clientPort=2181
+server.0=192.168.3.101:2888:3888
+server.1=192.168.3.102:2888:3888
+server.2=192.168.3.103:2888:3888
+  】
 
+7、创建ServerID标识(分别在3台机器中执行)
+  批量创建相关目录【mkdir -p /usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/{logs,data}】
+  【echo "0" > /usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/data/myid】
+  【echo "1" > /usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/data/myid】
+  【echo "2" > /usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/data/myid】
 
+8、配置环境变量【echo -e "# append zk_env\nexport PATH=$PATH:/usr/local/software/zookeeper/apache-zookeeper-3.6.0-bin/bin" >> /etc/profile】
 
+9、使得环境变量生效【source /etc/profile】
 
+10、启动zookeeper服务
+  1)、启动命令【sh zkServer.sh start】
+  2)、停止命令【sh zkServer.sh stop】
+  3)、重启命令【sh zkServer.sh restart】
+  4)、查看集群节点状态【sh zkServer.sh status】
 
+11、客户端连接Zookeeper集群【sh zkCli.sh -server 192.168.3.101】
 
-
-
-
-
+12、注意：在dataDir中的目录下创建对应的【myid】文件，里面的配置和 zoo.cfg 的server.x 配置保持一致。
 
 
 

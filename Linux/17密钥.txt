@@ -1,7 +1,9 @@
 
-====== 配置密钥验证方式步骤 ======
+各个节点相互免密登录，这里需要注意的是一定要给本机也发送一下【ssh-copy-id root@192.168.3.101】
 
-1、在客户端(相对于window或者linux)中生成密钥对(只要成对使用就行，私钥解公钥)【ssh-keygen】，其中【id_rsa】为私密，【id_rsa.pub】为公密
+====== 配置密钥验证方式步骤(若是window则在Git Bash Here操作比较好) ======
+
+1、在客户端(相对window或者linux)中生成公私密钥【ssh-keygen】；私密【id_rsa】、公密【id_rsa.pub】
   【
 [root@zookeeper-leader ~]# ssh-keygen
 Generating public/private rsa key pair.
@@ -9,8 +11,7 @@ Enter file in which to save the key (/root/.ssh/id_rsa): 按回车键或设置�
 Created directory '/root/.ssh'.
 Enter passphrase (empty for no passphrase): 直接按回车键或设置密钥的密码
 Enter same passphrase again: 再次按回车键或设置密钥的密码
-Your identification has been saved in /root/.ssh/id_rsa
-Your public key has been saved in /root/.ssh/id_rsa.pub
+
 The key fingerprint is:
 SHA256:hYV1VsI61Xc1eHYi2p6Fcu5tmjA6/b34YfwkMjhB8JU root@zookeeper-leader
 The key's randomart image is:
@@ -27,7 +28,7 @@ The key's randomart image is:
 +----[SHA256]-----+
   】
 
-2、把客户端主机中生成的公钥文件传送至远程主机【ssh-copy-id root@192.168.3.101】
+2、把客户端中生成的公钥传送至远程机【ssh-copy-id root@192.168.3.101】
   【
 [root@zookeeper-leader .ssh]# clear
 [root@zookeeper-leader .ssh]# ssh-copy-id 192.168.3.101
@@ -52,7 +53,7 @@ and check to make sure that only the key(s) you wanted were added.
   
   2)、重启 sshd 服务程序【systemctl restart sshd】
 
-4、连接【ssh   用户名@IP】
+4、连接【ssh 用户名@IP】、连接【ssh 用户名@主机名】
 
 
 

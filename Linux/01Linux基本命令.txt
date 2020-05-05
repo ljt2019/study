@@ -157,7 +157,7 @@ sync; sync; sync; reboot
   4)、【-6】 使用 IPv6 协议
   
 2、【scp -r /root/lrzsz-0.12.20.tar.gz 192.168.3.61:/root/lrzsz-0.12.20.tar.gz】
-   【scp -r jdk-8u131-linux-x64.rpm 192.168.240.128:/root/software】
+   【scp -rv /root/zookeeper/apache-zookeeper-3.6.0-bin.tar.gz 192.168.3.102:/root/zookeeper】
 
 
 ====== 搜索命令 ======
