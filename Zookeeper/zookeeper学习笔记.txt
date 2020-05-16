@@ -19,17 +19,9 @@
 5、数据模型
   zookeeper 的视图结构和标准的文件系统非常类似，每一个节点称之为 ZNode，是 zookeeper 的最小单元。每个 znode上都可以保存数据以及挂载子节点。构成一个层次化的树形结构
 
-====== centos7中安装以及启动 zookeeper（前提是有jdk环境） ======
+====== zookeeper 基本操作 ======
 
-1、下载安装包【apache-zookeeper-3.6.0-bin.tar】
-
-2、创建目录【mkdir zookeeper】，将安装包上传至服务器的zookeeper目录下，解压到文件夹【tar zxvf apache-zookeeper-3.6.0-bin.tar】
-
-3、进入目录【cd /root/zookeeper/apache-zookeeper-3.6.0-bin/bin】，启动【sh zkServer.sh start】
-
-4、命令行进入客户端【sh zkCli.sh】
-
-5、命令行基本操作
+1、命令行基本操作
   1)、创建节点【create /lock/ val】、【create /lock/tiger haha】
       有序节点【create -s /lock/ v】
 	  临时节点【create -e /temp temp_tiger】,临时节点owner属性有值，相当于会话sessionID
@@ -39,20 +31,20 @@
   3)、设置数据【set /node_name】
   4)、获取数据【get /node_name】
 
-6、节点特点
+2、节点特点
   1)、是一种树形结构：key=value 形式存储。
   2)、删除必须从最里层节点一层一层往外删(可以递归删除)。
   3)、同一层节点不能重复。
   4)、临时节点的生命周期和客户端的会话绑定在一起，当客户端会话失效该节点自动清理
 
-7、对节点进行监听，事件只监听一次，开启两个回话，只会触发一次
+3、对节点进行监听，事件只监听一次，开启两个回话，只会触发一次
   在其中一个会话中【get -w /haha】，另一个会话中【set haha tiger】
   【WATCHER::
    WatchedEvent state:SyncConnected type:NodeDataChanged path:/haha】
 
-8、watch机制、临时节点、持久节点，实现注册服务
+4、watch机制、临时节点、持久节点，实现注册服务
   
-9、版本号
+5、版本号
   1)、当前节点版本号：version，修改值一次，版本号加1。
   2)、子节点版本号：cversion，新建一个子节点，子节点版本号加1。
 
