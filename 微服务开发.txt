@@ -1,0 +1,58 @@
+
+====== 代码记录 ======
+
+1、获取登陆用户：
+    @Autowired
+    private HttpServletRequest request;
+SystemUserInfo user = SessionUtil.getSystemUserInfo(request);
+
+2、判空处理，服务层分页入参修改：Optional
+  ProcessPerformanceDto dto = Optional.ofNullable(pageQueryParam.getParam()).orElseGet(ProcessPerformanceDto::new);
+
+3、注解事物回滚：【 @Transactional(rollbackFor = Exception.class)】
+  声明式事务管理建立在AOP之上的。其本质是对方法前后进行拦截，然后在目标方法开始之前创建或者加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
+
+4、业务层异常抛出：【业务层异常类】
+  if (CollectionUtils.isEmpty(studentIdList)) {
+      throw new ServiceException(2, "请选中学生记录!");
+  }
+  
+5、日志：log.info("====== 学生免实习申请审批成功 ======【{}:{}】", request.getRemoteAddr(), request.getRemotePort());
+  
+  
+6、用户数据查看权限和用户角色数据审批权限
+  <if test="funcSign != null and (funcSign.toString() == '1'.toString() or funcSign.toString() == '2'.toString()) ">
+      <!--  用户数据查看权限(1：审批  2：查看) -->
+      AND kc.KKXY IN(
+      SELECT DISTINCT B.LSDW FROM XTGL_SJQX_YHZ@HXSJ B
+      START WITH B.ID IN (SELECT A.ZID FROM XTGL_SJQX_ZCY@HXSJ A WHERE A.YHBH = #{userId,jdbcType=VARCHAR})
+      CONNECT BY PRIOR B.ID = B.LSZID
+      )
+  </if>
+  <if test="funcSign != null and funcSign.toString() == '1'.toString() ">
+      <!--  用户角色数据审批权限(1：审批  2：查看),审批多加一层过滤 -->
+      AND EXISTS(
+      SELECT 1 FROM XTGL_SPLC_SPXXB@hxsj SPXXB
+      JOIN LY_CKBZ_GXJC_JSYHGXB@hxsj JSYHGXB
+      ON SPXXB.SPJSBH = JSYHGXB.JSBH
+      WHERE SPXXB.CZBBH = 'T_SXJX_SXDG'
+      AND SPXXB.BDZJID = dg.dgzj
+      AND JSYHGXB.YHBH = #{userId,jdbcType=VARCHAR}
+      )
+  </if>
+  
+7、Lookback,去除模板代码
+  @SneakyThrows
+
+填充创建时间和创建人，修改时间修改人。
+ObjectUtil.fillCreatorAndCreateTime(workloadStandardDto,request);
+ObjectUtil.fillEditorAndEditTime(workloadStandardDto,request);
+
+7、字体 仿宋_GB2312
+
+
+http://jrebel-license.jiweichengzhu.com/
+
+
+班级成绩导出
+

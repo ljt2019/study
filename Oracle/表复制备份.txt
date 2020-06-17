@@ -1,0 +1,5 @@
+
+CREATE  TABLE ly_gg_qx_zy_20200407 AS SELECT * FROM ly_gg_qx_zy
+
+DROP TABLE ly_gg_qx_zy
+CREATE  TABLE ly_gg_qx_zy AS SELECT * FROM ly_gg_qx_zy@dev_hxk
