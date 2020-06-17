@@ -36,8 +36,8 @@
 			AND device.device_identity LIKE CONCAT('%', #{param.deviceIdentity}, '%')
 		</if>
 		//全模糊查询,效率更高
-		<if test="inDTO.mallId !=null and inDTO.mallId !='' ">
-			AND instr(_member.mall_id,#{inDTO.mallId}) > 0
+		<if test="mallId !=null and mallId !='' ">
+			AND instr(mall_id,#{mallId}) > 0
 	    </if>
 
 判断字符是否相等		
@@ -61,9 +61,9 @@
 	order by t.createDate asc;	
 
 9、判空集合是否为空：【!param.statuses.isEmpty()】，遍历
-	<if test="param.statuses != null and !param.statuses.isEmpty()">
+	<if test="statuses != null and !statuses.isEmpty()">
          and da.status in
-        <foreach item="item" index="index" collection="param.statuses" open="(" separator="," close=")">
+        <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
           #{item}
         </foreach>
     </if>
@@ -273,6 +273,12 @@
 
 17、布尔类型：available bool default false, <-sql-> `available` tinyint(1) DEFAULT '0', <-实体类-> private Boolean available = Boolean.FALSE;
 
-18、
+18、在查询语句中使用参数：【 #{unPassPublicElectiveCourse} as temp 】
 
+19、参数列表：List<ScoreSubItemVo> scoreItem(@Param("scoreJobsCode") String scoreJobsCode,@Param("semesterId"));
+
+20、test中比较数值大小
+  <if test="credit != null and credit &gt; 0">
+      XF = #{credit},
+  </if>
 
