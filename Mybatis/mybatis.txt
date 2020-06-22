@@ -282,3 +282,57 @@
       XF = #{credit},
   </if>
 
+--聚合查询
+ <!-- 班级成绩导出（学生课程成绩信息） add by linjitai on 20200115-->
+ <resultMap id="classScoreMap" type="com.ly.education.score.api.vo.ClassScoreExportVo"
+            extends="classScoreExportBaseMap">
+ 
+     <!-- 表头 -->
+     <collection property="classCourseInfoVoList" resultMap="classCourseInfoMap">
+     </collection>
+ 
+     <!-- 表体 -->
+     <collection property="classStudentScoreInfoVoList" resultMap="classStudentScoreInfoMap">
+     </collection>
+ 
+ </resultMap>
+
+--聚合查询
+ <resultMap id="QueryTrainCenterMap"
+            type="com.ly.education.train.manage.api.vo.TrainCenterVo" extends="BaseResultMap">
+     <result column="departName" property="departName" jdbcType="VARCHAR"/>
+     <result column="leaderName" property="leaderName" jdbcType="VARCHAR"/>
+     <result column="laboratoryCnt" property="laboratoryCnt" jdbcType="VARCHAR"/>
+     <collection property="courseIdList" ofType="string"
+                 select="selectCourseIdList" column="trainCenterId = SXZXBH">
+     </collection>
+     <collection property="majorIdList" ofType="string"
+                 select="selectMajorIdList" column="trainCenterId = SXZXBH">
+     </collection>
+ </resultMap>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

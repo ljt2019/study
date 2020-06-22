@@ -82,6 +82,9 @@ debugger
       setChild={this.setChild}
       record={this.state.record}
   />
+  
+同时获取表单和state值【<AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />】
+
 
 17、注意：前台传值到后台，参数列表格式需要特别注意。大括号，等等
 
@@ -261,4 +264,42 @@ scroll: { x: sumWidth },
 
 列隐藏：
 ellipsis: true,
+
+获取当前登陆用户
+import Cookies from "js-cookie"
+  【
+  // userName={this.user.userName} //编号
+  // name={this.user.name} //名称
+  user = JSON.parse(Cookies.get("user") || "{}")
+  】
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

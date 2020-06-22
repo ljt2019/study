@@ -53,6 +53,6 @@ ObjectUtil.fillEditorAndEditTime(workloadStandardDto,request);
 
 http://jrebel-license.jiweichengzhu.com/
 
-
-班级成绩导出
+--获取当前学年学期
+(SELECT XNXQ_ID FROM gzjwxt_hxk.LY_CKBZ_GXJC_XNXQSZB WHERE SFDQXQ = '1') XNXQ,
 
