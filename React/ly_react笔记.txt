@@ -272,18 +272,55 @@ import Cookies from "js-cookie"
   // name={this.user.name} //名称
   user = JSON.parse(Cookies.get("user") || "{}")
   】
+  newFormData1.proposerName = JSON.parse(Cookies.get('user') || '{}').name;
+  newFormData1.proposerCode = JSON.parse(Cookies.get('user') || '{}').userName;
   
 
+--计算总宽度
+import TableUtil from "src/utils/TableUtil";
+scroll: { x: TableUtil.calculateColumsWidthSum(columns) }
 
 
+-- 刷新数据注意异步问题
+
+--附件id
+import { generatorUUIDString } from "src/app/config/commonService"
+
+--拿到当前页输入值
+const { getFieldDecorator,getFieldValue } = this.props.form
 
 
+--下拉框获取到值和代码
+【let factor = option.props.data.scorePercentileValue;】
+let enablSelect = <Select
+        showSearch
+        style={{ width: "90%" }}
+        placeholder=""
+        optionFilterProp="children"
+        onChange={(v, option) => this.onSelectChangePositive(v, record, option, index)}
+        defaultValue={this.displayScore(text, _scoreHierarchyCode)}
+        allowClear={true}
+        disabled={disabled}
+    >
+        {
+            this.state.scoreValueList.map((res) =>
+                <Option key={res.scoreValueCode} data={res}>{res.scoreValueName}</Option>
+            )
+        }
+    </Select>
 
-
-
-
-
-
+--修改数据源中的值
+    //【变动后期末备注】回调函数
+    changePositiveExamRemarkOnChange = (value, record, index) => {
+        let dataSource = this.state.dataSource;
+        console.log('dataSource', dataSource[index].positiveRemarkCode)
+        console.log('value', value)
+        dataSource[index].positiveRemarkCode = value;
+        this.setState({
+            dataSource: dataSource
+        });
+        console.log('dataSource111', dataSource[index].positiveRemarkCode)
+    }
 
 
 
