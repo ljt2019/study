@@ -323,8 +323,108 @@ let enablSelect = <Select
     }
 
 
+自定义 导出 文件调用
+  【
+  //学籍卡导出pdf add by linjitai on 20200708
+  doPrintPdf = () => {
+    this.props.form.validateFields((err, formData) => {
+      if (!err) {
+        this.setState({
+          exportLoading: true,
+        })
+        const timeout = 150000;
+        formData.xhList = this.state.selectedStudentNames.map((item, index) => {
+          return item.key;
+        });
+		
+        exportDataExcel(studentCard.printStudentCardPdf, formData, {
+          timeout,
+          showTimeout: true,
+          headers: { permission: "studentCard:printPdf" }
+        }).then((response) => {
+          if (response.status == "200") {
+            const aLink = document.createElement("a");
+            document.body.appendChild(aLink);
+            aLink.style.display = "none";
+            const objectUrl = URL.createObjectURL(response.data);
+            aLink.href = objectUrl;
+            const fileName = response.headers["content-disposition"].split(";")[1].split("filename=")[1];
+            aLink.download = decodeURI(fileName);
+            aLink.click();
+            document.body.removeChild(aLink);
+          } else {
+            //将字符串转换成 Blob对象
+            var blob = response.data;
+            //将Blob 对象转换成字符串
+            var reader = new FileReader();
+            reader.readAsText(blob, "utf-8");
+            reader.onload = function (e) {
+              var obj = JSON.parse(reader.result);
+              message.error("下载失败:" + obj.message);
+            };
+          }
+          this.setState({
+            exportLoading: false,
+          })
+        });
+      }
+    });
+  };
+  】
 
-
+--公共组件 导出【import ExportModal from "src/utils/exportModal";】
+【
+<DragModal
+          className="md-md"
+          title="导出"
+          destroyOnClose
+          maskClosable={false}
+          visible={this.state.exportVisible}
+          onCancel={this.showExportModal}
+          footer={[
+            <Button
+              key={2}
+              onClick={() => {
+                this.showExportModal();
+                this.exportModalState(false);
+              }}
+            >
+              取消
+            </Button>,
+            <Button
+              key={1}
+              disabled={this.state.exportLoading}
+              type="primary"
+              onClick={() => {
+                this.exportModal.exportSubmit();
+              }}
+            >
+              确定
+            </Button>
+          ]}
+        >
+          <Spin
+            spinning={this.state.exportLoading}
+            tip="处理中，请稍等...(若提示处理失败或等待时间过长，请重试)"
+          >
+            <ExportModal
+              dataSource={columns}
+              ref="exportModal"
+              showExportModal={this.showExportModal}
+              exportModalState={this.exportModalState}
+              exportExcelUrl={exportApi}
+              selectedRows={this.state.selectedRows}
+              permission={authority.exportExcel}
+              params={this.getExportParams(this.params)}
+              excelName="学生基本信息"
+              timeout={10000}
+              initSet={0}
+              disabledSet={false}
+              wrappedComponentRef={inst => (this.exportModal = inst)}
+            />
+          </Spin>
+        </DragModal>
+】
 
 
 

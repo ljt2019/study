@@ -50,8 +50,58 @@ ObjectUtil.fillEditorAndEditTime(workloadStandardDto,request);
 
 7、字体 仿宋_GB2312
 
+=== 导出依赖 ===
+【
+        <!-- pdf工具库 -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13</version>
+        </dependency>
+        <!-- pdf辅助库 -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-asian</artifactId>
+            <version>5.2.0</version>
+        </dependency>
 
-http://jrebel-license.jiweichengzhu.com/
+        <!-- itext add by linjitai on 20191028 -->
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext-rtf</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+
+        <!-- poi，xwpf在该包下，引入这个会依赖引入 poi和poi-ooxml-schemas -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.poi</groupId>-->
+        <!--            <artifactId>poi-ooxml</artifactId>-->
+        <!--            <version>3.13</version>-->
+        <!--        </dependency>-->
+
+        <!-- CTPageSz  https://mvnrepository.com/artifact/org.apache.poi/ooxml-schemas -->
+        <!-- pio -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>ooxml-schemas</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>3.8</version>
+        </dependency>
+】
 
 --获取当前学年学期
 (SELECT XNXQ_ID FROM gzjwxt_hxk.LY_CKBZ_GXJC_XNXQSZB WHERE SFDQXQ = '1') XNXQ,
