@@ -47,7 +47,7 @@ server.2=192.168.3.103:2888:3888
 
 9、使得环境变量生效【source /etc/profile】
 
-10、启动zookeeper服务
+10、启动zookeeper服务，如果失败，则停止重新启动下
   1)、启动命令【sh zkServer.sh start】
   2)、停止命令【sh zkServer.sh stop】
   3)、重启命令【sh zkServer.sh restart】
