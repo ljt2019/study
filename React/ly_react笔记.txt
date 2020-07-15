@@ -290,7 +290,7 @@ import { generatorUUIDString } from "src/app/config/commonService"
 const { getFieldDecorator,getFieldValue } = this.props.form
 
 
---下拉框获取到值和代码
+--下拉框获取到值和代码 代码集
 【let factor = option.props.data.scorePercentileValue;】
 let enablSelect = <Select
         showSearch
@@ -324,6 +324,7 @@ let enablSelect = <Select
 
 
 自定义 导出 文件调用
+  import AxiosHelperUtil from "src/utils/AxiosHelperUtil";
   【
   //学籍卡导出pdf add by linjitai on 20200708
   doPrintPdf = () => {
@@ -336,40 +337,76 @@ let enablSelect = <Select
         formData.xhList = this.state.selectedStudentNames.map((item, index) => {
           return item.key;
         });
-		
-        exportDataExcel(studentCard.printStudentCardPdf, formData, {
-          timeout,
-          showTimeout: true,
-          headers: { permission: "studentCard:printPdf" }
-        }).then((response) => {
-          if (response.status == "200") {
-            const aLink = document.createElement("a");
-            document.body.appendChild(aLink);
-            aLink.style.display = "none";
-            const objectUrl = URL.createObjectURL(response.data);
-            aLink.href = objectUrl;
-            const fileName = response.headers["content-disposition"].split(";")[1].split("filename=")[1];
-            aLink.download = decodeURI(fileName);
-            aLink.click();
-            document.body.removeChild(aLink);
-          } else {
-            //将字符串转换成 Blob对象
-            var blob = response.data;
-            //将Blob 对象转换成字符串
-            var reader = new FileReader();
-            reader.readAsText(blob, "utf-8");
-            reader.onload = function (e) {
-              var obj = JSON.parse(reader.result);
-              message.error("下载失败:" + obj.message);
-            };
-          }
-          this.setState({
-            exportLoading: false,
-          })
-        });
+		AxiosHelperUtil.downloadFile(studentCard.printStudentCardPdf, formData, "studentCard:printPdf" , 150000);
       }
     });
   };
+  】
+  【
+ import AxiosHelperUtil from "src/utils/AxiosHelperUtil";
+ /**
+   * add by linjitai on 20200713
+   * 下载文件，二进制流
+   * @param {*} url 接口url
+   * @param {*} params 查询参数
+   * @param {*} permission 接口权限
+   * @param {*} timeout 超时时间
+  */
+  static downloadFile = (url, params, permission, timeout) => {
+    downloadFile(url, params, {
+      timeout,
+      showTimeout: true,
+      headers: { permission: permission }
+    }).then((response) => {
+      if (response.status == "200") {
+        // 创建隐藏的a标签
+        const aLink = document.createElement("a");
+        document.body.appendChild(aLink);
+        aLink.style.display = "none";
+        // 设置下载内容
+        const objectUrl = URL.createObjectURL(response.data);
+        aLink.href = objectUrl;
+        // 设置下载文件名
+        const fileName = response.headers["content-disposition"].split(";")[1].split("filename=")[1];
+        aLink.download = decodeURI(fileName);
+        // 下载
+        aLink.click();
+        // 移出标签
+        document.body.removeChild(aLink);
+      } else {
+        //将字符串转换成 Blob对象
+        var blob = response.data;
+        //将Blob 对象转换成字符串
+        var reader = new FileReader();
+        reader.readAsText(blob, "utf-8");
+        reader.onload = function (e) {
+          var obj = JSON.parse(reader.result);
+          message.error("下载失败:" + obj.message);
+        };
+      }
+    });
+  };
+  】
+  【
+  /**
+   * add by linjitai on 20200713
+   * 下载文件，二进制流
+   * @param {*} url 接口url
+   * @param {*} params 查询参数
+   * @param {*} config 
+   */
+  export function downloadFile(url, params, config = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(url, params, { responseType: "blob", ...config })
+        .then(res => {
+          resolve(res);
+        })
+        .catch(err => {
+          reject(err.data);
+        });
+    });
+  }
   】
 
 --公共组件 导出【import ExportModal from "src/utils/exportModal";】
@@ -426,7 +463,33 @@ let enablSelect = <Select
         </DragModal>
 】
 
-
+判断表单的值是否改变
+【
+/**
+ * 
+ * @version 171221 1.0
+ * @param {Obj} form 表单的form对象
+ * @param {Obj} oldValues 表单旧的值
+ */
+export const isFormChange = (form, oldValues) => {
+  const { getFieldsValue } = form;
+  const newValue = getFieldsValue();
+  const keys = Object.keys(newValue);
+  let isChange = false;
+  // 遍历表单的key
+  for (let index = 0; index < keys.length; index++) {
+    const item = keys[index];
+    if (item && oldValues[item] === null && newValue[item] === "") {
+      break;
+    }
+    if (item && newValue[item] != oldValues[item]) {
+      isChange = true;
+      break;
+    }
+  }
+  return isChange;
+};
+】
 
 
 

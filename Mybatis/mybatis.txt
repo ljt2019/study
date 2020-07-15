@@ -242,30 +242,6 @@
 				) AS a
 		ORDER BY a.startTime DESC
 	</select>
-
-14、查询条件 
-		//方式1
-        List<Criteria> lists = new ArrayList<>();
-        lists.add(Activity_.deleteFlag.equal(0));
-        lists.add(Query.and);
-        lists.add(Activity_.activityNo.equal(param.getActivityNo()));
-        lists.add(Query.and);
-        lists.add(Activity_.citiyIds.like("%" + cityId + "%"));
-        lists.add(Query.and);
-        lists.add(Query.leftBracket);
-        lists.add(Activity_.citiyIds.in(tempProvinceIds));
-        lists.add(Query.or);
-        lists.add(Activity_.provinceIds.like("%" + param.getProvinceId() + "%"));
-        lists.add(Query.rightBracket);
-        lists.add(Query.orderby);
-        lists.add(Activity_.releaseTime.desc());
-		List<Activity> activityList = baseMapper.query(new Query().where(lists), pageParameter);
-		//方式2
-		List<ArBigOperatingRecord> arBigOperatingRecords = arBigOperatingRecordService
-				.query(new Query().where(ArBigOperatingRecord_.mallId.equal(mallId), Query.and,
-						ArBigOperatingRecord_.deleteFlag.equal(CommonConstant.NOT_DELETE), Query.orderby,
-						ArBigOperatingRecord_.createTime.desc()), pageParameter);
-	
 	
 15、inert into [key存在的就报错] / replace into [key存在的就更新]
 

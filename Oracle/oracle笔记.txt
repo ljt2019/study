@@ -689,9 +689,9 @@ CONNECT BY level<=length(txt)-length(replace(txt,',',''))+1 】
               TABLE ( i_jcbm )
       );
 
-创建序列：
+创建序列：自增序列
 【create SEQUENCE student_SEQ】
-插入序列：【INSERT INTO tbl_test VALUES(seq_test.nextval,'测试');】
+插入序列：【INSERT INTO tbl_test VALUES(student_SEQ.nextval,'测试');】
 
 plsql中代替遍历，启用table方式
   【UPDATE jxjhgl_jxrwb jxjhgljxrwb
