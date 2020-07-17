@@ -813,14 +813,13 @@ inert into [key存在的就报错] / replace into [key存在的就更新]
 
 DataBase links dblink
   【
+drop database link hxsj;
 CREATE DATABASE link hxsj CONNECT TO gzjwxt_hxk identified BY gzjwxt_hxk USING '(
   DESCRIPTION =
    (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.2.97)(PORT = 1521)) )
    (CONNECT_DATA = (SERVICE_NAME =orcl))
 )';
   】
-
-
 
 
 
