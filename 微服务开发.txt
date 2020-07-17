@@ -106,3 +106,15 @@ ObjectUtil.fillEditorAndEditTime(workloadStandardDto,request);
 --获取当前学年学期
 (SELECT XNXQ_ID FROM gzjwxt_hxk.LY_CKBZ_GXJC_XNXQSZB WHERE SFDQXQ = '1') XNXQ,
 
+数组拷贝
+//将省份证号数组zjhArray拷贝到threeInfo数组中（从threeInfo的指定索引3开始拷贝，拷贝zjhArray数组所有元素）
+System.arraycopy(zjhArray, 0, threeInfo, 3, zjhArray.length);
+//数组填充
+Arrays.fill(xhWidthArray, xhWidth);
+
+ //身份证号宽度
+ float[] zjhArrayArray = new float[zjhLength];
+ float zjhWidth = 1107.0f / zjhLength;
+ Arrays.fill(zjhArrayArray, zjhWidth);
+ System.arraycopy(zjhArrayArray, 0, threeWidth, 2 + xhLength, zjhLength);
+ PdfPTable threeTable = PdfUtil.fillTable(threeWidth, threeInfo, font);
