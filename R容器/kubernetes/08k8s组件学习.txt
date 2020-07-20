@@ -186,7 +186,7 @@ spec:
   【kubectl get pods -o wide】，容器运行详情如下：
   NAME        READY   STATUS    RESTARTS   AGE    IP                NODE                  NOMINATED NODE   READINESS GATES
   busybox     1/1     Running   0          36s    192.168.116.14    worker2-kubeadm-k8s   <none>           <none>
-  nginx-pod   1/1     Running   0          102s   192.168.188.208   worker1-kubeadm-k8s   <none>           <none>
+  nginx-pod   1/1     Running   0          113s   192.168.188.208   worker1-kubeadm-k8s   <none>           <none>
 
 4、集群内相互访问 Service-ClusterIP，Service的一种类型
 

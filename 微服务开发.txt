@@ -7,8 +7,13 @@
 SystemUserInfo user = SessionUtil.getSystemUserInfo(request);
 
 2、判空处理，服务层分页入参修改：Optional
-  ProcessPerformanceDto dto = Optional.ofNullable(pageQueryParam.getParam()).orElseGet(ProcessPerformanceDto::new);
+        WorkloadResultDto dto = Optional.ofNullable(pageQueryParam.getParam()).orElseGet(WorkloadResultDto::new);
+        SystemUserInfo user = SessionUtil.getSystemUserInfo(request);
 
+        if (!user.getRoleIds().contains("admin")&&!user.getRoleIds().contains("gly")) {
+            dto.setTeacherId(user.getUserId());
+        }
+		
 3、注解事物回滚：【 @Transactional(rollbackFor = Exception.class)】
   声明式事务管理建立在AOP之上的。其本质是对方法前后进行拦截，然后在目标方法开始之前创建或者加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
 

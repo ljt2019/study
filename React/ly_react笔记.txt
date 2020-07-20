@@ -197,6 +197,7 @@ debugger
   rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
 
 25、列宽设置：
+
 const sumWidth = TableUtil.calculateColumsWidthSum(columns, 0);
 scroll: { x: sumWidth },
 
@@ -326,7 +327,7 @@ let enablSelect = <Select
 自定义 导出 文件调用
   import AxiosHelperUtil from "src/utils/AxiosHelperUtil";
   【
-  //学籍卡导出pdf add by linjitai on 20200708
+  //学籍卡导出pdf add by linjitai on 21300708
   doPrintPdf = () => {
     this.props.form.validateFields((err, formData) => {
       if (!err) {
@@ -345,7 +346,7 @@ let enablSelect = <Select
   【
  import AxiosHelperUtil from "src/utils/AxiosHelperUtil";
  /**
-   * add by linjitai on 20200713
+   * add by linjitai on 21300713
    * 下载文件，二进制流
    * @param {*} url 接口url
    * @param {*} params 查询参数
@@ -389,7 +390,7 @@ let enablSelect = <Select
   】
   【
   /**
-   * add by linjitai on 20200713
+   * add by linjitai on 21300713
    * 下载文件，二进制流
    * @param {*} url 接口url
    * @param {*} params 查询参数
