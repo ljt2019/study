@@ -1,5 +1,5 @@
 
-====== 采用vagrant+virtual box ====== 单机
+====== 采用vagrant+virtual box ====== 
 1、安装Vagrant
   访问Vagrant官网：【https://www.vagrantup.com/】，下载对应版本
   
@@ -15,7 +15,7 @@
 3、安装centos7：
   1)、创建centos7文件夹，并进入其中[目录全路径不要有中文字符]
   2)、在此目录下打开cmd，运行 【vagrant init centos/7】
-  3)、此时会在当前目录下生成 Vagrantfile，进入Vagrantfile文件，修改信息，如下：
+  3)、此时会在当前目录下生成 Vagrantfile，进入Vagrantfile文件，修改信息，如下（单机）：（另外可以修改成集群的方式）
   【
   config.vm.box = "centos/7"
   config.vm.network "public_network"
@@ -25,7 +25,6 @@
   vb.cpus= 2
   】
 
-    
 4、centos/7镜像有了，根据Vagrantfile文件启动创建虚拟机，来到centos7文件夹，在此目录打开cmd窗口，执行【vagrant up】[打开virtual box观察，可以发现centos7创建成功]
 
 至此，使用vagrant+virtualbox搭建centos7完成，后面可以修改Vagrantfile对虚拟机进行相应配置`
@@ -71,8 +70,55 @@
   6)、使用xshell登陆，账号 root ，密码 123456 进行登录
 	
 	
-====== 搭建多机 ======
-1、
+====== 搭建多机（集群） ======
+1、修改Vagrantfile文件即可，如下
+【
+boxes = [
+    {
+        :name => "zookeeper-leader",
+        :eth1 => "192.168.3.101",
+        :mem => "2048",
+        :cpu => "2"
+    },
+    {
+        :name => "zookeeper-follower1",
+        :eth1 => "192.168.3.102",
+        :mem => "2048",
+        :cpu => "2"
+    },
+    {
+        :name => "zookeeper-follower2",
+        :eth1 => "192.168.3.103",
+        :mem => "2048",
+        :cpu => "2"
+    }
+]
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "centos/7"
+  
+   boxes.each do |opts|
+      config.vm.define opts[:name] do |config|
+        config.vm.hostname = opts[:name]
+        config.vm.provider "vmware_fusion" do |v|
+          v.vmx["memsize"] = opts[:mem]
+          v.vmx["numvcpus"] = opts[:cpu]
+        end
+
+        config.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--memory", opts[:mem]]
+		  v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
+		  v.customize ["modifyvm", :id, "--name", opts[:name]]
+        end
+
+        config.vm.network :public_network, ip: opts[:eth1]
+      end
+  end
+  #Encoding.default_external = 'GBK'
+  Encoding.default_external = 'UTF-8'
+end
+】
 
 
 
