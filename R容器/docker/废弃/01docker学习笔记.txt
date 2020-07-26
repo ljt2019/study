@@ -9,7 +9,7 @@
 3、给镜像打标签：【docker tag percona/percona-xtradb-cluster:5.7.21 pxc】
 
 4、删除某个镜像（删除前需要stop）：【dcoker rmi -f hello-world】,【docker rmi eb1dfeec7fbb】
-   删除所有：【dcoker rmi -f $(docker images)】
+   删除所有：【docker rmi -f $(docker images)】
    
 5、由Dockerfile生成image：【docker build -t dockerfile-demo .】，根据当前目录下的Dockerfile文件生成一个 image,而images实例化出container
 
@@ -18,7 +18,7 @@
 1、利用 images 创建 container
 
   1)、-p端口映射，将nginx本身80的端口映射到本地8080,-d允许直接返回，作为守护进程来执行,-name指定要创建容器的名称
-    【docker run -d --name my-tomcat -p 8888:8080 tomcat】
+    【docker run -d --name nginx -p 80:8080 nginx】
   
   2)、交互式运行 【docker run -d -it --name my-tomcat -p 9090:8080 tomcat】
   

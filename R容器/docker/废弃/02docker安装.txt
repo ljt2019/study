@@ -27,7 +27,7 @@
 
   3)、执行 Docker 安装脚本：【curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh】
 
-  4)、启动 Docker 进程，以及后台启动：【sudo systemctl start docker && sudo systemctl enable docker】
+  4)、启动Docker进程 && 后台启动：【sudo systemctl start docker && sudo systemctl enable docker】
 
   5)、验证 docker 是否安装成功并在容器中执行一个测试的镜像：【sudo docker run hello-world】
 
@@ -37,7 +37,7 @@
 
 1、创建文件夹【sudo mkdir -p /etc/docker】
 
-2、执行如下命令：网址，阿里云上加速地址
+2、执行如下命令：网址，阿里云上加速地址【https://ea3wi4om.mirror.aliyuncs.com】
 sudo tee /etc/docker/daemon.json <<-'EOF'
 { 
   "exec-opts": ["native.cgroupdriver=systemd"],

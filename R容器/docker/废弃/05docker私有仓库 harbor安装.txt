@@ -23,9 +23,9 @@
 
 4、修改配置文件：【vi vi harbor.cfg】,修改主机名为当前ip:【hostname = 192.168.3.12】，同时也可以看到Harbor默认密码【harbor_admin_password = Harbor12345】
 
-5、查看磁盘使用情况，时候够用：【df -h】
+5、查看磁盘使用情况，是否够用：【df -h】
 
-在这之前想要安装docker-compose
+在这之前需要安装docker-compose
 
 6、安装：【sh install.sh】
 
