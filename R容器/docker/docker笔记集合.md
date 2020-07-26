@@ -452,18 +452,32 @@ Weave Scope is listening at the following URL(s):
   * http://192.168.3.10:4040/
 ```
 
-# [Docker数据持久化](https://docs.docker.com/engine/reference/commandline/volume_create/)
+# [数据持久化***volume***](https://docs.docker.com/engine/reference/commandline/volume_create/)
 
-## Create a volume[^volume name]
-
-```
-docker volume volume名称
-```
-
-## 查看volume详情
+## [创建 volume](https://docs.docker.com/engine/reference/commandline/volume_create/)[^volume name]
 
 ```
-docker volume inspect volume名称
+docker volume create volume名称
+```
+
+## [查看volume详情](https://docs.docker.com/engine/reference/commandline/volume_inspect/)
+
+默认生成目录，如下【/var/lib/docker/volumes/mysql_volume/_data】
+
+```
+$ docker volume inspect mysql_volume
+[
+    {
+        "CreatedAt": "2020-07-26T14:31:54Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/mysql_volume/_data",
+        "Name": "mysql_volume",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+
 ```
 
 ## 查看volume列表
@@ -477,6 +491,152 @@ docker volume ls
 ~~~
 docker volume rm -f volume名称
 ~~~
+
+## [删除未使用的volume](https://docs.docker.com/engine/reference/commandline/volume_prune/)
+
+~~~
+docker volume prune
+~~~
+
+## 挂载案例
+
+```
+docker run -d --name tiger-mysql -p 3366:3306 -v mysql_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql
+```
+
+### 不需要创建volume挂载方式
+
+如下，但文件夹必须存在
+
+~~~
+docker run -d --name tiger-mysql -p 3366:3306 -v /mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql
+~~~
+
+
+
+
+
+## 验证数据持久是否生效思路
+
+1. 创建一个volume
+
+   ```
+   docker volume create volume_mysql
+   ```
+
+2. 实例化出一个mysql容器**tiger-mysql**并将数据挂载到volume_mysql上
+
+   ~~~
+   docker run -d --name tiger-mysql -p 3366:3306 -v mysql_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql
+   ~~~
+
+3. 进入**tiger_mysql**容器
+
+   ~~~
+   docker exec -it tiger-mysql bash
+   ~~~
+
+4. 登陆mysql服务器，创建一个测试表
+
+   ~~~
+   mysql -uroot -123456
+   create database db_test;
+   ~~~
+
+5. 退出mysql服务
+
+6. 删除容器
+
+   ~~~
+   docker rm -f tiger-mysql
+   ~~~
+
+7. 重新新创建mysql容器**new-mysql**，并将数据挂载到原先的volume上
+
+   ~~~
+   docker run -d --name new-mysql -p 3366:3306 -v mysql_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --privileged mysql
+   ~~~
+
+8. 进入容器并登陆，查看表，发现存在表**db_test**，说明数据没有因为容器的丢失而丢失，实验成功。
+
+## Bind Mounting
+
+宿主机器任意目录 -- 容器的任意目录 一一对应起来 对于开发者非常有效的利器，实时更新宿主机中的源码，而无需动容器
+
+- 创建一个tomcat容器
+
+  ~~~
+  docker run -d --name tomcat01 -p 9090:8080 -v /tmp/test:/usr/local/tomcat/webapps/test tomcat
+  ~~~
+
+- 查看两个目录
+    centos：【cd /tmp/test】
+    tomcat容器：先进入到容器：【docker exec -it tomcat01 bash】，再：【cd /usr/local/tomcat/webapps/test】
+- 在centos的/tmp/test中新建1.html，并写一些内容：【<p style="color:blue; font-size:20pt;">This is p!</p>】
+- 进入tomcat01的对应目录查看，发现也有一个1.html，并且也有内容
+- 在centos7上访问该路径【curl localhost:9090/test/1.html】
+- 在win浏览器中通过ip访问【http://192.168.3.13:9090/test/1.html】
+
+也可以将cetnos中的目录映射到window上的机器进行修改，按自己的思维进行挂载，
+我的虚拟机通过 Vagrantfile 来创建，在该文件中有如下信息，将这行取消注释 config.vm.synced_folder "../data", "/vagrant_data" ,配置对应的目录
+  \# Share an additional folder to the guest VM. The first argument is
+  \# the path on the host to the actual folder. The second argument is
+  \# the path on the guest to mount the folder. And the optional third
+  \# argument is a set of non-required options.
+  config.vm.synced_folder "C://AAAAA//all-code//async-servlet-demo", "/tmp/test"
+
+# 创建 mysql高可用集群***pxc***
+
+## 集群创建
+
+1. 拉取pxc镜像
+
+   ~~~
+   docker pull percona/percona-xtradb-cluster:5.7.21
+   ~~~
+
+2. 打标签/重命名
+
+   ~~~
+   docker tag percona/percona-xtradb-cluster:5.7.21 pxc
+   docker rmi percona/percona-xtradb-cluster:5.7.21
+   ~~~
+
+3. 创建一个单独的网段，给mysql数据库集群使用
+
+   ~~~
+   docker network create --subnet=172.19.0.0/24 pxc-net
+   ~~~
+
+4. 创建3个数据挂载点**volume**
+
+   ~~~
+   docker volume create --name mysql_v1
+   docker volume create --name mysql_v2
+   docker volume create --name mysql_v3
+   ~~~
+
+5. 运行三个PXC容器
+
+   ~~~
+   docker run -d --name=mysql_node1 -p 3301:3306 -v mysql_v1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.2 pxc
+   ~~~
+
+   注意：**下边两个节点(mysql_node2和mysql_node3)加入到mysql_node1节点中**
+
+   ~~~
+   docker run -d --name=mysql_node2 -p 3302:3306 -v v2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=mysql_node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.3 pxc
+   ~~~
+
+   ~~~
+   docker run -d --name=mysql_node3 -p 3303:3306 -v v3:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=mysql_node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.4 pxc
+   ~~~
+
+## 负载均衡[**haproxy**](https://hub.docker.com/_/haproxy)
+
+1. 创建 haproxy 配置文件
+
+# temp
 
 
 
