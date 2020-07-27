@@ -1,13 +1,12 @@
-
 1、Oracle数据库：默认端口号【1521】，默认oracle实例(SID)【orcl】,有些是【xe】
   1)、概念：相关的操作系统文件（即存储在计算机硬盘上的文件）集合，这些文件组织在一起，成为一个逻辑整体，即Oracle数据库，必须与内存中的实例结合才能对外提供数据管理服务。
 
   2)、三个必须文件：
-  
+
     (1)、Data files：数据的存储仓库
     (2)、Controller files：记录数据库的名字、存储位置等基本信息，很小的二进制文件，自动生成
     (3)、Redo Log files：重做日志文件，例如数据恢复
-	
+
   3)、三个非必需文件：
     (1)、Parameter file：参数文件
     (2)、Password file：口令文件
@@ -32,26 +31,26 @@
 
 7、OracleVssWriterORCL:拷贝写入服务，非必需启动项
 
-	
+
 ====== Oracle中常用的SQL Plus 命令 ======
 
   1)、切换用户：【connect username/password】
-  
+
   2)、执行系统doc命令：【host <doc命令>】，例如：host mkdir c:\AAAAA\oracleTest
-  
+
   3)、导出记录到本地：【spool】，例如:1、【spool c:\AAAAA\oracleTest】2、【select * from book】3、【spool off】
-  
+
   4)、清屏：【clear screen】
- 
+
   5)、执行SQL脚本语句：【sart c:\AAAAA\oracleTest\test.sql】【@c:\AAAAA\oracleTest\test.sql】
-  
+
   6)、显示表结构：【desc】
-  
+
   7)、显示错误信息：【show error】
-  
+
   8)、退出：【exit】
-  
-  
+
+
 ====== 表空间 ======
 	
 1、什么是表空间：表空间实际上是数据库上的逻辑存储结构，可以把表空间理解为在数据库中开辟一个空间，用于存放我们的数据库对象，一个数据库可以由一个或多个表空间构成；一个表空间由一个或多个数据文件构成。
@@ -59,17 +58,17 @@
 2、分类
 
   1)、永久表空间：系统的表空间，存储数据字典：统计信息、表信息、索引信息、用户信息等
-  
+
   2)、临时表空间：必须存在的一个表空间，数据中专站，当commit后会被清空，数据存储到了永久表空间中
-  
+
   3)、UNDO表空间：commit后想回退，则数据就是存储在这个空间里边
 
 2、创建表空间：在sys/system用户下操作
 
   1)、永久：【create tablespace 表空间名 datafile '=xx.dbf' size 10m;】
-  
+
   2)、临时：【create temporary tablespace 表空间名 tempfile 'xx.dbf' size 10m;】
-  
+
 3、查看所创建的表空间的存放位置：大写
 
 	1)、永久：【select file_name from dba_data_files where tablespace_name = 'TEST1_TABLESPACE';】
@@ -115,7 +114,7 @@
 9、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间[USERS/TEMP])：一般创建之后赋予权限：【grant connect resource to 用户名】
 
 	【create user 用户名 identified by 密码 default tablespace 表空间名 temporary tablespace 临时表空间名;】
-
+	
 	例如：【create user linjt identified by 123456 default tablespace test_tablespace temporary tablespace temptest_tablespace;】
 
 10、删除用户：【drop user 用户名 cascade;】，加上cascade表示级联将用户连接以及其所创建的东西全部删除
@@ -134,7 +133,7 @@
 	2)、RESOURCE(资源角色)：可以创建实体（表、视图...），但不可以创建数据库结构
 	
 	3)、DBA(数据管理员角色)：系统最高权限，只有DBA才可以创建数据库结构
-	
+
 3、创建角色：【create role 角色名;】，例如：【create role manager;】；删除角色：【drop role 角色名;】例如：【drop role manager;】
 	
 4、对于普通用户授予connect和resource权限，DBA授予dba权限
@@ -153,22 +152,22 @@
 3、权限的分类：
 
   1)、系统权限：允许用户执行特定的数据库动作，如创建表、创建索引、连接实例等；
-  
+
     (1)、查看系统权限：【select * from system_privilege_map;】
-	
+    
     (2)、授予系统权限的语法格式：【grant privilege [,privilege...] to user [,user|role,public...]】
-	     例如：【grant create table,create view to manager;】
-		 
-	(3)、回收格式：【revoke {privilege|role} from {user|role|public}】
+         例如：【grant create table,create view to manager;】
+    	 
+    (3)、回收格式：【revoke {privilege|role} from {user|role|public}】
          例如：【revoke create table,create sequence from manager;】
-	
+
   2)、对象(实体)权限：允许用户操作一些特定的对象，如读取视图、表，可更新某些列、执行存储过程等(select、update、insert、delete、all)
     
 	(1)、所有的对象权限：【select * from table_privilege_map;】
 	
 	(2)、授予对象权限的语法格式：【grant object_priv | all [(columns)] on object to {user|role|public}】
-         例如：【grant select,update,insert on scott.emp to manager2】
-               【grant manager2 to user01】
+	     例如：【grant select,update,insert on scott.emp to manager2】
+	           【grant manager2 to user01】
 			   
 	(3)、回收格式：【revoke {privilege[,privilege...]|all} on object from {user[,user...]|role|public}】
 	     例如：【revoke all on scott.emp from user01】
@@ -189,29 +188,29 @@
 6、alter table：更改表的结构，增加、修改、删除列
 
   1)、修改列：【alter table student modify id varchar(32);】
-  
+
   2)、删除列：【alter table student drop column name;】
-  
+
   3)、修改列名：【alter table student rename cloumn 旧列名 to 新列名】
 
 7、添加表级约束：【alter table student add [constraint student_pk] primary key(id);】
    添加列级约束：【alter table student modify clounm_name datatype not null;】
-   
+
 8、删除约束：
 
   1)、禁用或激活约束：【alter table table_name disable|enable constraint constraint_nam】
-  
+
   2)、彻底删除约束【alter table table_name drop constraint constraint_nam】
-  
+
   3)、彻底删除主键约束：【alter table table_name drop priamry key】
-  
+
   4)、彻底删除非空约束：【alter table table_name modify clounm_name [datatype] null;】
-   
+
 
 ====== 数据操纵语言(DML) ======
-   
 
-   
+
+
 ====== 数据控制语言(DCL) ======
 
 1、grant：将权限或角色授予用户或其他角色（授予访问权限），一般创建之后赋予权限：【grant connect resource to 用户名】
@@ -245,50 +244,50 @@
 3、常见的约束：
 
   1)、主键约束(primary key)：它是唯一确定表中每条记录的标识，不能为空不能重复，只能有一个，可以由2多列组成，例如：【primary key(id,code)】
-  
+
   2)、唯一约束：unique | constraint unique
-  
+
     (1)、用于指定一个或多个列组合值具有唯一性，以防止在列中输入重复值。例如身份证号的唯一性
-	
+    
     (2)、唯一约束的列允许为空
-	
+    
     (3)、一个表汇总允许有多个唯一约束
-	
+    
     (4)、可以把唯一约束定义在多个列上
-	
+
   3)、默认约束：【default constraint】
-  
+
   4)、非空约束(not null)：确保列不能为null,属于列级约束
-  
+
   5)、检查约束：对输入列或整个表中的值设置检查条件，以限制输入值，保证数据的完整性【check constraint】
       例如：【alter table student add constraint student_sex_ck check(sex='男' or sex='女');】
-  
+
   6)、外键键约束：用于建立和加强两个表数据之间的链接的一列或多列
-  
+
     (1)、列级约束(从表中定义)：【depID varchar2(20) references department(depID)】
-	
+    
     (2)、表级约束：【alter table student constraint student_dep_fk foreign key(depID) references department(depID) on delete cascade】
-	
-	(3)、主表的字段必须是主键列或唯一列
-	
-	(4)、从表中外键字段的值必须来自主表相应字段的值，或者为null
-	
-	(5)、主从表相应字段必须是同一数据类型
-	
+    
+    (3)、主表的字段必须是主键列或唯一列
+    
+    (4)、从表中外键字段的值必须来自主表相应字段的值，或者为null
+    
+    (5)、主从表相应字段必须是同一数据类型
+
 
 4、表级约束与列级约束定义上的区别
 
   1)、表级约束：可以单独定义
-  
+
   2)、列级约束：【column [contraint constraint_nam] constraint_type】必须跟在列后边定义
 
 
 ====== Oracle中常见的数据字段 ======
 
   1、查看当前下的用户信息：【user_users】
-  
+
   2、查看当前有权限访问的用户信息：【all_users】
-  
+
   3、查看数据库所有用户信息：【dba_users】
 
 
@@ -300,7 +299,7 @@
 	1)、char：表示固定长度类型，列长度在1到2000个字节之间
 	
 	2)、varchar2：表示可变长度字符串，最大长度为4000字节
-	
+
 2、数值类型：number[(p[,s])]
 	
 	1)、p表示精度，s表示小数点位数，可以存储整数、浮点数等数值类型，最高精度为38位
@@ -311,9 +310,9 @@
 3、日期类型：主要存储日期和时间值 ，包括年月日时分秒，主要的日期类型是 date
 
   1)、按特定格式显示日期：【alter session set nls_date_format='YYYY-MM-DD';】
-  
+
   2)、简体中文显示日期：【alter session set nls_language='SIMPLIFIED CHINESE';】
-  
+
   3)、美国英文显示日期：【alter session set nls_language='AMERICAN';】
 
 4、LOB类型：
@@ -321,8 +320,9 @@
 	1)、clob：字符lob，可以存储大量的字符数据
 	
 	2)、blob二进制lob，可以存储较大的二进制对象，如图形、视频剪辑、声音文件等
-	
-	
+
+
+​	
 ====== select ======
 
 1、定义列别名
@@ -333,7 +333,7 @@
   关键字 AS）
   • 如果别名包含空格或特殊字符，或者区分大小写，
   则需要使用双引号
-  
+
 2、连接运算符：select last_name,job_id, last_name || ' is a '|| job_id as "Employees" from emp;
   连接运算符具有以下特征和用途：
   • 将列或字符串链接到其它列
@@ -437,25 +437,25 @@
       DECODE(job_id,'IT_PROG',1.10 * salary,'ST_CLERK',1.15 * salary,'SA_REP',1.20 * salary,salary) revised_salary
   FROM
       emp;】
-  
+
 16、何谓组函数：组函数会对行集进行计算，为每个组提供一个结果。
 
   1)、语法：【SELECT group_function(column), ... FROM table [WHERE condition] [ORDER BY column];】
-  
+
   2)、可以对数字数据使用 AVG 和 SUM 函数。
-  
+
   3)、可以对数字、字符和日期数据类型使用 MIN 和 MAX 函数
-  
+
   4)、COUNT(*) 将返回表中的行数
-  
+
   5)、COUNT(expr) 将返回 expr 为非空值的行的数量
-  
+
 17、组函数和空值
-  
+
   1)、组函数将忽略列中的空值：【SELECT AVG(commission_pct) FROM emp; 】
 
   2)、NVL 函数会强制组函数包括空值：【SELECT AVG(NVL(commission_pct, 0)) 2 FROM emp;】
-  
+
 18、SELECT 列表中未出现在组函数中的所有列都必须包含在GROUP BY 子句中
    【SELECT deptno, AVG(salary) FROM emp GROUP BY deptno ;】
 
@@ -472,21 +472,21 @@
    【SELECT * FROM emp e,salgrade sg WHERE e.sal BETWEEN sg.losal AND sg.hisal;】
 
 24、笛卡尔积，以下情况时将形成笛卡尔积，使用连接条件可以避免笛卡尔全集（n-1个连接条件，n为表个数）
-  
+
   1)、联接条件被忽略
-  
+
   2)、联接条件无效
-  
+
   3)、第一个表中的所有行被联接到第二个表中的所有行
-  
+
 25、子查询
 
   1)、先执行子查询（内部查询），再执行主查询（外部查询）
 
   2)、主查询会使用子查询的结果
-  
+
   3)、单行子查询：【 select empno,ename,sal from emp where sal<(select max(sal) from emp) and sal>(select min(sal) from emp); 】
-  
+
   4)、多行子查询：多行子查询 返回多行数据的子查询
     (1)、使用in运算符：【 select empno,ename,sal from emp where deptno in (select deptno from dept where dname <> 'sales'); 】
     (2)、使用any运算符：【 select depno,ename,sal from emp where sal > any (select sal from emp where deptno =10) and depno <> 10; 】
@@ -504,7 +504,7 @@
   或者：
   现在要取 a 中的数据，其中id在b中 不存在：
   【select * from a where not exists(select 1 from b where a.id = b.id);】
-  
+
   In 和 exists 对比：若子查询结果集比较小，优先使用 in，若外层查询比子查询小，优先使用 exists。
 
 30、集合运算符准则：SELECT 列表中的表达式在数量和类型上必须匹配
@@ -528,8 +528,9 @@
     WHERE dept.deptno = c.deptno(+)
     UNION ALL
     SELECT '员工总数', COUNT(emp.deptno) cnt FROM emp;
-    
-      
+
+
+​      
     --3、分析函数：求每个部门员工数以及总人数
     SELECT dept.dname, c.count_id 
     FROM (select distinct emp.deptno deptno,count(emp.deptno) 
@@ -583,7 +584,7 @@ NOCYCLE;】
          ,sum(salary) 
   from group_test 
   group by rollup(group_id, job);
-  
+
 41、with 子句：使用 WITH AS 语句可以为一个子查询语句块 定义一个名称
   1)、SQL 可读性增强。比如对于特定 with 子查询取个有意义的名字等。
   2)、with 子查询只执行一次，将结果存储在用户临时表空间中，可以引用多次，增强性能。
@@ -593,8 +594,11 @@ NOCYCLE;】
     ,b AS (SELECT SUM(cnt)/COUNT(deptno) dep_avg FROM a)
   SELECT dept.dname,cnt FROM a,dept WHERE dept.deptno = a.deptno AND cnt > (SELECT dep_avg FROM b)
 
-42、merge into 合并资料，
-  1)、语法：(其中 as 可以省略)
+# merge into 合并资料
+
+ ## 语法：(其中 as 可以省略)
+
+~~~sql
   MERGE INTO table_name AS table_alias
   USING (table|view|sub_query) AS alias
   ON (join condition)
@@ -605,8 +609,11 @@ NOCYCLE;】
   WHEN NOT MATCHED THEN
   INSERT (column_list)—多个列以逗号分割 //可以不指定列
   VALUES (column_values); --9i 不可以有 where 条件，10g 可以
-  
-  2)、例子：
+~~~
+
+## 案例
+
+~~~sql
   --10g新特性，满足条件的插入和更新
   merge into acct a
   using subs b on (a.msid=b.msid)
@@ -617,16 +624,22 @@ NOCYCLE;】
   insert(msid,bill_month,areacode)
   values(b.msid,'200702',b.areacode)
   where b.ms_type=0; 
+~~~
 
-43、层次查询
-  1)、语法格式：【 select [level],colum,expr... from table [where condition(s)] [start with condition(s)] [connect by prior condition(s)]; 】
-  
+# 层次查询
+
+## 语法格式
+
+~~~sql
+select [level],colum,expr... from table [where condition(s)] [start with condition(s)] [connect by prior condition(s)]; 
+~~~
+
   2)、从id=2的员工开始查找其子节点，把整棵树删除
    【 select id from s_emp a tart with id=2 connect by prior id=manager_id); 】
-  
+
   3)、给定一个具体的 emp 看是否对某个 emp 有管理权，也就是从给定的节点寻找，看其子树节点中能否找到这个节点。如果找到，返回，找不到，no rows returned. 
    【 select level,a.* from s_emp a where first_name='Elena' start with manager_id is null connect by prior id=manager_id; 】
-   
+
   4)、找出每个部门的经理
     【select level,a.* from s_emp a start with manager_id is null connect by prior id=manager_id and dept_id !=prior dept_id; 】
 
@@ -638,9 +651,9 @@ NOCYCLE;】
 45、子查询：非相关子查询效率高相关子查询
   1)、非相关子查询：非相关子查询是独立于外部查询的子查询，子查询总共执行一次，执行完毕后
 将值传递给外部查询。
-  
+
   2)、相关子查询：相关子查询的执行依赖于外部查询的数据，外部查询执行一行，子查询就执行一次。
-  
+
 46、行转列：
   1)、wm_concat：wm_concat(e.ename)
   2)、listagg：listagg(e.ename,',') WITHIN GROUP (ORDER BY e.job)
@@ -651,21 +664,33 @@ NOCYCLE;】
   2)、聚合函数(aggregate)
   3)、行比较函数(row comparison)
   4)、统计函数(statistical)
-  
+
 2、分子子句构成：
   1)、partition 子句：确定如何对行进行分组，如果没有 partition 子句，那么所有行为一组。
   2)、window 子句：确定当前行对应的窗口范围，从而用分析函数计算当前行对应的窗口的值，如果没有 window 子句，而有 order by那么默认窗口范围是组的首行到当前行，如果没有 order by，那么默认是组的首行到组的末行。
 行。
   3)、order by 子句：确定组内的排序规则。
 
-=======
-将一行变多行：【 WITH t AS (SELECT 'G01-0005,9787508284309' txt FROM dual) 
-SELECT replace(regexp_substr(txt,'[^,]+',1,level),',','') txt FROM t 
-CONNECT BY level<=length(txt)-length(replace(txt,',',''))+1 】
+# 多行变一行（多变单）
 
-【  (
-    --多行转一行
-    SELECT LISTAGG(cbs.cbsmc,',') within group(order by cbs.cbsmc) FROM jcgl_cbsxx cbs 
+```sql
+(SELECT LISTAGG(isbn, ',') WITHIN GROUP(ORDER BY isbn) FROM t_jcgl_zdjcxx WHERE jxbh = rw.jxbh AND bjdm = BJSZ.BJDM group by jxbh) as isbn
+或
+--11g之后被摒弃，建议使用 LISTAGG(isbn, ',') WITHIN GROUP(ORDER BY isbn)
+wm_concat(isbn)
+```
+
+# 一行变多行（单变多）
+
+~~~sql
+WITH t AS (SELECT 'G01-0005,9787508284309' txt FROM dual) 
+SELECT replace(regexp_substr(txt,'[^,]+',1,level),',','') txt FROM t 
+CONNECT BY level<=length(txt)-length(replace(txt,',',''))+1 
+~~~
+
+~~~sql
+  --多行转一行
+    SELECT  LISTAGG(cbs.cbsmc,',') within group(order by cbs.cbsmc) FROM jcgl_cbsxx cbs 
     WHERE cbs.cbsdm IN (
     SELECT jckxxb.cbs FROM jcgl_jckxxb jckxxb WHERE jckxxb.isbn IN (
 	  --一行转多行
@@ -673,9 +698,14 @@ CONNECT BY level<=length(txt)-length(replace(txt,',',''))+1 】
       CONNECT BY level<=length(jxrwb.jcbh)-length(replace(jxrwb.jcbh,',',''))+1
       )
     )
-  ) AS cbs,--出版社】
-  
-  SELECT
+  ) AS cbs,--出版社
+~~~
+
+# column_value
+
+~~~sql
+SELECT
+      --多变单
       wm_concat(isbn)
   INTO
       v_jcbm --更新到 JXJHGL_JXRWB 的 jcbh 字段中
@@ -688,8 +718,11 @@ CONNECT BY level<=length(txt)-length(replace(txt,',',''))+1 】
           FROM
               TABLE ( i_jcbm )
       );
+~~~
 
-plsql中代替遍历，启用table方式
+
+
+plsql中代替遍历，
   【UPDATE jxjhgl_jxrwb jxjhgljxrwb
       SET
           jxjhgljxrwb.jcmc = v_jcmc,
@@ -796,7 +829,7 @@ inert into [key存在的就报错] / replace into [key存在的就更新]
             #{item.creatorName,jdbcType=VARCHAR} from dual
         </foreach>
     </insert>
-	
+
   <update id="batchChangeNoPracticeApplyStatus">
       <foreach collection="list" item="item" separator=";" open="begin" close=";end;">
           update T_SXGL_MSXSQ

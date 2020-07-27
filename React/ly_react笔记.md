@@ -207,19 +207,23 @@ record.studentOrderCnt = value.target.value;
   }
 ~~~
 
+# 模态框传递数据 参数
 
+ codeList: this.props.codeList
 
-23、模态框传递数据 参数
+~~~js
   <ClassBooksModal ref="showClassOrderBooksModal"
       setChild={this.setChild}
       codeList={this.state.selectedRowKeys}
       record={this.state.record}
   />
+~~~
 
-  codeList: this.props.codeList
+ # form表单传参 @Form.create()
 
-  form表单传参 @Form.create()
-  <AddModal  wrappedComponentRef={(inst) => (this.addModal = inst)} />
+ ~~~
+ <AddModal  wrappedComponentRef={(inst) => (this.addModal = inst)} />
+ ~~~
 
 # 获取当前页面表格数据
 
@@ -262,29 +266,23 @@ scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
 
 28、传id查详情：【isExtraQuery: id => `${base}/studentExtraScore/queryIsExtraData?studentExtraScoreId=${id}`】 // 查询是否为额外成绩表数据
 
-29、查询模态框：
-    // 查询
-    onSearch = () => {
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                //this.props.onSearch({ param: values });
-				//this.props.onSearch({ ...values });
-            }
-        });
-    };
+# 数组元素操作
 
-30、数组元素操作：
-  删除：list.splice(index, 1)
-  添加：list.push(newState.inputValue)  //push新的内容到列表中去
+~~~js
+// 删除
+list.splice(index, 1)
+// 添加
+list.push(newState.inputValue)  
+~~~
 
-31、刷新主表数据
-<AddModal ref="addModal" onSearch={this.indexQuery} reload={this.reload} enterWareNumber={this.state.enterWareNumber}/>
+# 创建map集合并赋值
 
-32、创建map集合并往里边加值
+~~~js
   let applyMap = {}
   this.state.selectedRows.map((item) => {
       applyMap[item.applyId] = item.studentId
   })
+~~~
 
 33、添加默认过滤条件
 // 查询参数
@@ -402,9 +400,10 @@ let enablSelect = <Select
    * @param {*} params 查询参数
    * @param {*} permission 接口权限
    * @param {*} timeout 超时时间
+
     */
     static downloadFile = (url, params, permission, timeout) => {
-
+    
     downloadFile(url, params, {
       timeout,
       showTimeout: true,
@@ -447,8 +446,9 @@ let enablSelect = <Select
    * @param {*} params 查询参数
    * @param {*} config 
       */
-    export function downloadFile(url, params, config = {}) {
 
+    export function downloadFile(url, params, config = {}) {
+    
     return new Promise((resolve, reject) => {
       axios
         .post(url, params, { responseType: "blob", ...config })
