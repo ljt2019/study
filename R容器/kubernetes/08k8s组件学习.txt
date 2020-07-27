@@ -34,7 +34,7 @@ EOF
   【kubectl get pods -o wide】，可以到对应节点查看验证：【docker ps | grep nginx】
   【kubectl describe pod nginx】，查看pod详情信息
   【kubectl delete -f pod_nginx_rs.yaml】，删除所有pod
-  【kubectl deletee pod podid】， 删除一个pod
+  【kubectl delete pod podid】， 删除一个pod
   
 3、扩缩容：【kubectl scale rs nginx --replicas=5】
   【kubectl scale deployment whoami-deployment --replicas=5】
@@ -379,8 +379,7 @@ kubectl apply -f nginx-pod.yaml，此时k8s会在所有可用的Node上，创建
 
 扩缩容：kubectl scale rc nginx --replicas=5
   
-  
+  删除pod【kubectl delete pod gz-cea-teacher-ui-deploy-56c97f9f7d-84vx4 --force --grace-period=0 -n default】
 
-  
   
   

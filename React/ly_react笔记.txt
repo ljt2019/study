@@ -190,16 +190,28 @@ debugger
   
   codeList: this.props.codeList
   
-  form表单传参
+  form表单传参 @Form.create()
   <AddModal  wrappedComponentRef={(inst) => (this.addModal = inst)} />
+
+--获取当前表格数据
+【
+    this.props.form.validateFields((err, formData) => {
+      if (!err) {
+        this.setState({
+          exportLoading: true,
+        })
+
+        AxiosHelperUtil.downloadFile(studentCard.printStudentCardPdf, formData, authority.export, 150000);
+      }
+    });
+】
 
 24、设置表格行联合主键
   rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
 
 25、列宽设置：
-
-const sumWidth = TableUtil.calculateColumsWidthSum(columns, 0);
-scroll: { x: sumWidth },
+import TableUtil from "src/utils/TableUtil";
+scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
 
 26、设置样式：【style={{height:35.016}}】，【style={{ width: "100%" }}】
 
@@ -491,6 +503,22 @@ export const isFormChange = (form, oldValues) => {
   return isChange;
 };
 】
+
+获取当前开课学年学期
+  【
+    getNowOpenTime = (param) => {
+        semesterNow((data) => {
+            this.setState(
+                {
+                    semester: data.semester
+                },
+                () => {
+                    this.onSearch()
+                }
+            )
+        })
+    }
+  】
 
 
 

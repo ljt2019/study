@@ -810,7 +810,7 @@ inert into [key存在的就报错] / replace into [key存在的就更新]
       </foreach>
   </update>
 
-
+创建dblink
 DataBase links dblink
   【
 drop database link hxsj;
