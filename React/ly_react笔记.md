@@ -2,20 +2,40 @@
 
 3、匿名函数：【onChange={(v) => { this.onChange(v, record) }}】
 
-4、单选框
-    <RadioGroup name="makeUpExam11" value={this.state.makeUpExam1} selectedValue={this.state.makeUpExam1} 【onChange={(event) => { this.setState({ makeUpExam1: event.target.value }) }}】>
-      补考通过最终成绩是否显示60分
-      <Radio value="1">是</Radio>
-      <Radio value="0">否</Radio>
-    </RadioGroup>
-    
-5、预览PDF文件：【 npm install react-pdf-js 】
+# 单选框
 
-6、对象转换：
-JSON.stringify(printDatas); //json对象转json字符串
-JSON.parse(); //json字符串转json对象
+~~~javascript
+            {
+                title: '排课类型', dataIndex: 'arrangeType', key: 'arrangeType', align: "center",
+                width: 200,
+                render: (text, record, index) => {
+                    return <RadioGroup defaultValue={record.arrangeType} onChange={(e) => {
+                        record.arrangeType = e.target.value;
+                        this.state.dataSource[index] = record;
+                        this.setState({ dataSource: this.state.dataSource });
+                        this.state.onChangeRows[index] = record;
+                    }}>
+                        <Radio value={'0'}>只排</Radio>
+                        <Radio value={'1'}>不可排</Radio>
+                    </RadioGroup>
+                }
+            },
+~~~
 
-section.events.push(datas); 
+# # 预览PDF文件
+
+~~~js
+npm install react-pdf-js
+~~~
+
+# json与对象之间的转换
+
+~~~js
+//对象 --> json
+let obj = JSON.stringify(jsonStr); 
+//json --> 对象
+let jsonStr = JSON.parse(obj); 
+~~~
 
 7、时间格式化显示：new Date(Date.parse(${dataSource[i].events[0].timesStartTime}.replace(/-/g, "/"))).format('hh:mm'))
 
@@ -23,7 +43,9 @@ section.events.push(datas);
 to_char(JCSZ.KSSJ,'hh:mi') as KSSJ,
         to_char(JCSZ.JSSJ,'hh:mi') as JSSJ,
 
-9、排序：
+# 排序
+
+~~~js
   const newSingleSchudle = JSON.parse(JSON.stringify(singleSchedule)).sort(
     (a, b) => {
       // 以time为主排序，key为次排序
@@ -34,8 +56,11 @@ to_char(JCSZ.KSSJ,'hh:mi') as KSSJ,
       }
     }
   );
-  
-10、在显示里修改逻辑
+~~~
+
+# 显示里修改逻辑
+
+~~~js
       {
         title: "在校状态",
         dataIndex: "sudentStatus",
@@ -52,21 +77,30 @@ to_char(JCSZ.KSSJ,'hh:mi') as KSSJ,
           return <div>{state}</div>
         }
       }
+~~~
 
-11、提示框：【message.error("请选中数据");】
+# 引入公共接口
 
+~~~js
+import { selectDepartment } from "../../../../../config/commonService"
+~~~
 
-12、引入公共代码接口：【import { selectDepartment } from "../../../../../config/commonService";】
+# 按钮控件
 
-按钮控件：<Button type="primary" onClick={this.batchDelete} ghost> 取消订购  </Button>
+~~~js
+<Button type="primary" onClick={this.batchDelete} ghost> 取消订购  </Button>
+~~~
 
-13、遍历数组：
+# 遍历数组
+
+~~~js
   _this.state.selectedRows.map((item, i) => {
        let status = item.orderStatus;
        if (status != 0 && status != 1) {
            cnt++;
        }
    })
+~~~
 
 debugger
 
@@ -82,14 +116,16 @@ debugger
       setChild={this.setChild}
       record={this.state.record}
   />
-  
+
 同时获取表单和state值【<AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />】
 
 
 17、注意：前台传值到后台，参数列表格式需要特别注意。大括号，等等
 
-18、【提示框确认操作】,在提示确认框中需要用【let _this = this;】，如下
-  approvalBooks = () => {
+# 确认提示框
+
+~~~js
+approvalBooks = () => {
       let _this = this;
       confirm({
           title: '提示',
@@ -106,43 +142,29 @@ debugger
           }
       });
   };
+~~~
 
-19、传递参数的方式：前端传参，入参
-  1)、
-  const params = {
-      'teachingClassNumberList': this.state.selectedRowKeys,
-      'isbnList': isbnList,
-      'appendOrder': appendOrder
-  };
-  
-  2)、
-  const params = {
-      teachingClassNumberList: this.state.selectedRowKeys,
-      isbnList: isbnList,
-      appendOrder: appendOrder
-  };
-  
-  3)、
-  let _params = {
-      ...this.params,
-      param:{
-          useable:1
-      }
-  };
-  
-  4)、
+# 前端传参
+
+~~~js
   let _params = {
       ...this.params,
       ...params,
       param: {
           teachingClassNumber: this.props.record.teachingClassNumber
       }
-  };
-  
-20、在表格行中通过render 返回自定义东西
+  }
+~~~
 
-21、将新的属性添加到record中：【record.studentOrderCnt = value.target.value;】
-  //【教师征订人数】回调函数
+# 给js对象赋值新属性
+
+~~~js
+record.studentOrderCnt = value.target.value;
+~~~
+
+# 回调函数
+
+~~~js
   studentOrderCntOnChange = (value, record, index) => {
       record.studentOrderCnt = value.target.value
       let dataSource = this.state.dataSource
@@ -150,8 +172,8 @@ debugger
       this.setState({ dataSource: dataSource })
 
   }
-  
-  {
+  //---------
+ {
     title: '请确认学生征订人数',
     dataIndex: 'studentOrderCnt',
     key: 'studentOrderCnt',
@@ -165,8 +187,11 @@ debugger
         />
     }
   },
+~~~
 
-22、批量修改保存【dataSource[index].returnNotice = value.target.value;】
+# 批量修改保存
+
+~~~js
   returnNoticeOnChange = (value, record, index) => {
       let _data = {
           "orderNumber": record.orderNumber,
@@ -174,53 +199,66 @@ debugger
           "approvalStatus": 4,
       }
       let dataSource = this.state.dataSource;
+      //通过索引赋值
       dataSource[index].returnNotice = value.target.value;
       this.setState({
           dataSource: dataSource
       });
   }
-  
-  
+~~~
+
+
+
 23、模态框传递数据 参数
   <ClassBooksModal ref="showClassOrderBooksModal"
       setChild={this.setChild}
       codeList={this.state.selectedRowKeys}
       record={this.state.record}
   />
-  
+
   codeList: this.props.codeList
-  
+
   form表单传参 @Form.create()
   <AddModal  wrappedComponentRef={(inst) => (this.addModal = inst)} />
 
---获取当前表格数据
-【
-    this.props.form.validateFields((err, formData) => {
-      if (!err) {
-        this.setState({
-          exportLoading: true,
-        })
+# 获取当前页面表格数据
 
-        AxiosHelperUtil.downloadFile(studentCard.printStudentCardPdf, formData, authority.export, 150000);
+~~~js
+  onSearch = () => {
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.props.onSearch(values);
       }
     });
-】
+  };
+~~~
 
-24、设置表格行联合主键
-  rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
+# 设置表格行联合主键
 
-25、列宽设置：
+~~~js
+ rowKey: (record) => { return JSON.stringify({ teachingClassNumber: record.teachingClassNumber, classCode: record.classCode }) },
+~~~
+
+# 列宽设置
+
+~~~js
 import TableUtil from "src/utils/TableUtil";
 scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
+~~~
 
-26、设置样式：【style={{height:35.016}}】，【style={{ width: "100%" }}】
+# 设置样式
 
+~~~js
+<Input style={{ height: 35.016, width: '246px' }} />
+~~~
 
-27、判空：【
-        if (typeof remark != "undefined" && remark != null && remark.replace(/(^s*)|(s*$)/g, "").length != 0) {
+# 判空
+
+~~~js
+    if (typeof remark != "undefined" && remark != null && remark.replace(/(^s*)|(s*$)/g, "").length != 0) {
           disabled = true
-        }
-      】
+    }
+~~~
 
 28、传id查详情：【isExtraQuery: id => `${base}/studentExtraScore/queryIsExtraData?studentExtraScoreId=${id}`】 // 查询是否为额外成绩表数据
 
@@ -247,7 +285,7 @@ scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
   this.state.selectedRows.map((item) => {
       applyMap[item.applyId] = item.studentId
   })
-  
+
 33、添加默认过滤条件
 // 查询参数
     params = {
@@ -287,7 +325,7 @@ import Cookies from "js-cookie"
   】
   newFormData1.proposerName = JSON.parse(Cookies.get('user') || '{}').name;
   newFormData1.proposerCode = JSON.parse(Cookies.get('user') || '{}').userName;
-  
+
 
 --计算总宽度
 import TableUtil from "src/utils/TableUtil";
@@ -364,8 +402,9 @@ let enablSelect = <Select
    * @param {*} params 查询参数
    * @param {*} permission 接口权限
    * @param {*} timeout 超时时间
-  */
-  static downloadFile = (url, params, permission, timeout) => {
+    */
+    static downloadFile = (url, params, permission, timeout) => {
+
     downloadFile(url, params, {
       timeout,
       showTimeout: true,
@@ -407,8 +446,9 @@ let enablSelect = <Select
    * @param {*} url 接口url
    * @param {*} params 查询参数
    * @param {*} config 
-   */
-  export function downloadFile(url, params, config = {}) {
+      */
+    export function downloadFile(url, params, config = {}) {
+
     return new Promise((resolve, reject) => {
       axios
         .post(url, params, { responseType: "blob", ...config })
@@ -485,12 +525,12 @@ let enablSelect = <Select
  * @param {Obj} oldValues 表单旧的值
  */
 export const isFormChange = (form, oldValues) => {
-  const { getFieldsValue } = form;
-  const newValue = getFieldsValue();
-  const keys = Object.keys(newValue);
-  let isChange = false;
-  // 遍历表单的key
-  for (let index = 0; index < keys.length; index++) {
+    const { getFieldsValue } = form;
+    const newValue = getFieldsValue();
+    const keys = Object.keys(newValue);
+    let isChange = false;
+    // 遍历表单的key
+    for (let index = 0; index < keys.length; index++) {
     const item = keys[index];
     if (item && oldValues[item] === null && newValue[item] === "") {
       break;
@@ -499,8 +539,8 @@ export const isFormChange = (form, oldValues) => {
       isChange = true;
       break;
     }
-  }
-  return isChange;
+    }
+    return isChange;
 };
 】
 
