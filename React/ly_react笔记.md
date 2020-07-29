@@ -1,7 +1,3 @@
-
-
-3、匿名函数：【onChange={(v) => { this.onChange(v, record) }}】
-
 # 单选框
 
 ~~~javascript
@@ -284,63 +280,109 @@ list.push(newState.inputValue)
   })
 ~~~
 
-33、添加默认过滤条件
-// 查询参数
-    params = {
-        pageNo: 1,
-        pageSize: 20,
-        total: 0,
-        param: { approvalStatus: '' }
-    }
-    //表单查询
-    indexQuery = params => {
-        if (this.props.queryType == '1') {
-            this.params.param.approvalStatus = '1' //待审批
-        } else if (this.props.queryType == '2') {
-            this.params.param.approvalStatus = "9"; //已审批
-        }
-        let _params = {
-            ...this.params,
-            ...params
-        }
-        this.setState({
-            loading: true
-        })
-        query(_params, authority.query, (data) => {
-           
-        })
-    }
+# 所在部门和开课单位
+
+~~~js
+import { selectDepartment, departmentSelectList } from "app/config/commonService";
+//开课院系
+  getDepartmentSelectList = () => {
+    departmentSelectList((data) => {
+      this.setState({
+        departmentList: data
+      });
+    });
+  };
+
+selectDepartment({}, (data) => {
+      this.setState({
+        dwList: this.returnTreeData(data)
+      })
+    })
+
+
+
+  returnTreeData = (data) => {
+    return data.map((item) => {
+      let child = [];
+      if (item.child) {
+        child = this.returnTreeData(item.child);
+      }
+      return { title: item.dwmc, key: item.dwh, value: item.dwh, children: child };
+    });
+  };
+
+
+            <Col {...colSpan}>
+              <FormItem {...formItemLayout} label="所在部门">
+                {getFieldDecorator("departmentId", {})
+                  (
+                    <TreeSelect
+                      allowClear
+                      placeholder="所在部门"
+                      dropdownStyle={{
+                        maxHeight: 300,
+                        overflow: "auto"
+                      }}
+                      treeData={this.state.dwList} />
+                    // <Select
+                    //   placeholder="请选择"
+                    //   allowClear
+                    //   showSearch
+                    // >
+                    //   {this.state.dwList.map(val => (
+                    //     <Option key={val.dwh}>{val.dwmc}</Option>
+                    //   ))}
+                    // </Select>
+                  )}
+              </FormItem>
+            </Col>
+            <Col {...colSpan}>
+              <FormItem {...formItemLayout} label="开课部门">
+                {getFieldDecorator("collegeId")(
+                  <Select placeholder="请选择" allowClear showSearch optionFilterProp="children">
+                    {this.state.departmentList.map((item) => {
+                      return <Option key={item.dwh}>{item.dwmc}</Option>;
+                    })}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+~~~
+
+
 
 列隐藏：
 ellipsis: true,
 
-获取当前登陆用户
+# 获取当前登陆用户
+
+~~~js
 import Cookies from "js-cookie"
-  【
   // userName={this.user.userName} //编号
   // name={this.user.name} //名称
   user = JSON.parse(Cookies.get("user") || "{}")
-  】
   newFormData1.proposerName = JSON.parse(Cookies.get('user') || '{}').name;
   newFormData1.proposerCode = JSON.parse(Cookies.get('user') || '{}').userName;
-
-
---计算总宽度
-import TableUtil from "src/utils/TableUtil";
-scroll: { x: TableUtil.calculateColumsWidthSum(columns) }
-
+~~~
 
 -- 刷新数据注意异步问题
 
---附件id
+# 附件id
+
+~~~
 import { generatorUUIDString } from "src/app/config/commonService"
+~~~
 
---拿到当前页输入值
+# 拿到当前页输入值
+
+~~~
 const { getFieldDecorator,getFieldValue } = this.props.form
+~~~
 
+# 下拉框获取到值和代码 代码集
 
---下拉框获取到值和代码 代码集
-【let factor = option.props.data.scorePercentileValue;】
+~~~js
+let factor = option.props.data.scorePercentileValue;
 let enablSelect = <Select
         showSearch
         style={{ width: "90%" }}
@@ -357,9 +399,11 @@ let enablSelect = <Select
             )
         }
     </Select>
+~~~
 
---修改数据源中的值
-    //【变动后期末备注】回调函数
+# 【后期末备注】回调函数
+
+~~~js
     changePositiveExamRemarkOnChange = (value, record, index) => {
         let dataSource = this.state.dataSource;
         console.log('dataSource', dataSource[index].positiveRemarkCode)
@@ -371,11 +415,13 @@ let enablSelect = <Select
         console.log('dataSource111', dataSource[index].positiveRemarkCode)
     }
 
+~~~
 
-自定义 导出 文件调用
-  import AxiosHelperUtil from "src/utils/AxiosHelperUtil";
-  【
-  //学籍卡导出pdf add by linjitai on 21300708
+# 自定义 导出 文件调用
+
+~~~js
+ import AxiosHelperUtil from "src/utils/AxiosHelperUtil";
+   //学籍卡导出pdf add by linjitai on 21300708
   doPrintPdf = () => {
     this.props.form.validateFields((err, formData) => {
       if (!err) {
@@ -390,80 +436,83 @@ let enablSelect = <Select
       }
     });
   };
-  】
-  【
+~~~
+
+# 文件下载
+
+```js
  import AxiosHelperUtil from "src/utils/AxiosHelperUtil";
- /**
-   * add by linjitai on 21300713
-   * 下载文件，二进制流
-   * @param {*} url 接口url
-   * @param {*} params 查询参数
-   * @param {*} permission 接口权限
-   * @param {*} timeout 超时时间
+static downloadFile = (url, params, permission, timeout) => {
 
-    */
-    static downloadFile = (url, params, permission, timeout) => {
-    
-    downloadFile(url, params, {
-      timeout,
-      showTimeout: true,
-      headers: { permission: permission }
-    }).then((response) => {
-      if (response.status == "200") {
-        // 创建隐藏的a标签
-        const aLink = document.createElement("a");
-        document.body.appendChild(aLink);
-        aLink.style.display = "none";
-        // 设置下载内容
-        const objectUrl = URL.createObjectURL(response.data);
-        aLink.href = objectUrl;
-        // 设置下载文件名
-        const fileName = response.headers["content-disposition"].split(";")[1].split("filename=")[1];
-        aLink.download = decodeURI(fileName);
-        // 下载
-        aLink.click();
-        // 移出标签
-        document.body.removeChild(aLink);
-      } else {
-        //将字符串转换成 Blob对象
-        var blob = response.data;
-        //将Blob 对象转换成字符串
-        var reader = new FileReader();
-        reader.readAsText(blob, "utf-8");
-        reader.onload = function (e) {
-          var obj = JSON.parse(reader.result);
-          message.error("下载失败:" + obj.message);
-        };
-      }
-    });
-  };
-  】
-  【
-  /**
-   * add by linjitai on 21300713
-   * 下载文件，二进制流
-   * @param {*} url 接口url
-   * @param {*} params 查询参数
-   * @param {*} config 
-      */
-
-    export function downloadFile(url, params, config = {}) {
-    
-    return new Promise((resolve, reject) => {
-      axios
-        .post(url, params, { responseType: "blob", ...config })
-        .then(res => {
-          resolve(res);
-        })
-        .catch(err => {
-          reject(err.data);
-        });
-    });
+downloadFile(url, params, {
+  timeout,
+  showTimeout: true,
+  headers: { permission: permission }
+}).then((response) => {
+  if (response.status == "200") {
+    // 创建隐藏的a标签
+    const aLink = document.createElement("a");
+    document.body.appendChild(aLink);
+    aLink.style.display = "none";
+    // 设置下载内容
+    const objectUrl = URL.createObjectURL(response.data);
+    aLink.href = objectUrl;
+    // 设置下载文件名
+    const fileName = response.headers["content-disposition"].split(";")[1].split("filename=")[1];
+    aLink.download = decodeURI(fileName);
+    // 下载
+    aLink.click();
+    // 移出标签
+    document.body.removeChild(aLink);
+  } else {
+    //将字符串转换成 Blob对象
+    var blob = response.data;
+    //将Blob 对象转换成字符串
+    var reader = new FileReader();
+    reader.readAsText(blob, "utf-8");
+    reader.onload = function (e) {
+      var obj = JSON.parse(reader.result);
+      message.error("下载失败:" + obj.message);
+    };
   }
-  】
+});
+};
+  
+```
+```js
+export function downloadFile(url, params, config = {}) {
 
---公共组件 导出【import ExportModal from "src/utils/exportModal";】
-【
+return new Promise((resolve, reject) => {
+  axios
+    .post(url, params, { responseType: "blob", ...config })
+    .then(res => {
+      resolve(res);
+    })
+    .catch(err => {
+      reject(err.data);
+    });
+});
+  }
+```
+# 搜索传参
+
+~~~js
+  // 搜索 
+    onSearch = (params) => {
+        this.params.pageNo = 1;
+        this.params = { ...this.params, ...params };
+        params.param.analyType = '1'
+        params.param.classNo = this.props.classNo
+        this.setState({
+            searchParam: params.param
+        })
+        this.indexQuery();
+    };
+~~~
+
+# 公共组件 导出【import ExportModal from "src/utils/exportModal";】
+
+~~~js
 <DragModal
           className="md-md"
           title="导出"
@@ -514,38 +563,34 @@ let enablSelect = <Select
             />
           </Spin>
         </DragModal>
-】
+~~~
 
-判断表单的值是否改变
-【
-/**
- * 
- * @version 171221 1.0
- * @param {Obj} form 表单的form对象
- * @param {Obj} oldValues 表单旧的值
- */
+# 判断表单的值是否改变
+
+~~~js
 export const isFormChange = (form, oldValues) => {
-    const { getFieldsValue } = form;
-    const newValue = getFieldsValue();
-    const keys = Object.keys(newValue);
-    let isChange = false;
-    // 遍历表单的key
-    for (let index = 0; index < keys.length; index++) {
-    const item = keys[index];
-    if (item && oldValues[item] === null && newValue[item] === "") {
-      break;
-    }
-    if (item && newValue[item] != oldValues[item]) {
-      isChange = true;
-      break;
-    }
-    }
-    return isChange;
+const { getFieldsValue } = form;
+const newValue = getFieldsValue();
+const keys = Object.keys(newValue);
+let isChange = false;
+// 遍历表单的key
+for (let index = 0; index < keys.length; index++) {
+const item = keys[index];
+if (item && oldValues[item] === null && newValue[item] === "") {
+  break;
+}
+if (item && newValue[item] != oldValues[item]) {
+  isChange = true;
+  break;
+}
+}
+return isChange;
 };
-】
+~~~
 
-获取当前开课学年学期
-  【
+# 前开课学年学期
+
+~~~js
     getNowOpenTime = (param) => {
         semesterNow((data) => {
             this.setState(
@@ -558,9 +603,52 @@ export const isFormChange = (form, oldValues) => {
             )
         })
     }
-  】
+~~~
+
+# 数据行中添加弹出框
+
+~~~JS
+      {
+        title: "可用创新学分",
+        dataIndex: "availableCredit",
+        key: "availableCredit",
+        width: 100,
+        align: "center",
+        render: (text, record, index) => {
+          return (<Button onClick={() => { this.showAvailableCreditModal(record) }}
+            style={{
+              marginLeft: '-4px',
+              color: '#1890ff',
+              fontSize: '8px',
+              textDecoration: 'none'
+            }}
+            disabled={false}
+          >{record.availableCredit}</Button>)
+        },
+      },
+      
+~~~
 
 
+
+~~~js
+                {/**教学班*/}
+                <DragModal
+                    title="教学班"
+                    width={780}
+                    destroyOnClose={true}
+                    maskClosable={false}
+                    visible={this.state.classModalVisible}
+                    onCancel={this.showClassModal}
+                    footer={[
+                        <Button key="addCancelkey11" onClick={this.showClassModal}>
+                            取消
+                       </Button>
+                    ]}
+                >
+                    <ClassAnaly ref="ClassAnaly" record={this.state.record} />
+                </DragModal>
+~~~
 
 
 

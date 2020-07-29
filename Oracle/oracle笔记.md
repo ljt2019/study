@@ -1,176 +1,393 @@
-1、Oracle数据库：默认端口号【1521】，默认oracle实例(SID)【orcl】,有些是【xe】
-  1)、概念：相关的操作系统文件（即存储在计算机硬盘上的文件）集合，这些文件组织在一起，成为一个逻辑整体，即Oracle数据库，必须与内存中的实例结合才能对外提供数据管理服务。
+# Oracle数据库
 
-  2)、三个必须文件：
+默认端口号【1521】，默认oracle实例(SID)【orcl】,有些是【xe】
 
-    (1)、Data files：数据的存储仓库
-    (2)、Controller files：记录数据库的名字、存储位置等基本信息，很小的二进制文件，自动生成
-    (3)、Redo Log files：重做日志文件，例如数据恢复
+ # 概念
 
-  3)、三个非必需文件：
-    (1)、Parameter file：参数文件
-    (2)、Password file：口令文件
-    (3)、Archived Log files
+相关的操作系统文件（即存储在计算机硬盘上的文件）集合，这些文件组织在一起，成为一个逻辑整体，即Oracle数据库，必须与内存中的实例结合才能对外提供数据管理服务
+
+# 三个必须文件
+
+- Data files：数据的存储仓库
+- Controller files：记录数据库的名字、存储位置等基本信息，很小的二进制文件，自动生成
+- Redo Log files：重做日志文件，例如数据恢复
+
+# 三个非必需文件
+
+- Parameter file：参数文件
+- Password file：口令文件
+- Archived Log files
+
+# Oracle实例
+
+位于物理内存里的数据结构，它由操作系统的多个后台进程和一个共享的内存池组成，共享的内存池可以被所有进程访问
+
+# Oracle的7个服务
+
+## 必须、建议启动项
+
+1. OracleServiceORCL：数据库基础服务
+2. OracleOraDb11g_home1TNSListener：数据库监听服务，远程访问，使用sqldeveloper，需要打开此服务（建议为启动）
+
+## 非必须启动项
+
+1. OracleJobSchedulerORCL：Oracle调用定时器服务
+2. OracleMTSRecoveryService：服务端控制服务
+3. OracleOraDb11g_home1ClrAgent：oracle数据 .net扩展的一部分
+4. OracleDBConsoleorcl:基于web的控制台服务，在web端管理oracle时需要启动
+5. OracleVssWriterORCL:拷贝写入服务
+
+# SQL Plus 命令
+
+1. 切换用户
+
+   ~~~sql
+   connect username/password
+   ~~~
+
+2. 执行系统doc命令
+
+   ~~~sql
+   【host <doc命令>】，例如：host mkdir c:\AAAAA\oracleTest
+   ~~~
+
+3. 导出记录到本地
+
+   ~~~sql
+   例如:1、【spool c:\AAAAA\oracleTest】2、【select * from book】3、【spool off】
+   ~~~
+
+4. 清屏
+
+   ~~~sql
+   clear screen
+   ~~~
+
+5. 执行SQL脚本语句
+
+   ~~~sql
+   sart c:\AAAAA\oracleTest\test.sql
+   --或
+   @c:\AAAAA\oracleTest\test.sql
+   ~~~
+
+6. 显示表结构
+
+   ~~~sql
+   desc
+   ~~~
+
+7. 显示错误信息
+
+   ~~~sql
+   show err
+   ~~~
+
+8. 退出
+
+   ~~~sql
+   exit
+   ~~~
+
+# 表空间
+
+## 什么是表空间
+
+表空间实际上是数据库上的逻辑存储结构，可以把表空间理解为在数据库中开辟一个空间，用于存放我们的数据库对象，一个数据库可以由一个或多个表空间构成；一个表空间由一个或多个数据文件构成。
 	
-2、oracle实例：位于物理内存里的数据结构，它由操作系统的多个后台进程和一个共享的内存池组成，共享的内存池可以被所有进程访问
+
+## 分类
+
+1. 永久表空间：系统的表空间，存储数据字典：统计信息、表信息、索引信息、用户信息等
+2. 临时表空间：必须存在的一个表空间，数据中专站，当commit后会被清空，数据存储到了永久表空间中
+3. UNDO表空间：commit后想回退，则数据就是存储在这个空间里边
+
+### 创建表空间
+
+***在sys或system用户下操作***
+
+1. 永久
+
+   ~~~sql
+   create tablespace 表空间名 datafile '=xx.dbf' size 10m;
+   ~~~
+
+2. 临时
+
+   ~~~sql
+   create temporary tablespace 表空间名 tempfile 'xx.dbf' size 10m;
+   ~~~
+
+### 查看表空间存放位置 大写
+
+1. 永久
+
+   ~~~
+   select file_name from dba_data_files where tablespace_name = 'TEST1_TABLESPACE';
+   ~~~
+
+2. 临时
+
+   ~~~
+   select file_name from dba_temp_files where tablespace_name = 'TEMPTEST_TABLESPACE';
+   ~~~
+
+3. 查看用户表空间
+
+   ~~~sql
+   --用户表空间
+   select tablespace_name from user_tablespaces;
+   --系统表空间
+   select tablespace_name from dba_tablespaces;
+   ~~~
+
+4. 更改用户默认表空和临时表空间
+
+   ~~~sql
+   alter user 用户名 default tablespace 表空间名 temporary tablespace 临时表空间名;
+   ~~~
+
+### 设置表空间联机
+
+- 联机(表示可读写状态)
+
+  ~~~sql
+  alter tablespace 表空间名 online;
+  ~~~
+
+- 脱机
+
+  ~~~sql
+  alter tablespace 表空间名 offline;
+  ~~~
 
 
-====== oracle的7个服务 ======
+	### 查看表空间的状态
 
-1、OracleServiceORCL：数据库基础服务，必须启动
+~~~sql
+select status from dba_tablespaces where tablespace_name = '表空间名';
+~~~
 
-2、OracleOraDb11g_home1TNSListener：数据库监听服务，远程访问，使用sqldeveloper，需要打开此服务（建议为启动），非必须启动
+## 设置读写状态
 
-3、OracleJobSchedulerORCL：Oracle调用定时器服务，非必须启动
+默认可读可写
 
-4、OracleMTSRecoveryService：服务端控制服务
+~~~sql
+alter tablespace 表空间名 read only/read write;
+~~~
 
-5、OracleOraDb11g_home1ClrAgent：oracle数据 .net扩展的一部分，非必须启动
+## 增加数据文件
 
-6、OracleDBConsoleorcl:基于web的控制台服务，在web端管理oracle时需要启动，非必需启动项
+~~~sql
+alter tablespace 表空间名 add datafile '数据文件名.dbf' size 10m;
+~~~
 
-7、OracleVssWriterORCL:拷贝写入服务，非必需启动项
+## 删除数据文件
 
+不能删除第一个创建的数据文件，如需删除，则要把表空间删除
 
-====== Oracle中常用的SQL Plus 命令 ======
+~~~sql
+alter tablespace 表空间名 drop datafile '数据文件名.dbf';
+~~~
 
-  1)、切换用户：【connect username/password】
+## 删除表空间
 
-  2)、执行系统doc命令：【host <doc命令>】，例如：host mkdir c:\AAAAA\oracleTest
+如何想同时把表空间中的数据文件也连同删除，则需加后边的可选项
 
-  3)、导出记录到本地：【spool】，例如:1、【spool c:\AAAAA\oracleTest】2、【select * from book】3、【spool off】
+~~~sql
+drop tablespace 表空间名 [including contents];
+~~~
 
-  4)、清屏：【clear screen】
+#  用户管理 
 
-  5)、执行SQL脚本语句：【sart c:\AAAAA\oracleTest\test.sql】【@c:\AAAAA\oracleTest\test.sql】
+1. sys：超级用户
 
-  6)、显示表结构：【desc】
+   可以完成数据库得所有管理任务，以sysdb或asysoper的权限登陆
 
-  7)、显示错误信息：【show error】
+   ~~~sql
+   conn sys/Ly123456 @orcl as sysdba;
+   ~~~
 
-  8)、退出：【exit】
+2. system
 
+   用来创建一些用于查看管理信息得表或试图，以普通用户(normal)的权限登陆
 
-====== 表空间 ======
-	
-1、什么是表空间：表空间实际上是数据库上的逻辑存储结构，可以把表空间理解为在数据库中开辟一个空间，用于存放我们的数据库对象，一个数据库可以由一个或多个表空间构成；一个表空间由一个或多个数据文件构成。
-	
-2、分类
+   ~~~sql
+   conn scott/123456 @orcl as normal;
+   ~~~
 
-  1)、永久表空间：系统的表空间，存储数据字典：统计信息、表信息、索引信息、用户信息等
+3. sysman
 
-  2)、临时表空间：必须存在的一个表空间，数据中专站，当commit后会被清空，数据存储到了永久表空间中
+4. scott：示例用户，用来初学者学习
 
-  3)、UNDO表空间：commit后想回退，则数据就是存储在这个空间里边
+5. 查看所有用户
 
-2、创建表空间：在sys/system用户下操作
+   针对管理员的数据字典
 
-  1)、永久：【create tablespace 表空间名 datafile '=xx.dbf' size 10m;】
+   ~~~sql
+   select username from dba_users
+   ~~~
 
-  2)、临时：【create temporary tablespace 表空间名 tempfile 'xx.dbf' size 10m;】
+6. 查看当前账户下的所有表信息
 
-3、查看所创建的表空间的存放位置：大写
+   普通用户的数据字典，查看当前连接用户的用户信息
 
-	1)、永久：【select file_name from dba_data_files where tablespace_name = 'TEST1_TABLESPACE';】
-	
-	2)、临时：【select file_name from dba_temp_files where tablespace_name = 'TEMPTEST_TABLESPACE';】
+   ~~~sql
+   select table_name from user_tables;
+   ~~~
 
-4、查看用户表空间：【select tablespace_name from dba_tablespaces/user_tablespaces;】，分别是用户表空间和系统表空间
+7. 解锁用户
 
-5、更改用户默认表空和临时表空间：【 alter user 用户名 default tablespace 表空间名 temporary tablespace 临时表空间名;】
-	
-6、设置表空间联机（即是可读写状态）或脱机的状态：【alter tablespace 表空间名 online/offline;】
-	查看表空间的状态：【select status from dba_tablespaces where tablespace_name = '表空间名';】
+   ~~~sql
+   alter user 用户名 identified by 用户密码 account unlock;
+   ~~~
 
-7、设置只读或可读写状态(默认是可读写状态)：【alter tablespace 表空间名 read only/read write】
+8. 锁定用户
 
-8、在表空间中增加数据文件：【alter tablespace 表空间名 add datafile '数据文件名.dbf' size 10m;】
+   ~~~sql
+   alter user 用户名 account lock;
+   ~~~
 
-9、删除表空间中的数据文件：【alter tablespace 表空间名 drop datafile '数据文件名.dbf';】
-	注意：不能删除第一个创建的数据文件，如需删除，则要把表空间删除
-	
-10、删除表空间：【drop tablespace 表空间名 [including contents];】
-	注意：如何想同时把表空间中的数据文件也连同删除，则需加后边的可选项
+9. 更改用户密码
 
+   ~~~sql
+   alter user 用户名 identified by 新密码;
+   ~~~
 
-====== 用户管理 ======
+10. 创建用户
 
-1、sys：超级用户，可以完成数据库得所有管理任务，以sysdb或asysoper的权限登陆，【conn sys/123456 @orcl as sysdba;】
+    指定表空间和临时表空间，不然会默认为系统的表空间[USERS/TEMP])：一般创建之后赋予权限
 
-2、system：用来创建一些用于查看管理信息得表或试图，以普通用户(normal)的权限登陆，【conn scott/123456 @orcl as normal;】
+    ~~~sql
+    create user 用户名 identified by 密码 default tablespace 表空间名 temporary tablespace 临时表空间名;
+    --授权
+    grant connect resource to 用户名;
+    --例如
+    create user linjt identified by 123456 default tablespace test_tablespace temporary tablespace temptest_tablespace;
+    ~~~
 
-3、sysman：
+11. 删除用户
 
-4、scott：示例用户，用来初学者学习
+    加上cascade表示级联将用户连接以及其所创建的东西全部删除
 
-5、查看所有用户：【select username from dba_users;】,针对管理员的数据字典
+    ~~~sql
+    drop user 用户名 cascade;
+    ~~~
 
-6、查看当前账户下的所有表信息:【select table_name from user_tables;】，针对普通用户的数据字典，查看当前连接用户的用户信息
+12. 连接切换用户
 
-7、解锁用户：【alter user 用户名 identified by 用户密码 account unlock;】；锁定某用户：【alter user 用户名 account lock;】
+    ~~~sql
+    connect username/password;
+    ~~~
 
-8、更改用户密码：【alter user 用户名 identified by 新密码;】
+# 角色管理
 
-9、创建用户(指定表空间和临时表空间，不然会默认为系统的表空间[USERS/TEMP])：一般创建之后赋予权限：【grant connect resource to 用户名】
+## 角色定义
 
-	【create user 用户名 identified by 密码 default tablespace 表空间名 temporary tablespace 临时表空间名;】
-	
-	例如：【create user linjt identified by 123456 default tablespace test_tablespace temporary tablespace temptest_tablespace;】
-
-10、删除用户：【drop user 用户名 cascade;】，加上cascade表示级联将用户连接以及其所创建的东西全部删除
-
-11、连接切换用户：【connect username/password】
-
-
-====== 角色管理 ======
-
-1、什么事角色：即一组权限的集合；用户可以给角色赋予指定的权限，然后将角色赋给相应的用户。
-	
-2、三种系统的标准的角色：
-
-	1)、CONNECT(连接角色)：只可以登陆Oracle，不可以创建实体和数据库结构
-	
-	2)、RESOURCE(资源角色)：可以创建实体（表、视图...），但不可以创建数据库结构
-	
-	3)、DBA(数据管理员角色)：系统最高权限，只有DBA才可以创建数据库结构
-
-3、创建角色：【create role 角色名;】，例如：【create role manager;】；删除角色：【drop role 角色名;】例如：【drop role manager;】
-	
-4、对于普通用户授予connect和resource权限，DBA授予dba权限
-
-5、给用户赋予角色：【grant 角色 to 用户名1,用户2】 例如：【grant connect to linjt;】
-
-6、收回用户角色：【revoke 角色 from 用户名1,用户2】 例如：【revoke connect from linjt;】
+即一组权限的集合；用户可以给角色赋予指定的权限，然后将角色赋给相应的用户
 
 
-====== 权限管理 ======
+## 	系统的三种角色
 
-1、什么是权限：指执行特定命令或访问数据库对象的权利。
+1. CONNECT(连接角色)：只可以登陆Oracle，不可以创建实体和数据库结构
+2. RESOURCE(资源角色)：可以创建实体（表、视图...），但不可以创建数据库结构
+3. DBA(数据管理员角色)：系统最高权限，只有DBA才可以创建数据库结构
 
-2、权限的作用：数据库安全性(系统安全、数据安全)
 
-3、权限的分类：
 
-  1)、系统权限：允许用户执行特定的数据库动作，如创建表、创建索引、连接实例等；
+## 角色管理
 
-    (1)、查看系统权限：【select * from system_privilege_map;】
-    
-    (2)、授予系统权限的语法格式：【grant privilege [,privilege...] to user [,user|role,public...]】
-         例如：【grant create table,create view to manager;】
-    	 
-    (3)、回收格式：【revoke {privilege|role} from {user|role|public}】
-         例如：【revoke create table,create sequence from manager;】
+1. 创建角色
 
-  2)、对象(实体)权限：允许用户操作一些特定的对象，如读取视图、表，可更新某些列、执行存储过程等(select、update、insert、delete、all)
-    
-	(1)、所有的对象权限：【select * from table_privilege_map;】
-	
-	(2)、授予对象权限的语法格式：【grant object_priv | all [(columns)] on object to {user|role|public}】
-	     例如：【grant select,update,insert on scott.emp to manager2】
-	           【grant manager2 to user01】
-			   
-	(3)、回收格式：【revoke {privilege[,privilege...]|all} on object from {user[,user...]|role|public}】
-	     例如：【revoke all on scott.emp from user01】
+   ~~~sql
+   create role 角色名;
+   ~~~
+
+2. 删除角色
+
+   ~~~sql
+   drop role 角色名;
+   ~~~
+
+3. 赋予角色
+
+   对于普通用户授予connect和resource权限，DBA授予dba权限
+
+   ~~~sql
+   grant 角色 to 用户名1,用户2
+   --例如
+   grant connect to linjt;
+   ~~~
+
+4. 回收角色
+
+   ~~~sql
+   revoke 角色 from 用户名1,用户2
+   --例如
+   revoke connect from linjt;
+   ~~~
+
+# 权限管理 
+
+## 什么是权限
+
+指执行特定命令或访问数据库对象的权利
+
+## 权限的作用
+
+数据库安全性(系统安全、数据安全)
+
+## 权限的分类
+
+1. 系统权限：允许用户执行特定的数据库动作，如创建表、创建索引、连接实例等；
+
+   > 查看系统权限
+   >
+   > ~~~sql
+   > select * from system_privilege_map;
+   > ~~~
+   >
+   > 授予系统权限
+   >
+   > ~~~sql
+   > grant privilege [,privilege...] to user [,user|role,public...];
+   > --例如
+   > grant create table,create view to manager;
+   > ~~~
+   >
+   > 回收权限
+   >
+   > ~~~sql
+   > revoke {privilege|role} from {user|role|public}
+   > --例如
+   > revoke create table,create sequence from manager;
+   > ~~~
+
+2. 对象(实体)权限：允许用户操作一些特定的对象，如读取视图、表，可更新某些列、执行存储过程等(select、update、insert、delete、all)
+
+   > 查看所有对象权限
+   >
+   > ~~~sql
+   > select * from table_privilege_map;
+   > ~~~
+   >
+   > 授予对象权限
+   >
+   > ~~~sql
+   > grant object_priv | all [(columns)] on object to {user|role|public}
+   > --例如
+   > grant select,update,insert on scott.emp to manager2
+   > --
+   > grant manager2 to user01
+   > ~~~
+   >
+   > 回收
+   >
+   > ~~~sql
+   > revoke {privilege[,privilege...]|all} on object from {user[,user...]|role|public}
+   > --例如
+   > revoke all on scott.emp from user01
+   > ~~~
 
 
 ====== 数据定义语言(DDL) ======
@@ -531,18 +748,18 @@
 
 
 ​      
-    --3、分析函数：求每个部门员工数以及总人数
-    SELECT dept.dname, c.count_id 
-    FROM (select distinct emp.deptno deptno,count(emp.deptno) 
-          over(partition by emp.deptno 
-          order by emp.deptno) count_id
-          from emp
-          ) c,
-         dept
-    WHERE dept.deptno = c.deptno(+)
-    UNION ALL
-    SELECT '员工总数', COUNT(emp.deptno) FROM emp;
-    
+​    --3、分析函数：求每个部门员工数以及总人数
+​    SELECT dept.dname, c.count_id 
+​    FROM (select distinct emp.deptno deptno,count(emp.deptno) 
+​          over(partition by emp.deptno 
+​          order by emp.deptno) count_id
+​          from emp
+​          ) c,
+​         dept
+​    WHERE dept.deptno = c.deptno(+)
+​    UNION ALL
+​    SELECT '员工总数', COUNT(emp.deptno) FROM emp;
+​    
     --4、使用rollup函数：求每个部门员工数以及总人数
     select decode(grouping(dept.dname),1,'员工总数',dept.dname)
            ,count(emp.deptno)
