@@ -49,7 +49,7 @@
   14)、启动veth-ns1和veth-ns2
   【ip netns exec ns1 ip link set veth-ns1 up】
   【ip netns exec ns2 ip link set veth-ns2 up】
-  15)、)再次查看，发现state是UP，同时有IP
+  15)、再次查看，发现state是UP，同时有IP
   【ip netns exec ns1 ip a】
   【ip netns exec ns2 ip a】
   16)、此时两个network namespace互相ping一下，发现是可以ping通的

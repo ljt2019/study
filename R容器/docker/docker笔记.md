@@ -201,13 +201,13 @@ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
 1. 运行nginx容器
 
    ```
-   【docker run -d --name 容器名称 -p 容器原本端口:映射端口 镜像名称】
-   【docker run -d --name nginx -p 8080:88 nginx】
+   【docker run -d --name 容器名 -p 容器端口:映射端口 镜像名】
+   【docker run -d --name nginx -p 88:9090 nginx】
    ```
 
    - -d：作为守护进程来执行
    - --name：指定要创建容器的名称
-   - -p：将nginx本身80的端口映射到本地8080
+   - -p：**-p 88:9090**：映射容器服务的 88端口到宿主机的 9090端口。外部可以直接通过宿主机ip:9090访问到 nginx的服务
 
 2. 交互式运行
 
@@ -585,7 +585,7 @@ docker run -d --name tiger-mysql -p 3366:3306 -v /mysql/data:/var/lib/mysql -e M
   \# argument is a set of non-required options.
   config.vm.synced_folder "C://AAAAA//all-code//async-servlet-demo", "/tmp/test"
 
-# 创建 mysql高可用集群***pxc***
+# mysql高可用集群***pxc***
 
 ## 集群创建
 
@@ -604,13 +604,13 @@ docker run -d --name tiger-mysql -p 3366:3306 -v /mysql/data:/var/lib/mysql -e M
 
 3. 创建一个单独的网段，给mysql数据库集群使用
 
-   ~~~
+   ~~~shell
    docker network create --subnet=172.19.0.0/24 pxc-net
    ~~~
 
 4. 创建3个数据挂载点**volume**
 
-   ~~~
+   ~~~shell
    docker volume create --name mysql_v1
    docker volume create --name mysql_v2
    docker volume create --name mysql_v3
@@ -618,23 +618,290 @@ docker run -d --name tiger-mysql -p 3366:3306 -v /mysql/data:/var/lib/mysql -e M
 
 5. 运行三个PXC容器
 
-   ~~~
+   ~~~shell
    docker run -d --name=mysql_node1 -p 3301:3306 -v mysql_v1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.2 pxc
    ~~~
 
    注意：**下边两个节点(mysql_node2和mysql_node3)加入到mysql_node1节点中**
 
-   ~~~
+   ~~~shell
    docker run -d --name=mysql_node2 -p 3302:3306 -v v2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=mysql_node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.3 pxc
    ~~~
 
-   ~~~
+   ~~~powershell
    docker run -d --name=mysql_node3 -p 3303:3306 -v v3:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -e CLUSTER_JOIN=mysql_node1 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=123456 --privileged  --net=pxc-net --ip 172.19.0.4 pxc
    ~~~
 
 ## 负载均衡[**haproxy**](https://hub.docker.com/_/haproxy)
 
-1. 创建 haproxy 配置文件
+### 拉取镜像
+
+~~~shell
+docker pull haproxy
+~~~
+
+### haproxy 配置文件
+
+这里使用 bind mounting 的方式，配置文件挂载在宿主机中
+
+在宿主机中创建文件夹和***haproxy.cfg***文件
+
+~~~shell
+mkdir /tmp/haproxy
+touch haproxy.cfg
+~~~
+
+***haproxy.cfg***内容如下
+
+~~~yaml
+global
+	#工作目录，这边要和创建容器指定的目录对应
+	chroot /usr/local/etc/haproxy
+	#日志文件
+	log 127.0.0.1 local5 info
+	#守护进程运行
+	daemon
+defaults
+	log	global
+	mode	http
+	#日志格式
+	option	httplog
+	#日志中不记录负载均衡的心跳检测记录
+	option	dontlognull
+ 	#连接超时（毫秒）
+	timeout connect 5000
+ 	#客户端超时（毫秒）
+	timeout client  50000
+	#服务器超时（毫秒）
+ 	timeout server  50000
+
+    #监控界面	
+    listen  admin_stats
+	#监控界面的访问的IP和端口
+	bind  0.0.0.0:8888
+	#访问协议
+ 	mode        http
+	#URI相对地址
+ 	stats uri   /dbs_monitor
+	#统计报告格式
+ 	stats realm     Global\ statistics
+	#登陆帐户信息
+ 	stats auth  admin:admin
+	#数据库负载均衡
+	listen  proxy-mysql
+	#访问的IP和端口，haproxy开发的端口为3306
+ 	#假如有人访问haproxy的3306端口，则将请求转发给下面的数据库实例
+	bind  0.0.0.0:3306  
+ 	#网络协议
+	mode  tcp
+	#负载均衡算法（轮询算法）
+	#轮询算法：roundrobin
+	#权重算法：static-rr
+	#最少连接算法：leastconn
+	#请求源IP算法：source 
+ 	balance  roundrobin
+	#日志格式
+ 	option  tcplog
+	#在MySQL中创建一个没有权限的haproxy用户，密码为空。
+	#Haproxy使用这个账户对MySQL数据库心跳检测
+ 	option  mysql-check user haproxy
+	server  MySQL_1 172.19.0.2:3306 check weight 1 maxconn 2000  
+ 	server  MySQL_2 172.19.0.3:3306 check weight 1 maxconn 2000  
+	server  MySQL_3 172.19.0.4:3306 check weight 1 maxconn 2000 
+	#使用keepalive检测死链
+ 	option  tcpka
+~~~
+
+### 运行容器
+
+~~~shell
+docker run -it -d -p 8888:8888 -p 3304:3306 -v /tmp/haproxy:/usr/local/etc/haproxy --name haproxy_mysql --privileged --net=pxc-net haproxy
+~~~
+
+### 根据haproxy.cfg文件启动 haproxy
+
+~~~shell
+docker exec -it haproxy_mysql bash
+haproxy -f /usr/local/etc/haproxy/haproxy.cfg
+~~~
+
+### 连接 haproxy_mysql
+
+~~~
+  ip:192.168.3.10
+  port:3304
+  user:root
+  password:123456
+~~~
+
+### 监控网页
+
+【http://192.168.3.10:8888/dbs_monitor】，账户密码都是 admin
+
+### 负载均衡链接授权
+
+  CREATE USER 'haproxy'@'%' IDENTIFIED BY '';
+[小技巧[如果创建失败，可以先输入一下命令]:
+    drop user 'haproxy'@'%';
+    flush privileges;
+    CREATE USER 'haproxy'@'%' IDENTIFIED BY '';
+]
+
+# 实战-Nginx + Spring Boot集群+  MySQL
+
+## [创建一个单独的网段](https://docs.docker.com/engine/reference/commandline/network_create/)
+
+~~~shell
+docker network create --subnet=172.18.0.0/24 nginx-net
+~~~
+
+## MySQL容器
+
+- 创建volume数据卷挂载
+
+  ~~~shell
+  docker volume create my-mysql-v
+  ~~~
+
+- 创建mysql容器，并指定到网段
+
+  ~~~shell
+  docker run -d --name my-mysql -v my-mysql-v:/var/lib/mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=123456 --net=nginx-net --ip 172.18.0.5 mysql
+  ~~~
+
+- datagrip连接，执行.mysql文件
+
+  >
+  >
+  >  name:my-mysql
+  >  ip:centos-ip
+  >  端口:3307
+  >  user:root
+  >  password:123456
+  >
+  >>
+  >>
+  >>~~~sql
+  >>create table t_user
+  >>(
+  >>	id int not null primary key,
+  >>	username varchar(50) not null,
+  >>	password varchar(50) not null,
+  >>	number varchar(100) not null
+  >>);
+  >>~~~
+
+## 构建镜像
+
+- 将 springboot-mybatis 打成 jar 包：**springboot-mybatis.jar**
+
+  在同一个网络中，bridge  nginx-net   容器之间不仅可以通过ip访问，而且可以通过名称 my-mysql
+
+  ~~~
+  url: jdbc:mysql://my-mysql:3306/db_gupao_springboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+  ~~~
+
+- 创建目录并进入
+
+  ~~~shell
+  mkdir springboot-mybatis-nginx
+  cd springboot-mybatis-nginx
+  ~~~
+
+- 将springboot-mybatis.jar传到该目录下
+
+- 创**Dockerfile**文件，内容如下
+
+  ~~~
+  FROM openjdk:8
+  MAINTAINER tiger2019
+  LABEL name="springboot-mybatis-nginx" version="1.0" author="tiger2019"
+  COPY springboot-mybatis.jar springboot-mybatis-nginx.jar
+  CMD ["java","-jar","springboot-mybatis-nginx.jar"]
+  ~~~
+
+- 基于Dockerfile构建images
+
+  ~~~shell
+  docker build -t springboot-mybatis-nginx-image .
+  ~~~
+
+- 基于images创建容器，运行项目，并指定网段内ip
+
+  ~~~shell
+  docker run -d --name sbm1 -p 8091:8080 --net=nginx-net --ip 172.18.0.11 springboot-mybatis-nginx-image
+  ~~~
+
+- 查看启动日志
+
+  ~~~
+  docker logs sbm1
+  ~~~
+
+- 在win中访问项目：http://192.168.3.13:8091/user/listall
+
+- 创建多个项目容器
+
+  ~~~shell
+  docker run -d --name sbm2 -p 8092:8080 --net=nginx-net --ip 172.18.0.12 springboot-mybatis-nginx-image
+  docker run -d --name sbm3 -p 8093:8080 --net=nginx-net --ip 172.18.0.13 springboot-mybatis-nginx-image
+  ~~~
+
+## Nginx 配置
+
+1. 创建目录文件
+
+   >~~~shell
+   >mkdir -r /tmp/nginx
+   >touch nginx.conf
+   >~~~
+
+   ~~~
+   user nginx;
+   worker_processes  1;
+   events {
+       worker_connections  1024;
+   }
+   http {
+       include       /etc/nginx/mime.types;
+       default_type  application/octet-stream;
+       sendfile        on;
+       keepalive_timeout  65; 
+   
+       server {
+           listen 80;
+           location / {
+            proxy_pass http://balance;
+           }
+       }
+       
+       upstream balance{  
+   	    #均衡配置
+   	    #这里可以通过名字来指定
+           #server sbm1:8080;
+           #server sbm2:8080;
+           #server sbm3:8080;
+           server 172.18.0.11:8080;  
+           server 172.18.0.12:8080;
+           server 172.18.0.13:8080;
+       }
+       include /etc/nginx/conf.d/*.conf;
+   }
+   ~~~
+
+2. 创建nginx容器
+
+   ~~~
+   docker run -d --name my-nginx -p 80:80 -v /tmp/nginx/nginx.conf:/etc/nginx/nginx.conf --network=nginx-net --ip 172.18.0.10 nginx
+   ~~~
+
+3. win浏览器访问，省略端口号
+
+   ~~~
+   ip[centos]/user/listall
+   ~~~
+
+
 
 # temp
 
