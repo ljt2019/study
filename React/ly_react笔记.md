@@ -652,6 +652,38 @@ return isChange;
 
 
 
+# 代码器选择器
+
+~~~js
+              import { SearchBox, TeacheDeptSelector, CodeSelector } from "components";
+              <Col {...colSpan}>
+                <FormItem {...formItemLayout} label="所属单位">
+                  {getFieldDecorator("department")(<TeacheDeptSelector />)}
+                </FormItem>
+              </Col>
+             <Col {...colSpan}>
+              <FormItem {...formItemLayout} label="课程属性：">
+                {getFieldDecorator("courseAttr")(
+                  <CodeSelector CODE="XTGL_KCSXDMJ" />
+                )}
+              </FormItem>
+            </Col>
+            <Col {...colSpan}>
+              <FormItem {...formItemLayout} label="课程性质：">
+                {getFieldDecorator("courseNature")(
+                  <CodeSelector CODE="XTGL_KCXZDMJ" />
+                )}
+              </FormItem>
+            </Col>
+            <Col {...colSpan}>
+              <FormItem {...formItemLayout} label="课程类型：">
+                {getFieldDecorator("courseType")(
+                  <CodeSelector CODE="XTGL_KCBJDMJ" />
+                )}
+              </FormItem>
+            </Col>
+~~~
+
 
 
 
