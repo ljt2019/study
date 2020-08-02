@@ -59,57 +59,6 @@ CMD ["flask", "run"]
 10、访问测试：【ip[centos]:5000】
 
 
-====== 搭建虚拟机分布式环境 ======
-1、新建 swarm-docker-centos7 文件夹，创建 Vagrantfile ，内容如下
-
-【
-boxes = [
-    {
-        :name => "manager-node",
-        :eth1 => "192.168.3.11",
-        :mem => "1024",
-        :cpu => "1"
-    },
-    {
-        :name => "worker01-node",
-        :eth1 => "192.168.3.12",
-        :mem => "1024",
-        :cpu => "1"
-    },
-    {
-        :name => "worker02-node",
-        :eth1 => "192.168.3.13",
-        :mem => "1024",
-        :cpu => "1"
-    }
-]
-
-Vagrant.configure(2) do |config|
-
-  config.vm.box = "centos/7"
-  
-   boxes.each do |opts|
-      config.vm.define opts[:name] do |config|
-        config.vm.hostname = opts[:name]
-        config.vm.provider "vmware_fusion" do |v|
-          v.vmx["memsize"] = opts[:mem]
-          v.vmx["numvcpus"] = opts[:cpu]
-        end
-
-        config.vm.provider "virtualbox" do |v|
-          v.customize ["modifyvm", :id, "--memory", opts[:mem]]
-		  v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
-		  v.customize ["modifyvm", :id, "--name", opts[:name]]
-        end
-
-        config.vm.network :public_network, ip: opts[:eth1]
-      end
-  end
-
-end
-】
-
-
 2、进入到对应的centos里面，使得root账户能够登陆，从而使用XShell登陆
 
   vagrant ssh manager-node/worker01-node/worker02-node
