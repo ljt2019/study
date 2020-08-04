@@ -1,57 +1,78 @@
+# in ä¸ exists
 
-1¡¢¡¾in ÊÊºÏÓÚÍâ±í´ó¶øÄÚ±íĞ¡µÄÇé¿ö£¬exists ÊÊºÏÓÚÍâ±íĞ¡¶øÄÚ±í´óµÄÇé¿ö¡£µ«notÊ±£¬ÎŞÂÛÄÇ¸ö±í´ó£¬ÓÃnot exists¶¼±Ènot inÒª¿ì¡£¡¿
+in é€‚åˆäºå¤–è¡¨å¤§è€Œå†…è¡¨å°çš„æƒ…å†µï¼Œexists é€‚åˆäºå¤–è¡¨å°è€Œå†…è¡¨å¤§çš„æƒ…å†µã€‚ä½†notæ—¶ï¼Œæ— è®ºé‚£ä¸ªè¡¨å¤§ï¼Œç”¨not existséƒ½æ¯”not inè¦å¿«ã€‚
 
-	ÀıÈç£º±íA£¨Ğ¡±í£©£¬±íB£¨´ó±í£©
+```sql
+# ä¾‹å¦‚ï¼šè¡¨Aï¼ˆå°è¡¨ï¼‰ï¼Œè¡¨Bï¼ˆå¤§è¡¨ï¼‰
+
+
+# æ•ˆç‡é«˜ï¼Œç”¨åˆ°äº†Bè¡¨ä¸Šbbåˆ—çš„ç´¢å¼•
+select * from A where exists(select bb from B where bb=A.aa);
+# æ•ˆç‡ä½ï¼Œç”¨åˆ°äº†Aè¡¨ä¸Šaaåˆ—çš„ç´¢å¼•
+select * from A where aa in (select bb from B);
+
+# æ•ˆç‡é«˜ï¼Œç”¨åˆ°äº†Bè¡¨ä¸Šbbåˆ—çš„ç´¢å¼•
+select * from B where bb in (select aa from A);
+# æ•ˆç‡ä½ï¼Œç”¨åˆ°äº†Aè¡¨ä¸Šaaåˆ—çš„ç´¢å¼•
+select * from B where exists(select aa from A where aa=B.bb);
+
+# ç¬¦åˆæƒ…å†µåˆ™è¿”å›trueï¼Œä¸ç¬¦åˆåˆ™è¿”å›false
+SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member_report_id = #{reportId} AND _view.delete_flag = 0);
+```
+
+# æ¡ä»¶è¿ç®—ç¬¦
+
+1. case when
+
+   ~~~sql
+   (case when type_id = 'SALE' then 'é”€å”®' when type_id = 'PURCHASE' then 'é‡‡è´­' else 'å…¶ä»–' end) as orderType;
+   ~~~
+
+2. if(expr1,expr2,expr3)ä¸ decode()
+
+
+
+ã€ä¸æˆ‘ä»¬å¸¸ç”¨çš„ä¸‰ç›®è¿ç®—ç±»ä¼¼ã€‚expr1æ˜¯ä¸€ä¸ªè¡¨è¾¾å¼ï¼Œå¦‚æœtrueï¼Œè¿”å›expr2å¦åˆ™ä¸ºexpr3ã€‘
+
+   ã€ä¸‰ç§é€‰æ‹©æ¡ä»¶ä»¥ä¸Š case whenã€‘
+
+	æ–¹å¼1ï¼šå…¶ä¸­value=compare-valueåˆ™è¿”å›resultã€‚
+	case when _type.order_type_id = 'SALE' then 'é”€å”®' when _type.order_type_id = 'PURCHASE' then 'é‡‡è´­' else 'å…¶ä»–' end as orderType;
 	
-	select * from A where aa in (select bb from B) Ğ§ÂÊµÍ£¬ÓÃµ½ÁËA±íÉÏaaÁĞµÄË÷Òı£»
-	select * from A where exists(select bb from B where bb=A.aa) Ğ§ÂÊ¸ß£¬ÓÃµ½ÁËB±íÉÏbbÁĞµÄË÷Òı¡£ 
+	æ–¹å¼2:å¦‚æœç¬¬ä¸€ä¸ªæ¡ä»¶ä¸ºçœŸï¼Œè¿”å›resultã€‚å¦‚æœæ²¡æœ‰åŒ¹é…çš„resultå€¼ï¼Œé‚£ä¹ˆç»“æœåœ¨ELSEåçš„resultè¢«è¿”å›ã€‚å¦‚æœæ²¡æœ‰ELSEéƒ¨åˆ†ï¼Œé‚£ä¹ˆNULLè¢«è¿”å›ã€‚ 
+	select case _type.order_type_id when 'SALE' then "é”€å”®" when 'PURCHASE' then "é‡‡è´­" else "å…¶ä»–" end as orderType;
 
-	select * from B where bb in (select aa from A) Ğ§ÂÊ¸ß£¬ÓÃµ½ÁËB±íÉÏbbÁĞµÄË÷Òı£»
-	select * from B where exists(select aa from A where aa=B.bb) Ğ§ÂÊµÍ£¬ÓÃµ½ÁËA±íÉÏaaÁĞµÄË÷Òı¡£
+3ã€ã€ifnull(expr1,expr2)ï¼Œå¦‚æœexpr1ä¸æ˜¯nullï¼Œifnull()è¿”å›expr1ï¼Œå¦åˆ™å®ƒè¿”å›expr2ã€‚ifnull()è¿”å›ä¸€ä¸ªæ•°å­—æˆ–å­—ç¬¦ä¸²å€¼ï¼Œå–å†³äºå®ƒè¢«ä½¿ç”¨çš„ä¸Šä¸‹æ–‡ç¯å¢ƒã€‚ã€‘
 
-	·ûºÏÇé¿öÔò·µ»Øtrue£¬²»·ûºÏÔò·µ»Øfalse£ºSELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member_report_id = #{reportId} AND _view.delete_flag = 0)
-
-2¡¢¡¾if(expr1,expr2,expr3)ÓëÎÒÃÇ³£ÓÃµÄÈıÄ¿ÔËËãÀàËÆ¡£expr1ÊÇÒ»¸ö±í´ïÊ½£¬Èç¹ûtrue£¬·µ»Øexpr2·ñÔòÎªexpr3¡¿
-
-   ¡¾ÈıÖÖÑ¡ÔñÌõ¼şÒÔÉÏ case when¡¿
-   
-	·½Ê½1£ºÆäÖĞvalue=compare-valueÔò·µ»Øresult¡£
-	case when _type.order_type_id = 'SALE' then 'ÏúÊÛ' when _type.order_type_id = 'PURCHASE' then '²É¹º' else 'ÆäËû' end as orderType;
-	
-	·½Ê½2:Èç¹ûµÚÒ»¸öÌõ¼şÎªÕæ£¬·µ»Øresult¡£Èç¹ûÃ»ÓĞÆ¥ÅäµÄresultÖµ£¬ÄÇÃ´½á¹ûÔÚELSEºóµÄresult±»·µ»Ø¡£Èç¹ûÃ»ÓĞELSE²¿·Ö£¬ÄÇÃ´NULL±»·µ»Ø¡£ 
-	select case _type.order_type_id when 'SALE' then "ÏúÊÛ" when 'PURCHASE' then "²É¹º" else "ÆäËû" end as orderType;
-	
-3¡¢¡¾ifnull(expr1,expr2)£¬Èç¹ûexpr1²»ÊÇnull£¬ifnull()·µ»Øexpr1£¬·ñÔòËü·µ»Øexpr2¡£ifnull()·µ»ØÒ»¸öÊı×Ö»ò×Ö·û´®Öµ£¬È¡¾öÓÚËü±»Ê¹ÓÃµÄÉÏÏÂÎÄ»·¾³¡£¡¿
-
-4¡¢¡¾concat(str1,str2,...) ÈçÓĞÈÎºÎÒ»¸ö²ÎÊıÎªnull£¬Ôò·µ»ØÖµÎª null¡¿¡¾concat_ws(str1,str2,...) º¯Êı»áºöÂÔÈÎºÎ·Ö¸ô·û²ÎÊıºóµÄ null Öµ¡¿
+4ã€ã€concat(str1,str2,...) å¦‚æœ‰ä»»ä½•ä¸€ä¸ªå‚æ•°ä¸ºnullï¼Œåˆ™è¿”å›å€¼ä¸º nullã€‘ã€concat_ws(str1,str2,...) å‡½æ•°ä¼šå¿½ç•¥ä»»ä½•åˆ†éš”ç¬¦å‚æ•°åçš„ null å€¼ã€‘
 		
-5¡¢¡¾group_concat([distinct] ÒªÁ¬½ÓµÄ×Ö¶Î [order by asc/desc ÅÅĞò×Ö¶Î] [separator '·Ö¸ô·û'])¡¿
+5ã€ã€group_concat([distinct] è¦è¿æ¥çš„å­—æ®µ [order by asc/desc æ’åºå­—æ®µ] [separator 'åˆ†éš”ç¬¦'])ã€‘
 
-	Á¬½ÓÆğÀ´µÄ×Ö¶ÎÈç¹ûÊÇintĞÍ£¬Ò»¶¨Òª×ª»»³ÉcharÔÙÆ´ÆğÀ´£¬·ñÔòÔÚÄãÖ´ĞĞºó·µ»ØµÄ½«²»ÊÇÒ»¸ö¶ººÅ¸ô¿ªµÄ´®£¬¶øÊÇbyte[]¡£
-	select group_concat(CAST(id as char)) from t_dep ·µ»Ø¶ººÅ¸ô¿ªµÄ´®
-	select group_concat(Convert(id , char)) from t_dep ·µ»Ø¶ººÅ¸ô¿ªµÄ´®  
-		
-6¡¢Ä£ºıËÑË÷¡¾×¢Òâ£ºÊı×ÖºÍ×Ö·û´®Á¬½ÓÓ¦¸ÃÓÃCONCAT()¡¿
+	è¿æ¥èµ·æ¥çš„å­—æ®µå¦‚æœæ˜¯intå‹ï¼Œä¸€å®šè¦è½¬æ¢æˆcharå†æ‹¼èµ·æ¥ï¼Œå¦åˆ™åœ¨ä½ æ‰§è¡Œåè¿”å›çš„å°†ä¸æ˜¯ä¸€ä¸ªé€—å·éš”å¼€çš„ä¸²ï¼Œè€Œæ˜¯byte[]ã€‚
+	select group_concat(CAST(id as char)) from t_dep è¿”å›é€—å·éš”å¼€çš„ä¸²
+	select group_concat(Convert(id , char)) from t_dep è¿”å›é€—å·éš”å¼€çš„ä¸²  
+
+6ã€æ¨¡ç³Šæœç´¢ã€æ³¨æ„ï¼šæ•°å­—å’Œå­—ç¬¦ä¸²è¿æ¥åº”è¯¥ç”¨CONCAT()ã€‘
 		<if test="param.deviceIdentity != null and param.deviceIdentity != '' ">
 			AND device.device_identity LIKE CONCAT('%', #{param.deviceIdentity}, '%')
 		</if>
-		//È«Ä£ºı²éÑ¯,Ğ§ÂÊ¸ü¸ß
+		//å…¨æ¨¡ç³ŠæŸ¥è¯¢,æ•ˆç‡æ›´é«˜
 		<if test="mallId !=null and mallId !='' ">
 			AND instr(mall_id,#{mallId}) > 0
 	    </if>
 
-ÅĞ¶Ï×Ö·ûÊÇ·ñÏàµÈ		
+åˆ¤æ–­å­—ç¬¦æ˜¯å¦ç›¸ç­‰		
   <if test="grade!= null and grade!= '' and grade == '1'.toString()">
       id = ''
   </if>
 
-7¡¢Á½Ê±¼äÖ®²î£¬·µ»ØSECONDÊı¡¾select TIMESTAMPDIFF(SECOND,start_time,end_time)¡¿
+7ã€ä¸¤æ—¶é—´ä¹‹å·®ï¼Œè¿”å›SECONDæ•°ã€select TIMESTAMPDIFF(SECOND,start_time,end_time)ã€‘
 		
-7¡¢¸ñÊ½»¯Ê±¼ä¡¾date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr¡¿ @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")¼ÇµÃÊ±Çø×ª»»
+7ã€æ ¼å¼åŒ–æ—¶é—´ã€date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStrã€‘ @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")è®°å¾—æ—¶åŒºè½¬æ¢
 
-8¡¢¡¾STRCMP(str1, str2):±È½ÏÁ½¸ö×Ö·û´®£¬Èç¹ûÕâÁ½¸ö×Ö·û´®ÏàµÈ·µ»Ø0£¬Èç¹ûµÚÒ»¸ö²ÎÊıÊÇ¸ù¾İµ±Ç°µÄÅÅĞòĞ¡ÓÚµÚ¶ş¸ö²ÎÊıË³Ğò·µ»Ø-1£¬·ñÔò·µ»Ø1¡£¡¿
+8ã€ã€STRCMP(str1, str2):æ¯”è¾ƒä¸¤ä¸ªå­—ç¬¦ä¸²ï¼Œå¦‚æœè¿™ä¸¤ä¸ªå­—ç¬¦ä¸²ç›¸ç­‰è¿”å›0ï¼Œå¦‚æœç¬¬ä¸€ä¸ªå‚æ•°æ˜¯æ ¹æ®å½“å‰çš„æ’åºå°äºç¬¬äºŒä¸ªå‚æ•°é¡ºåºè¿”å›-1ï¼Œå¦åˆ™è¿”å›1ã€‚ã€‘
 		
-8¡¢ÒÀ¾İÊ±¼ä½øĞĞ·Ö×é£¬²¢°´Ê±¼ä½øĞĞ½µĞòÅÅĞò¡¾·Ö×é²éÑ¯¡¿
+8ã€ä¾æ®æ—¶é—´è¿›è¡Œåˆ†ç»„ï¼Œå¹¶æŒ‰æ—¶é—´è¿›è¡Œé™åºæ’åºã€åˆ†ç»„æŸ¥è¯¢ã€‘
 	select t.* from
 		(select r.mall_id
 		,sum(r.sport_metre) as sportMetre
@@ -60,7 +81,7 @@
 		from mem_sport_record r where r.mall_id=#{mallId} and r.create_time>=#{startTime} and r.create_time<=#{endTime} group by createDate) t 
 	order by t.createDate asc;	
 
-9¡¢ÅĞ¿Õ¼¯ºÏÊÇ·ñÎª¿Õ£º¡¾!param.statuses.isEmpty()¡¿£¬±éÀú
+9ã€åˆ¤ç©ºé›†åˆæ˜¯å¦ä¸ºç©ºï¼šã€!param.statuses.isEmpty()ã€‘ï¼Œéå†
 	<if test="statuses != null and !statuses.isEmpty()">
          and da.status in
         <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
@@ -68,13 +89,13 @@
         </foreach>
     </if>
 	
-10¡¢¡¾Ê¡ÊĞÇø¹ØÁª¡¿
+10ã€ã€çœå¸‚åŒºå…³è”ã€‘
 		LEFT JOIN pub_region province ON province.id = xx.provinceId
 		LEFT JOIN pub_region city ON city.id = xx.cityId
 		LEFT JOIN pub_region region ON region.id = xx.regionId
 
-11¡¢·µ»Ø¼¯ºÏlist,list¼¯ºÏÀï±ßÇ¶Ì×list¼¯ºÏ
-	//¶ÔÓ¦µÄOutDTO£ºGymDeviceOutDTOÊôĞÔÈçÏÂ
+11ã€è¿”å›é›†åˆlist,listé›†åˆé‡Œè¾¹åµŒå¥—listé›†åˆ
+	//å¯¹åº”çš„OutDTOï¼šGymDeviceOutDTOå±æ€§å¦‚ä¸‹
 	private String gymId;
 	private String address;
 	private String gymName;
@@ -82,8 +103,8 @@
 	//......
 	private List<GymDeviceDetailOutDTO> gymDeviceList = new ArrayList<GymDeviceDetailOutDTO>();
 
-   1)¡¢Ê×ÏÈĞ´Ò»¸ö resultMap¡¾·µ»Ølist¼¯ºÏ¾ÍĞèÒªĞ´Õâ¸öresultMap¡¿
-	<!-- ¸ù¾İ³¡¹İ²éÑ¯³¡¹İÉè±¸½á¹û¼¯ -->
+   1)ã€é¦–å…ˆå†™ä¸€ä¸ª resultMapã€è¿”å›listé›†åˆå°±éœ€è¦å†™è¿™ä¸ªresultMapã€‘
+	<!-- æ ¹æ®åœºé¦†æŸ¥è¯¢åœºé¦†è®¾å¤‡ç»“æœé›† -->
 	<resultMap id="GymRegionOutDTOMap" type="cn.healthmall.sail.base.dto.GymDeviceOutDTO"> 
 		<id column="gymId" property="gymId"/>
 		<result column="gymName" property="gymName"/>
@@ -102,7 +123,7 @@
 		</collection>
 	</resultMap>
 	
-   2)¡¢½Ó×Å 
+   2)ã€æ¥ç€ 
 	<select id="queryGymDeriveList" resultMap="GymRegionOutDTOMap" parameterType="cn.healthmall.sail.base.dto.GymInDTO">
 		SELECT temp.* from (
 			SELECT 
@@ -110,8 +131,8 @@
 				,gym.name as gymName
 				,gym.address as address
 				,CASE  
-				WHEN gym.type = 0 then 'Ğ¡ÏóÔË¶¯'
-				WHEN gym.type = 1 then 'Éú»î¹İ'
+				WHEN gym.type = 0 then 'å°è±¡è¿åŠ¨'
+				WHEN gym.type = 1 then 'ç”Ÿæ´»é¦†'
 				END as gymType
 				,dev.device_identity AS deviceIdentity
 				,dev.device_no AS deviceNo
@@ -134,8 +155,8 @@
 		ORDER BY temp.deviceNo
 	</select>
 	
-Á½¸öÀı×Ó£º
-	<!-- »ñÈ¡Ê¡·İĞÅÏ¢ÁĞ±í ×¢Òâ£ºµöÓãµºÏÂ±ßÃ»ÓĞÊĞÇø£¬Ã»ÓĞ²é³ö -->
+ä¸¤ä¸ªä¾‹å­ï¼š
+	<!-- è·å–çœä»½ä¿¡æ¯åˆ—è¡¨ æ³¨æ„ï¼šé’“é±¼å²›ä¸‹è¾¹æ²¡æœ‰å¸‚åŒºï¼Œæ²¡æœ‰æŸ¥å‡º -->
 	<resultMap id="RegionInfoOutDTOMap"
 		type="cn.healthmall.sail.activity.dto.CityListOutDTO">
 		<id column="provinceId" property="provinceId" />
@@ -158,7 +179,7 @@
 		AND _region.level_type = 1
 	</select>
 	
-	<!-- »ñÈ¡³¡¹İÁĞ±í ´«Èë¾­Î³¶È£¨³ÇÊĞid£© -->
+	<!-- è·å–åœºé¦†åˆ—è¡¨ ä¼ å…¥ç»çº¬åº¦ï¼ˆåŸå¸‚idï¼‰ -->
 	<resultMap id="GymListOutDTOMap" type="cn.healthmall.sail.activity.dto.GymListOutDTO">
 		<id column="regionId" property="regionId" />
 		<result column="regionName" property="regionName" />
@@ -191,9 +212,9 @@
 		ORDER BY _gym.name
 	</select>
 
-12¡¢·µ»ØtxtÎÄ±¾ĞÅÏ¢¡¾´øWith,ÔÚxmlÖĞ¡¿£ºList<Medal> selectByExampleWithBLOBs(MedalExample example);
+12ã€è¿”å›txtæ–‡æœ¬ä¿¡æ¯ã€å¸¦With,åœ¨xmlä¸­ã€‘ï¼šList<Medal> selectByExampleWithBLOBs(MedalExample example);
 
-13¡¢¡¾union all¡¿µÄÓÃ·¨£¬Á½¸ö±í×Ö¶ÎË³ĞòÒªÒ»ÖÂ
+13ã€ã€union allã€‘çš„ç”¨æ³•ï¼Œä¸¤ä¸ªè¡¨å­—æ®µé¡ºåºè¦ä¸€è‡´
 	<select id="list" parameterType="java.lang.String" resultType="cn.healthmall.sail.member.dto.ArSportRecordOutDTO">
 		SELECT a.* from (
 			SELECT
@@ -243,37 +264,37 @@
 		ORDER BY a.startTime DESC
 	</select>
 	
-15¡¢inert into [key´æÔÚµÄ¾Í±¨´í] / replace into [key´æÔÚµÄ¾Í¸üĞÂ]
+15ã€inert into [keyå­˜åœ¨çš„å°±æŠ¥é”™] / replace into [keyå­˜åœ¨çš„å°±æ›´æ–°]
 
-16¡¢´´½¨Ë÷Òı£º¡¾create unique index idx_sys_users_username on sys_users(username);¡¿£¬Æµ·±²éÑ¯µÄ×Ö¶Î´´½¨Ë÷ÒıÀ´Ìá½»ĞÔÄÜ¡£
+16ã€åˆ›å»ºç´¢å¼•ï¼šã€create unique index idx_sys_users_username on sys_users(username);ã€‘ï¼Œé¢‘ç¹æŸ¥è¯¢çš„å­—æ®µåˆ›å»ºç´¢å¼•æ¥æäº¤æ€§èƒ½ã€‚
 
-17¡¢²¼¶ûÀàĞÍ£ºavailable bool default false, <-sql-> `available` tinyint(1) DEFAULT '0', <-ÊµÌåÀà-> private Boolean available = Boolean.FALSE;
+17ã€å¸ƒå°”ç±»å‹ï¼šavailable bool default false, <-sql-> `available` tinyint(1) DEFAULT '0', <-å®ä½“ç±»-> private Boolean available = Boolean.FALSE;
 
-18¡¢ÔÚ²éÑ¯Óï¾äÖĞÊ¹ÓÃ²ÎÊı£º¡¾ #{unPassPublicElectiveCourse} as temp ¡¿
+18ã€åœ¨æŸ¥è¯¢è¯­å¥ä¸­ä½¿ç”¨å‚æ•°ï¼šã€ #{unPassPublicElectiveCourse} as temp ã€‘
 
-19¡¢²ÎÊıÁĞ±í£ºList<ScoreSubItemVo> scoreItem(@Param("scoreJobsCode") String scoreJobsCode,@Param("semesterId"));
+19ã€å‚æ•°åˆ—è¡¨ï¼šList<ScoreSubItemVo> scoreItem(@Param("scoreJobsCode") String scoreJobsCode,@Param("semesterId"));
 
-20¡¢testÖĞ±È½ÏÊıÖµ´óĞ¡
+20ã€testä¸­æ¯”è¾ƒæ•°å€¼å¤§å°
   <if test="credit != null and credit &gt; 0">
       XF = #{credit},
   </if>
 
---¾ÛºÏ²éÑ¯
- <!-- °à¼¶³É¼¨µ¼³ö£¨Ñ§Éú¿Î³Ì³É¼¨ĞÅÏ¢£© add by linjitai on 20200115-->
+--èšåˆæŸ¥è¯¢
+ <!-- ç­çº§æˆç»©å¯¼å‡ºï¼ˆå­¦ç”Ÿè¯¾ç¨‹æˆç»©ä¿¡æ¯ï¼‰ add by linjitai on 20200115-->
  <resultMap id="classScoreMap" type="com.ly.education.score.api.vo.ClassScoreExportVo"
             extends="classScoreExportBaseMap">
- 
-     <!-- ±íÍ· -->
+
+     <!-- è¡¨å¤´ -->
      <collection property="classCourseInfoVoList" resultMap="classCourseInfoMap">
      </collection>
- 
-     <!-- ±íÌå -->
+     
+     <!-- è¡¨ä½“ -->
      <collection property="classStudentScoreInfoVoList" resultMap="classStudentScoreInfoMap">
      </collection>
- 
+
  </resultMap>
 
---¾ÛºÏ²éÑ¯
+--èšåˆæŸ¥è¯¢
  <resultMap id="QueryTrainCenterMap"
             type="com.ly.education.train.manage.api.vo.TrainCenterVo" extends="BaseResultMap">
      <result column="departName" property="departName" jdbcType="VARCHAR"/>
@@ -293,7 +314,14 @@
        SUM(NVL(XSCJHZB.XF, 0)) OVER(PARTITION BY XSCJHZB.XN,XSCJHZB.XQ, XSCJHZB.XH) AS QDZXFXNXQ,
        SUM(NVL(XSCJHZB.KCXF, 0)) OVER(PARTITION BY XSCJHZB.XN,XSCJHZB.XQ, XSCJHZB.XH) AS YDZXFXNXQ,
 
+### æŸ¥è¯¢æ¡ä»¶ä¸­å­—ç¬¦æ¯”è¾ƒ 
 
+~~~sql
+           <if test="isSupplierCode != null '1'.toString()==isSupplierCode">
+              and  GYSDM is not null
+              and DGZT in ('0','1')
+            </if>
+~~~
 
 
 

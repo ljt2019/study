@@ -379,7 +379,8 @@ kubectl apply -f nginx-pod.yaml，此时k8s会在所有可用的Node上，创建
 
 扩缩容：kubectl scale rc nginx --replicas=5
   
-  删除pod【kubectl delete pod gz-cea-teacher-ui-deploy-56c97f9f7d-84vx4 --force --grace-period=0 -n default】
+  删除pod【kubectl delete pod gz-discovery-deploy-77576d4745-wph82 --force --grace-period=0 -n default】
+  删除pod【kubectl get pod gz-discovery-deploy-77576d4745-wph82 】
 
   
   

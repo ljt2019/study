@@ -205,6 +205,18 @@ record.studentOrderCnt = value.target.value;
 
 # 模态框传递数据 参数
 
+## 获取页面
+
+~~~
+<SupplierInfo wrappedComponentRef={(inst) => (this.supplierInfo = inst)} />
+~~~
+
+~~~
+<SupplierInfo ref={(ref) => { this.supplierInfo = ref }} />
+~~~
+
+## 获取表单
+
  codeList: this.props.codeList
 
 ~~~js
@@ -682,6 +694,19 @@ return isChange;
                 )}
               </FormItem>
             </Col>
+~~~
+
+# 转圈圈
+
+~~~js
+    this.setState({
+      spinLoading: true
+    })
+ this.setState({
+      spinLoading: false
+    })
+<Spin spinning={this.state.spinLoading} tip="处理中，请稍等...(若提示处理失败或等待时间过长，请重试)">
+ </Spin>
 ~~~
 
 
