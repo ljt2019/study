@@ -760,16 +760,19 @@ drop tablespace 表空间名 [including contents];
 ​    UNION ALL
 ​    SELECT '员工总数', COUNT(emp.deptno) FROM emp;
 ​    
-    --4、使用rollup函数：求每个部门员工数以及总人数
-    select decode(grouping(dept.dname),1,'员工总数',dept.dname)
-           ,count(emp.deptno)
-    from dept,emp
-    where dept.deptno=emp.deptno(+)
-    group by rollup(dept.dname)
-    ORDER BY count(emp.deptno);
+​    --4、使用rollup函数：求每个部门员工数以及总人数
+​    select decode(grouping(dept.dname),1,'员工总数',dept.dname)
+​           ,count(emp.deptno)
+​    from dept,emp
+​    where dept.deptno=emp.deptno(+)
+​    group by rollup(dept.dname)
+​    ORDER BY count(emp.deptno);
 
-31、从其它表中复制行：请勿使用 VALUES 子句，使 INSERT 子句中的列数与子查询中的列数匹配。
-【 INSERT INTO sales_reps(id, name, salary, commission_pct) SELECT deptno, last_name, salary, commission_pct FROM emp WHERE job_id LIKE '%REP%'; 】
+# 从其它表中复制行：请勿使用 VALUES 子句，使 INSERT 子句中的列数与子查询中的列数匹配。
+
+~~~sql
+ INSERT INTO sales_reps(id, name, salary, commission_pct) SELECT deptno, last_name, salary, commission_pct FROM emp WHERE job_id LIKE '%REP%';
+~~~
 
 32、使用子查询创建表：
 【CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;】
@@ -963,23 +966,38 @@ WHERE st.major_id = mj.id(+);
 表之间数据的相互 拷贝 ，从一张表中批量选中数据插入另外一张表中：
 【insert into t2 (xjh,xsid) select xh|| '10' AS xjh ,xsid from t1  WHERE xx = yy;】
 
-oracle中添加 UUID：【sys_guid()】
+# UUID
 
-创建序列：自增序列
-【create SEQUENCE student_SEQ】
-插入序列：【INSERT INTO tbl_test VALUES(student_SEQ.nextval,'测试');】
+~~~sql
+sys_guid()
+~~~
 
+# 自增序列
+
+~~~sql
+create SEQUENCE student_SEQ
+INSERT INTO tbl_test VALUES(student_SEQ.nextval,'测试');
+--mysql中
 inert into [key存在的就报错] / replace into [key存在的就更新]
+~~~
 
-全模糊查询,效率更高
+# 模糊查询,
+
+~~~sql
   <if test="mallId !=null and mallId !='' ">
   	AND instr(mall_id,#{mallId}) > 0
   </if>
+~~~
 
-判断字符是否相等		
+# 判断字符是否相等		
+
+~~~sql
   <if test="grade!= null and grade!= '' and grade == '1'.toString()">
       id = ''
   </if>
+~~~
+
+
 
     <!-- 批量添加 -->
     <insert id="batchInsert"

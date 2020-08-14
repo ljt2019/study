@@ -87,6 +87,15 @@ import { selectDepartment } from "../../../../../config/commonService"
 <Button type="primary" onClick={this.batchDelete} ghost> 取消订购  </Button>
 ~~~
 
+# 滚动条
+
+~~~js
+import { Scrollbars } from "components";
+<Scrollbars id="Scrollbarsbox">
+~~~
+
+
+
 # 遍历数组
 
 ~~~js
@@ -98,7 +107,13 @@ import { selectDepartment } from "../../../../../config/commonService"
    })
 ~~~
 
-debugger
+## 遍历设值
+
+~~~
+dataSource: data.map((item) => ({ developLinkCode: item.code, developLinkName: item.name ,developLinkType:'1'}))
+~~~
+
+
 
 14、组件如果有default，则引用时不需要{}
 
@@ -113,7 +128,11 @@ debugger
       record={this.state.record}
   />
 
-同时获取表单和state值【<AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />】
+# 同时获取表单和state值
+
+~~~
+<AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />
+~~~
 
 
 17、注意：前台传值到后台，参数列表格式需要特别注意。大括号，等等
@@ -203,6 +222,16 @@ record.studentOrderCnt = value.target.value;
   }
 ~~~
 
+# 从URL参数中获取
+
+~~~js
+this.setState({
+      enterWareNumber: this.props.match.params.enterWareNumber
+})
+~~~
+
+
+
 # 模态框传递数据 参数
 
 ## 获取页面
@@ -233,6 +262,22 @@ record.studentOrderCnt = value.target.value;
  <AddModal  wrappedComponentRef={(inst) => (this.addModal = inst)} />
  ~~~
 
+~~~
+this.props.form.setFieldsValue({credit:data.rows[0].credit});
+~~~
+
+~~~
+
+~~~
+
+## 获取当前页表单数据
+
+~~~
+this.props.form.getFieldValue("nj")
+~~~
+
+
+
 # 获取当前页面表格数据
 
 ~~~js
@@ -255,6 +300,7 @@ record.studentOrderCnt = value.target.value;
 
 ~~~js
 import TableUtil from "src/utils/TableUtil";
+import TableUtil from '@/utils/TableUtil';
 scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
 ~~~
 
@@ -263,6 +309,17 @@ scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
 ~~~js
 <Input style={{ height: 35.016, width: '246px' }} />
 ~~~
+
+~~~js
+           style={{
+              marginLeft: '-4px',
+              color: '#1890ff',
+              fontSize: '8px',
+              textDecoration: 'none'
+            }}
+~~~
+
+
 
 # 判空
 
@@ -709,7 +766,70 @@ return isChange;
  </Spin>
 ~~~
 
+# 将多个对象合并到某个对象
 
+~~~
+const merge = (target, ...sources) => Object.assign(target, ...sources);
+~~~
+
+# 合并后返回一个新对象
+
+~~~
+const merge = (...sources) => Object.assign({}, ...sources);
+~~~
+
+# 查询最新一条数据
+
+~~~sql
+select * FROM (select tt.*, row_number() over(partition by tt.jgh,tt.xnxq order by tt.jgh,tt.xnxq desc) rn FROM T_GZL_TJJG tt
+~~~
+
+
+
+
+
+## 自定义组件使用
+
+## 年级、院系单位、专业
+
+~~~js
+import {CodeSelector,DepartSelector, MajorSelector } from "@/components"
+<Row>
+     <Col {...colSpan}>
+         <FormItem {...formItemLayout} label="年级：">
+             {getFieldDecorator('grade', {
+                 rules: [
+                 ]
+             })(
+                 <CodeSelector CODE="NJ" />
+             )}
+         </FormItem>
+     </Col>
+     <Col {...colSpan}>
+         <FormItem {...formItemLayout} label="学院:">
+             {getFieldDecorator('departId', {
+                 rules: [
+                 ]
+             })(
+                 <DepartSelector />
+             )}
+         </FormItem>
+     </Col>
+     <Col {...colSpan}>
+         <FormItem {...formItemLayout} label="专业:">
+             {getFieldDecorator('majorId', {
+                 rules: [
+                 ]
+             })(
+                 <MajorSelector />
+             )}
+         </FormItem>
+     </Col>
+ 
+ </Row>
+~~~
+
+## 
 
 
 

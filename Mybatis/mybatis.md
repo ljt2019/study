@@ -81,14 +81,44 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
 		from mem_sport_record r where r.mall_id=#{mallId} and r.create_time>=#{startTime} and r.create_time<=#{endTime} group by createDate) t 
 	order by t.createDate asc;	
 
-9、判空集合是否为空：【!param.statuses.isEmpty()】，遍历
-	<if test="statuses != null and !statuses.isEmpty()">
-         and da.status in
-        <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
-          #{item}
-        </foreach>
-    </if>
-	
+# 聚合
+
+~~~
+	<resultMap id="AssociationMapper" type="com.ly.cloud.base.dto.DomainDTO">
+		<!-- WARNING - @mbg.generated -->
+		<id column="BH" property="bh" jdbcType="VARCHAR" />
+		<result column="MC" property="mc" jdbcType="VARCHAR" />
+		<result column="MS" property="ms" jdbcType="VARCHAR" />
+		<result column="PXH" property="pxh" jdbcType="DECIMAL" />
+		<collection property="servingList" column="bh"
+			select="com.ly.cloud.base.mapper.ServingDTOMapper.selectByDomainId"></collection>
+	</resultMap>
+~~~
+
+~~~
+	<resultMap id="AssociationMapper" type="com.ly.cloud.base.dto.ServingDTO">
+		<id column="BH" property="bh" jdbcType="VARCHAR" />
+		<result column="MC" property="mc" jdbcType="VARCHAR" />
+		<result column="MS" property="ms" jdbcType="VARCHAR" />
+		<result column="PXH" property="pxh" jdbcType="DECIMAL" />
+		<result column="SSY" property="ssy" jdbcType="VARCHAR" />
+		<collection property="permissionList" column="ybh=ssy,fwbh=bh"
+			select="com.ly.cloud.base.mapper.PermissionDTOMapper.selectPermissionList"></collection>
+	</resultMap>
+~~~
+
+
+
+# 遍历
+
+```sql
+<if test="statuses != null and !statuses.isEmpty()">
+     and da.status in
+    <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+</if>	
+```
 10、【省市区关联】
 		LEFT JOIN pub_region province ON province.id = xx.provinceId
 		LEFT JOIN pub_region city ON city.id = xx.cityId
