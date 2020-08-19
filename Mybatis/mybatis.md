@@ -5,7 +5,6 @@ in 适合于外表大而内表小的情况，exists 适合于外表小而内表�
 ```sql
 # 例如：表A（小表），表B（大表）
 
-
 # 效率高，用到了B表上bb列的索引
 select * from A where exists(select bb from B where bb=A.aa);
 # 效率低，用到了A表上aa列的索引
@@ -20,20 +19,6 @@ select * from B where exists(select aa from A where aa=B.bb);
 SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member_report_id = #{reportId} AND _view.delete_flag = 0);
 ```
 
-# 条件运算符
-
-1. case when
-
-   ~~~sql
-   (case when type_id = 'SALE' then '销售' when type_id = 'PURCHASE' then '采购' else '其他' end) as orderType;
-   ~~~
-
-2. if(expr1,expr2,expr3)与 decode()
-
-
-
-【与我们常用的三目运算类似。expr1是一个表达式，如果true，返回expr2否则为expr3】
-
    【三种选择条件以上 case when】
 
 	方式1：其中value=compare-value则返回result。
@@ -42,7 +27,7 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
 	方式2:如果第一个条件为真，返回result。如果没有匹配的result值，那么结果在ELSE后的result被返回。如果没有ELSE部分，那么NULL被返回。 
 	select case _type.order_type_id when 'SALE' then "销售" when 'PURCHASE' then "采购" else "其他" end as orderType;
 
-3、【ifnull(expr1,expr2)，如果expr1不是null，ifnull()返回expr1，否则它返回expr2。ifnull()返回一个数字或字符串值，取决于它被使用的上下文环境。】
+3、【mysql ,ifnull(expr1,expr2)，如果expr1不是null，ifnull()返回expr1，否则它返回expr2。ifnull()返回一个数字或字符串值，取决于它被使用的上下文环境。】
 
 4、【concat(str1,str2,...) 如有任何一个参数为null，则返回值为 null】【concat_ws(str1,str2,...) 函数会忽略任何分隔符参数后的 null 值】
 		
@@ -52,21 +37,24 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
 	select group_concat(CAST(id as char)) from t_dep 返回逗号隔开的串
 	select group_concat(Convert(id , char)) from t_dep 返回逗号隔开的串  
 
-6、模糊搜索【注意：数字和字符串连接应该用CONCAT()】
-		<if test="param.deviceIdentity != null and param.deviceIdentity != '' ">
-			AND device.device_identity LIKE CONCAT('%', #{param.deviceIdentity}, '%')
-		</if>
-		//全模糊查询,效率更高
-		<if test="mallId !=null and mallId !='' ">
-			AND instr(mall_id,#{mallId}) > 0
-	    </if>
+# 模糊查询
 
-判断字符是否相等		
-  <if test="grade!= null and grade!= '' and grade == '1'.toString()">
-      id = ''
-  </if>
+~~~sql
+ <if test="mallId !=null and mallId !='' ">
+ 	AND instr(mall_id,#{mallId}) > 0
+ </if>
+~~~
 
-7、两时间之差，返回SECOND数【select TIMESTAMPDIFF(SECOND,start_time,end_time)】
+# 判断字符是否相等
+
+
+~~~sql
+<if test="grade!= null and grade!= '' and grade == '1'.toString()">
+     
+</if>
+~~~
+
+7、【】
 		
 7、格式化时间【date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr】 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")记得时区转换
 

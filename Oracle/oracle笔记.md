@@ -631,20 +631,7 @@ drop tablespace 表空间名 [including contents];
 14、处理日期，默认的日期显示格式为 DD-MON-RR
   MONTHS_BETWEEN 两个日期之间的月数，计算工作年数和月数：【SELECT hire_date,trunc(months_between(SYSDATE,hire_date)/12) FROM emp;】
 
-15、条件表达式：
-  1)、CASE 表达式：【CASE expr WHEN comparison_expr1 THEN return_expr1 [WHEN comparison_expr2 THEN return_expr2 WHEN comparison_exprn THEN return_exprn ELSE else_expr] END】
-  【SELECT
-      last_name,
-      job_id,
-      salary,
-      CASE job_id
-          WHEN 'IT_PROG'    THEN 1.10 * salary
-          WHEN 'ST_CLERK'   THEN 1.15 * salary
-          WHEN 'SA_REP'     THEN 1.20 * salary
-          ELSE salary
-      END "REVISED_SALARY"
-  FROM
-      emp;】
+
 
   2)、DECODE 函数：【DECODE(col|expression, search1, result1 [, search2, result2,...,] [, default])】
   【SELECT
@@ -746,8 +733,6 @@ drop tablespace 表空间名 [including contents];
     UNION ALL
     SELECT '员工总数', COUNT(emp.deptno) cnt FROM emp;
 
-
-​      
 ​    --3、分析函数：求每个部门员工数以及总人数
 ​    SELECT dept.dname, c.count_id 
 ​    FROM (select distinct emp.deptno deptno,count(emp.deptno) 
@@ -768,14 +753,44 @@ drop tablespace 表空间名 [including contents];
 ​    group by rollup(dept.dname)
 ​    ORDER BY count(emp.deptno);
 
+# 表复制备份,使用子查询创建表
+
+~~~sql
+CREATE  TABLE ly_gg_qx_zy_20200407 AS SELECT * FROM ly_gg_qx_zy where ...;
+CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;
+~~~
+
+# 条件运算符
+
+## case when
+
+1. case 表达式返回的是一个确定的 value，如果没有 else，若前面的都不匹配，则返回 null
+2. 简单 case 中的表达式，when 后面的表达式类型应该全部保持一致
+3. 所有的 then 后面的 return_value 类型要保持一致 
+
+~~~sql
+case when type_id = 'SALE' then '销售' when type_id = 'PURCHASE' then '采购' else '其他' end as orderType;
+~~~
+
+## decode()
+
+~~~sql
+decode(sex,'0','女','男')
+~~~
+
+# 两时间之差，返回SECOND数
+
+~~~sql
+select TIMESTAMPDIFF(SECOND,start_time,end_time)
+~~~
+
 # 从其它表中复制行：请勿使用 VALUES 子句，使 INSERT 子句中的列数与子查询中的列数匹配。
 
 ~~~sql
  INSERT INTO sales_reps(id, name, salary, commission_pct) SELECT deptno, last_name, salary, commission_pct FROM emp WHERE job_id LIKE '%REP%';
 ~~~
 
-32、使用子查询创建表：
-【CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;】
+
 
 33、将表重新置于读/写模式：【ALTER TABLE emp READ ONLY;】、【ALTER TABLE emp READ WRITE;】
 
@@ -862,11 +877,6 @@ select [level],colum,expr... from table [where condition(s)] [start with conditi
 
   4)、找出每个部门的经理
     【select level,a.* from s_emp a start with manager_id is null connect by prior id=manager_id and dept_id !=prior dept_id; 】
-
-44、case
-  1)、case 表达式返回的是一个确定的 value，如果没有 else，若前面的都不匹配，则返回 null。
-  2)、简单 case 中的表达式，when 后面的表达式类型应该全部保持一致
-  3)、所有的 then 后面的 return_value 类型要保持一致 
 
 45、子查询：非相关子查询效率高相关子查询
   1)、非相关子查询：非相关子查询是独立于外部查询的子查询，子查询总共执行一次，执行完毕后
