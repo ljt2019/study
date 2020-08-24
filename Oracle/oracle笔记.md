@@ -784,10 +784,35 @@ decode(sex,'0','女','男')
 select TIMESTAMPDIFF(SECOND,start_time,end_time)
 ~~~
 
-# 从其它表中复制行：请勿使用 VALUES 子句，使 INSERT 子句中的列数与子查询中的列数匹配。
+# 从其它表中复制行：使 INSERT 子句与子查询中的列数匹配。
 
 ~~~sql
- INSERT INTO sales_reps(id, name, salary, commission_pct) SELECT deptno, last_name, salary, commission_pct FROM emp WHERE job_id LIKE '%REP%';
+    <insert id="initMajorDevelopLink" >
+        insert into T_PYFA_ZYPYHJSZ (
+		ZYPYHJSZ_ID,
+		ND,
+		DW_ID,
+		ZY_ID,
+        XSLBM,
+		ZHXGSJ
+        )
+        SELECT DISTINCT
+        ZYPYFX.NJ||ZYPYFX.DW_ID||ZYPYFX.ZY_ID||ZYPYFX.XSLBM,
+        nvl(ZYPYFX.NJ,'-') NJ,
+        nvl(ZYPYFX.DW_ID,'-') DW_ID,
+        ZYPYFX.ZY_ID,
+        nvl(ZYPYFX.XSLBM,'-') XSLBM,
+        sysdate
+		FROM ly_yjs_hxsj.T_PYFA_ZYPYFX ZYPYFX
+		WHERE ZYPYFX.ZYPYFX_ID in
+            <foreach item="item" index="index" collection="majorDevelopDirectionIdList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        and NOT EXISTS (
+        SELECT 1 FROM T_PYFA_ZYPYHJSZ ZYPYHJSZ
+        WHERE ZYPYHJSZ.ZYPYHJSZ_ID=ZYPYFX.nj||ZYPYFX.Dw_Id||ZYPYFX.ZY_ID||ZYPYFX.XSLBM
+        )
+    </insert>
 ~~~
 
 
@@ -801,24 +826,47 @@ select TIMESTAMPDIFF(SECOND,start_time,end_time)
 36、确保对视图执行的 DML 操作只在视图范围内起作用：【WITH CHECK OPTION】
 CREATE OR REPLACE VIEW empvu20 AS SELECT * FROM emp WHERE deptno = 20 WITH CHECK OPTION CONSTRAINT empvu20_ck ;
 
-37、创建序列：
-【CREATE SEQUENCE dept_deptid_seq
+# 创建序列
+
+~~~sql
+CREATE SEQUENCE deptid_seq
 INCREMENT BY 10
 START WITH 120
 MAXVALUE 9999
 NOCACHE
-NOCYCLE;】
+NOCYCLE;
+~~~
 
-38、创建索引：【CREATE [UNIQUE][BITMAP]INDEX index ON table (column[, column]...);】、【CREATE INDEX emp_last_name_idx ON emp(last_name);】
+# 格式时间
 
-39、删除索引：【DROP INDEX index;】
+~~~sql
+date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr
+~~~
 
-40、rollup和grouping函数
-  SELECT DECODE(grouping(GROUP_ID),1,'总量',GROUP_ID)
-         ,DECODE(grouping(JOB),1,'部门编号为【'||GROUP_ID||'】的总量',JOB) 
-         ,sum(salary) 
-  from group_test 
-  group by rollup(group_id, job);
+# 创建索引
+
+~~~sql
+CREATE [UNIQUE][BITMAP]INDEX index_name ON table (column[, column]...);
+CREATE INDEX index_name ON emp(last_name);
+~~~
+
+# 删除索引
+
+~~~sql
+DROP INDEX index_name;
+~~~
+
+# rollup和grouping函数
+
+  ~~~sql
+SELECT DECODE(GROUPING(GROUP_ID), 1, '总量', GROUP_ID),
+       DECODE(GROUPING(JOB), 1, '部门编号为【' || GROUP_ID || '】的总量', JOB),
+       SUM(SALARY)
+FROM GROUP_TEST
+ GROUP BY ROLLUP(GROUP_ID, JOB);
+  ~~~
+
+
 
 41、with 子句：使用 WITH AS 语句可以为一个子查询语句块 定义一个名称
   1)、SQL 可读性增强。比如对于特定 with 子查询取个有意义的名字等。
@@ -828,6 +876,12 @@ NOCYCLE;】
     a AS (SELECT emp.deptno deptno,SUM(emp.sal) cnt FROM emp GROUP BY emp.deptno)
     ,b AS (SELECT SUM(cnt)/COUNT(deptno) dep_avg FROM a)
   SELECT dept.dname,cnt FROM a,dept WHERE dept.deptno = a.deptno AND cnt > (SELECT dep_avg FROM b)
+
+# 集合查询
+
+~~~sql
+ SUM(NVL(XSCJHZB.XF, 0)) OVER(PARTITION BY XSCJHZB.XN, XSCJHZB.XH) AS QDZXF,
+~~~
 
 # merge into 合并资料
 
@@ -1005,6 +1059,12 @@ inert into [key存在的就报错] / replace into [key存在的就更新]
   <if test="grade!= null and grade!= '' and grade == '1'.toString()">
       id = ''
   </if>
+~~~
+
+# 查询一行，ROWNUM
+
+~~~sql
+WHERE ROWNUM <= 15;
 ~~~
 
 

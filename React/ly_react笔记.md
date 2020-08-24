@@ -661,7 +661,55 @@ import {CodeSelector,DepartSelector, MajorSelector } from "@/components"
  </Row>
 ~~~
 
-## 
+# 按钮属性
+
+~~~js
+<Button
+    className="ml10"
+    type="primary"
+    htmlType="submit"
+    onClick={this.onSearch}
+>
+    查询
+</Button>
+~~~
+
+# 照片授权
+
+~~~js
+import { hex_md5 } from 'utils/MD5'
+import { auth,config as globalConfig } from "app/config/global";
+function timestamp(url) {
+  
+  if (url.indexOf("?") > -1) {
+    url = url + "&_t=" + getTimestamp
+  } else {
+    url = url + "?_t=" + getTimestamp
+  }
+  return url
+}
+
+const zximgprops = {
+      name: "file",
+      action: timestamp(gradeExamManageApi.uploadStudentPictureByOne),
+      headers: {
+        permission: 'gradeExamPicture:uploadStudentPictureByOne',
+        csrfToken:hex_md5(getTimestamp + globalConfig.tokenKey)
+      },
+      data: (file) => {
+        return { postgraduateId: this.props.selectRow.postgraduateId, grade: this.props.selectRow.grade, studentPictureType: "student", file };
+      },
+      onChange(info) {
+        console.log("info", info);
+        const file = info.fileList[info.fileList.length - 1];
+
+        _this.setState({ loading: false, zxfileList: [file] });
+
+      }
+    };
+~~~
+
+
 
 
 

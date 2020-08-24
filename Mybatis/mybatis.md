@@ -45,7 +45,7 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
  </if>
 ~~~
 
-# 判断字符是否相等
+# test中比较字符是否相等
 
 
 ~~~sql
@@ -54,11 +54,18 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
 </if>
 ~~~
 
-7、【】
-		
-7、格式化时间【date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr】 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")记得时区转换
+# test中比较数值大小
+~~~sql
+<if test="credit != null and credit &gt; 0">
+    XF = #{credit},
+</if>
+~~~
 
-8、【STRCMP(str1, str2):比较两个字符串，如果这两个字符串相等返回0，如果第一个参数是根据当前的排序小于第二个参数顺序返回-1，否则返回1。】
+# 比较两个字符串
+
+
+
+8、【STRCMP(str1, str2):，如果这两个字符串相等返回0，如果第一个参数是根据当前的排序小于第二个参数顺序返回-1，否则返回1。】
 		
 8、依据时间进行分组，并按时间进行降序排序【分组查询】
 	select t.* from
@@ -71,28 +78,56 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
 
 # 聚合
 
-~~~
-	<resultMap id="AssociationMapper" type="com.ly.cloud.base.dto.DomainDTO">
-		<!-- WARNING - @mbg.generated -->
-		<id column="BH" property="bh" jdbcType="VARCHAR" />
-		<result column="MC" property="mc" jdbcType="VARCHAR" />
-		<result column="MS" property="ms" jdbcType="VARCHAR" />
-		<result column="PXH" property="pxh" jdbcType="DECIMAL" />
-		<collection property="servingList" column="bh"
-			select="com.ly.cloud.base.mapper.ServingDTOMapper.selectByDomainId"></collection>
-	</resultMap>
+## 通过子查询
+
+~~~sql
+--一个参数
+<resultMap id="AssociationMapper" type="com.ly.cloud.base.dto.DomainDTO">
+	<!-- WARNING - @mbg.generated -->
+	<id column="BH" property="bh" jdbcType="VARCHAR" />
+	<result column="MC" property="mc" jdbcType="VARCHAR" />
+	<result column="MS" property="ms" jdbcType="VARCHAR" />
+	<result column="PXH" property="pxh" jdbcType="DECIMAL" />
+	<collection property="servingList" column="bh"
+		select="com.ly.cloud.base.mapper.ServingDTOMapper.selectByDomainId"></collection>
+</resultMap>
+--多个参数
+<resultMap id="AssociationMapper" type="com.ly.cloud.base.dto.ServingDTO">
+	<id column="BH" property="bh" jdbcType="VARCHAR" />
+	<result column="MC" property="mc" jdbcType="VARCHAR" />
+	<result column="MS" property="ms" jdbcType="VARCHAR" />
+	<result column="PXH" property="pxh" jdbcType="DECIMAL" />
+	<result column="SSY" property="ssy" jdbcType="VARCHAR" />
+	<collection property="permissionList" column="ybh=ssy,fwbh=bh"
+		select="com.ly.cloud.base.mapper.PermissionDTOMapper.selectPermissionList"></collection>
+</resultMap>
 ~~~
 
-~~~
-	<resultMap id="AssociationMapper" type="com.ly.cloud.base.dto.ServingDTO">
-		<id column="BH" property="bh" jdbcType="VARCHAR" />
-		<result column="MC" property="mc" jdbcType="VARCHAR" />
-		<result column="MS" property="ms" jdbcType="VARCHAR" />
-		<result column="PXH" property="pxh" jdbcType="DECIMAL" />
-		<result column="SSY" property="ssy" jdbcType="VARCHAR" />
-		<collection property="permissionList" column="ybh=ssy,fwbh=bh"
-			select="com.ly.cloud.base.mapper.PermissionDTOMapper.selectPermissionList"></collection>
-	</resultMap>
+##  SUM(NVL(XSCJHZB.XF, 0)) OVER(PARTITION BY XSCJHZB.XN, XSCJHZB.XH) AS QDZXF,
+
+~~~sql
+  <resultMap id="classScoreMap" type="com.ly.education.score.api.vo.ClassScoreExportVo"
+            extends="classScoreExportBaseMap">
+  	<!-- 表头 -->
+  	<collection property="classCourseInfoVoList" resultMap="classCourseInfoMap">
+ 	</collection>
+ 
+ 	<!-- 表体 -->
+ 	<collection property="classStudentScoreInfoVoList" resultMap="classStudentScoreInfoMap">
+ 	</collection>
+  </resultMap>
+  <resultMap id="QueryTrainCenterMap"
+            type="com.ly.education.train.manage.api.vo.TrainCenterVo" extends="BaseResultMap">
+     <result column="departName" property="departName" jdbcType="VARCHAR"/>
+     <result column="leaderName" property="leaderName" jdbcType="VARCHAR"/>
+     <result column="laboratoryCnt" property="laboratoryCnt" jdbcType="VARCHAR"/>
+     <collection property="courseIdList" ofType="string"
+                 select="selectCourseIdList" column="trainCenterId = SXZXBH">
+     </collection>
+     <collection property="majorIdList" ofType="string"
+                 select="selectMajorIdList" column="trainCenterId = SXZXBH">
+     </collection>
+ </resultMap>
 ~~~
 
 
@@ -107,19 +142,25 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
     </foreach>
 </if>	
 ```
-10、【省市区关联】
-		LEFT JOIN pub_region province ON province.id = xx.provinceId
-		LEFT JOIN pub_region city ON city.id = xx.cityId
-		LEFT JOIN pub_region region ON region.id = xx.regionId
+# 省市区关联
 
-11、返回集合list,list集合里边嵌套list集合
-	//对应的OutDTO：GymDeviceOutDTO属性如下
+~~~sql
+LEFT JOIN pub_region province ON province.id = xx.provinceId
+LEFT JOIN pub_region city ON city.id = xx.cityId
+LEFT JOIN pub_region region ON region.id = xx.regionId
+~~~
+
+~~~java
+   //返回集合list,list集合里边嵌套list集合
+   //对应的OutDTO：GymDeviceOutDTO属性如下
 	private String gymId;
 	private String address;
 	private String gymName;
 	private String gymType;
 	//......
 	private List<GymDeviceDetailOutDTO> gymDeviceList = new ArrayList<GymDeviceDetailOutDTO>();
+	
+~~~
 
    1)、首先写一个 resultMap【返回list集合就需要写这个resultMap】
 	<!-- 根据场馆查询场馆设备结果集 -->
@@ -197,38 +238,8 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
 		AND _region.level_type = 1
 	</select>
 	
-	<!-- 获取场馆列表 传入经纬度（城市id） -->
-	<resultMap id="GymListOutDTOMap" type="cn.healthmall.sail.activity.dto.GymListOutDTO">
-		<id column="regionId" property="regionId" />
-		<result column="regionName" property="regionName" />
-		<collection property="infos" javaType="ArrayList"
-			ofType="cn.healthmall.sail.activity.dto.GymInfoOutDTO" column="gymId">
-			<result column="gymId" property="gymId" />
-			<result column="gymName" property="gymName" />
-			<result column="isSpecialGym" property="isSpecialGym" />
-			<result column="smallIcon" property="smallIcon" />
-			<result column="normalIcon" property="normalIcon" />
-		</collection>
-	</resultMap>
-	<select id="getGymInfo" resultMap="GymListOutDTOMap">
-		SELECT
-		_gym.id AS gymId,
-		_gym.name AS gymName,
-		_gym.type AS isSpecialGym,
-		_gym.small_icon AS smallIcon,
-		_gym.normal_icon AS normalIcon,
-		_region.name AS regionName,
-		_region.id AS regionId
-		FROM
-		base_gym _gym
-		LEFT JOIN pub_region _city ON _gym.city_id = _city.id
-		LEFT JOIN
-		pub_region _region ON _gym.region_id = _region.id
-		WHERE
-		_city.id = #{cityId}
-		AND _gym.delete_flag = 0
-		ORDER BY _gym.name
-	</select>
+
+
 
 12、返回txt文本信息【带With,在xml中】：List<Medal> selectByExampleWithBLOBs(MedalExample example);
 
@@ -281,64 +292,20 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
 				) AS a
 		ORDER BY a.startTime DESC
 	</select>
-	
-15、inert into [key存在的就报错] / replace into [key存在的就更新]
 
-16、创建索引：【create unique index idx_sys_users_username on sys_users(username);】，频繁查询的字段创建索引来提交性能。
+15、inert into [key存在的就报错] / replace into [key存在的就更新]
 
 17、布尔类型：available bool default false, <-sql-> `available` tinyint(1) DEFAULT '0', <-实体类-> private Boolean available = Boolean.FALSE;
 
-18、在查询语句中使用参数：【 #{unPassPublicElectiveCourse} as temp 】
 
-19、参数列表：List<ScoreSubItemVo> scoreItem(@Param("scoreJobsCode") String scoreJobsCode,@Param("semesterId"));
-
-20、test中比较数值大小
-  <if test="credit != null and credit &gt; 0">
-      XF = #{credit},
-  </if>
-
---聚合查询
- <!-- 班级成绩导出（学生课程成绩信息） add by linjitai on 20200115-->
- <resultMap id="classScoreMap" type="com.ly.education.score.api.vo.ClassScoreExportVo"
-            extends="classScoreExportBaseMap">
-
-     <!-- 表头 -->
-     <collection property="classCourseInfoVoList" resultMap="classCourseInfoMap">
-     </collection>
-     
-     <!-- 表体 -->
-     <collection property="classStudentScoreInfoVoList" resultMap="classStudentScoreInfoMap">
-     </collection>
-
- </resultMap>
-
---聚合查询
- <resultMap id="QueryTrainCenterMap"
-            type="com.ly.education.train.manage.api.vo.TrainCenterVo" extends="BaseResultMap">
-     <result column="departName" property="departName" jdbcType="VARCHAR"/>
-     <result column="leaderName" property="leaderName" jdbcType="VARCHAR"/>
-     <result column="laboratoryCnt" property="laboratoryCnt" jdbcType="VARCHAR"/>
-     <collection property="courseIdList" ofType="string"
-                 select="selectCourseIdList" column="trainCenterId = SXZXBH">
-     </collection>
-     <collection property="majorIdList" ofType="string"
-                 select="selectMajorIdList" column="trainCenterId = SXZXBH">
-     </collection>
- </resultMap>
-
-
-       SUM(NVL(XSCJHZB.XF, 0)) OVER(PARTITION BY XSCJHZB.XN, XSCJHZB.XH) AS QDZXF,
-       SUM(NVL(XSCJHZB.KCXF, 0)) OVER(PARTITION BY XSCJHZB.XN, XSCJHZB.XH) AS YDZXF,
-       SUM(NVL(XSCJHZB.XF, 0)) OVER(PARTITION BY XSCJHZB.XN,XSCJHZB.XQ, XSCJHZB.XH) AS QDZXFXNXQ,
-       SUM(NVL(XSCJHZB.KCXF, 0)) OVER(PARTITION BY XSCJHZB.XN,XSCJHZB.XQ, XSCJHZB.XH) AS YDZXFXNXQ,
 
 ### 查询条件中字符比较 
 
 ~~~sql
-           <if test="isSupplierCode != null '1'.toString()==isSupplierCode">
-              and  GYSDM is not null
-              and DGZT in ('0','1')
-            </if>
+<if test="isSupplierCode != null '1'.toString()==isSupplierCode">
+   and  GYSDM is not null
+   and DGZT in ('0','1')
+</if>
 ~~~
 
 
