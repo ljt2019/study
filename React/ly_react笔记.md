@@ -122,8 +122,11 @@ this.props.record
 
 # 父组件获取子组件***表单和state值***
 
-~~~
+~~~js
 <AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />
+//取值
+let courseIdList = this.addModal.state.selectedRowKeys
+
 ~~~
 
 # 当前页面表单数据操作
@@ -144,6 +147,19 @@ this.props.form.getFieldValue("majorCreditList")
 //未知？
 const { getFieldDecorator,getFieldValue } = this.props.form
 ~~~
+
+# 获取当前搜索框的值
+
+~~~js
+ this.refs.searchModal.validateFields((err, formData) => {
+     if (!err) {
+         let grade = formData.grade
+     }
+ });
+<SearchModal ref="searchModal" onSearch={this.onSearch} openChange={() => this.openChange()} />
+~~~
+
+
 
 # 表单组件，@Form.create()
 

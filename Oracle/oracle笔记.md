@@ -1067,97 +1067,45 @@ inert into [key存在的就报错] / replace into [key存在的就更新]
 WHERE ROWNUM <= 15;
 ~~~
 
+# 批量插入
 
-
-    <!-- 批量添加 -->
-    <insert id="batchInsert"
-            parameterType="java.util.List">
-        INSERT INTO T_BSGL_BSKT_MXZY (
-            BSKT_ID,
-            NJZYFX_ID,
-            CJR,
-            CJSJ
-        )
-        <foreach collection="list" item="item" index="index" separator="UNION ALL" open="(" close=")">
-            SELECT
-                #{item.graduationTopicId,jdbcType=VARCHAR},
-                #{item.gradeMajorId,jdbcType=VARCHAR},
-                #{item.creator,jdbcType=VARCHAR},
-                #{item.createTime,jdbcType=DATE}
-            FROM dual
-        </foreach>
-    </insert>
-
-18、oracle批量操作
-
- <insert id="insertBatch"
-            parameterType="com.ly.education.teachingMaterial.api.dto.OutWareInfoDto">
-        insert into T_JCGL_XSCKMX (
-		ID,
-		XSCKDH,
-		ZDDH,
-		JG,
-		ISBN,
-		JCMC,
-		ZK,
-		CKSL,
-		GYSDM,
-		CBSDM,
-		CKZT,
-		TSZT,
-		SFCYFYHS,
-		DYZZ,
-		BZ,
-		CJRBH,
-		CJRXM
-        )
-
-        oracle 批量插入
-        <foreach item="item" index="index" collection="studentOutWareDetailsVoList"  open="(" close=")"  separator="union all">
-        select
-            sys_guid(),
-            #{outWareNumber,jdbcType=VARCHAR},
-            #{item.orderNumber,jdbcType=VARCHAR},
-            #{item.price,jdbcType=NUMERIC},
-            #{item.isbn,jdbcType=VARCHAR},
-            #{item.bookName,jdbcType=VARCHAR},
-            #{item.discount,jdbcType=NUMERIC},
-            #{item.studentOutWareCnt,jdbcType=NUMERIC},
-            #{item.supplierCode,jdbcType=VARCHAR},
-            #{item.publisherCode,jdbcType=VARCHAR},
-            #{item.useStatus,jdbcType=NUMERIC},
-            #{item.unOrderStatus,jdbcType=NUMERIC},
-            #{item.inCostAccounting,jdbcType=NUMERIC},
-            #{item.firstAuthor,jdbcType=VARCHAR},
-            '一键入库',
+~~~sql
+<insert id="batchInsert"
+        parameterType="java.util.List">
+    INSERT INTO T_BSGL_BSKT_MXZY (
+        BSKT_ID,
+        NJZYFX_ID,
+        CJR,
+        CJSJ
+    )
+    <foreach collection="list" item="item" index="index" separator="UNION ALL" open="(" close=")">
+        SELECT
+            #{item.graduationTopicId,jdbcType=VARCHAR},
+            #{item.gradeMajorId,jdbcType=VARCHAR},
             #{item.creator,jdbcType=VARCHAR},
-            #{item.creatorName,jdbcType=VARCHAR} from dual
-        </foreach>
-    </insert>
+            #{item.createTime,jdbcType=DATE}
+        FROM dual
+    </foreach>
+</insert>
+~~~
 
-  <update id="batchChangeNoPracticeApplyStatus">
-      <foreach collection="list" item="item" separator=";" open="begin" close=";end;">
-          update T_SXGL_MSXSQ
-          <set>
-              <if test="item.applyStatus != null">
-                  SPZT = #{item.applyStatus,jdbcType=VARCHAR},
-              </if>
-          </set>
-          where
-          SQZJ =  #{item.applyId,jdbcType=VARCHAR}
-      </foreach>
-  </update>
-
-创建dblink
-DataBase links dblink
-  【
+# 创建dblink，DataBase links dblink
+~~~sql
 drop database link hxsj;
 CREATE DATABASE link hxsj CONNECT TO gzjwxt_hxk identified BY gzjwxt_hxk USING '(
   DESCRIPTION =
    (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.2.97)(PORT = 1521)) )
    (CONNECT_DATA = (SERVICE_NAME =orcl))
 )';
-  】
+~~~
+
+
+
+# 查询表字段
+
+~~~sql
+select  *  from user_col_comments  where Table_Name='T_DMK_DMZ'
+~~~
 
 
 

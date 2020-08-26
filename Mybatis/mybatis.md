@@ -130,6 +130,57 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
  </resultMap>
 ~~~
 
+# 批量插入
+
+~~~sql
+<insert id="batchInsert"
+        parameterType="java.util.List">
+    INSERT INTO T_BSGL_BSKT_MXZY (
+        BSKT_ID,
+        NJZYFX_ID,
+        CJR,
+        CJSJ
+    )
+    <foreach collection="list" item="item" index="index" separator="UNION ALL" open="(" close=")">
+        SELECT
+            #{item.graduationTopicId,jdbcType=VARCHAR},
+            #{item.gradeMajorId,jdbcType=VARCHAR},
+            #{item.creator,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=DATE}
+        FROM dual
+    </foreach>
+</insert>
+~~~
+
+~~~sql
+    <insert id="initMajorDevelopLink" >
+        insert into T_PYFA_ZYPYHJSZ (
+		ZYPYHJSZ_ID,
+		ND,
+		DW_ID,
+		ZY_ID,
+        XSLBM,
+		ZHXGSJ
+        )
+        SELECT DISTINCT
+        ZYPYFX.NJ||ZYPYFX.DW_ID||ZYPYFX.ZY_ID||ZYPYFX.XSLBM,
+        nvl(ZYPYFX.NJ,'-') NJ,
+        nvl(ZYPYFX.DW_ID,'-') DW_ID,
+        ZYPYFX.ZY_ID,
+        nvl(ZYPYFX.XSLBM,'-') XSLBM,
+        sysdate
+		FROM ly_yjs_hxsj.T_PYFA_ZYPYFX ZYPYFX
+		WHERE ZYPYFX.ZYPYFX_ID in
+            <foreach item="item" index="index" collection="majorDevelopDirectionIdList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        and NOT EXISTS (
+        SELECT 1 FROM T_PYFA_ZYPYHJSZ ZYPYHJSZ
+        WHERE ZYPYHJSZ.ZYPYHJSZ_ID=ZYPYFX.nj||ZYPYFX.Dw_Id||ZYPYFX.ZY_ID||ZYPYFX.XSLBM
+        )
+    </insert>
+~~~
+
 
 
 # 遍历
