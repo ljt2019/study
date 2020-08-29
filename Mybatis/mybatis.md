@@ -181,6 +181,56 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
     </insert>
 ~~~
 
+~~~sql
+<insert id="batchInsert">
+        MERGE into ly_yjs_xtgl.T_XTGL_FJ FJ
+        USING (<foreach item="item" index="index" collection="list" open="(" close=")" separator="union all">
+            select
+            #{item.uid,jdbcType=VARCHAR} as FJ_ID,
+            #{item.name,jdbcType=VARCHAR} as WJMC,
+            #{item.type,jdbcType=VARCHAR} as WJLX,
+            #{item.filePath,jdbcType=VARCHAR} as WJ_ID,
+            #{item.businessId,jdbcType=VARCHAR} as SJ_ID,
+            #{item.businessTable,jdbcType=VARCHAR} as SSB,
+            #{item.size,jdbcType=NUMERIC} as WJDX,
+            #{item.creator,jdbcType=VARCHAR} as CJR,
+            #{item.createTime,jdbcType=TIMESTAMP} as CJSJ,
+            #{item.editor,jdbcType=VARCHAR} as ZHXGR,
+            #{item.editTime,jdbcType=TIMESTAMP} as ZHXGSJ
+            from dual
+    </foreach>)tr
+        ON (FJ.WJLX = tr.WJLX AND FJ.SJ_ID = tr.SJ_ID AND FJ.WJ_ID = tr.WJ_ID )
+        WHEN NOT MATCHED THEN
+        insert  (
+        FJ.FJ_ID,
+        FJ.WJMC,
+        FJ.WJLX,
+        FJ.WJ_ID,
+        FJ.SJ_ID,
+        FJ.SSB,
+        FJ.WJDX,
+        FJ.CJR,
+        FJ.CJSJ,
+        FJ.ZHXGR,
+        FJ.ZHXGSJ
+        )values
+        (
+        tr.FJ_ID,
+        tr.WJMC,
+        tr.WJLX,
+        tr.WJ_ID,
+        tr.SJ_ID,
+        tr.SSB,
+        tr.WJDX,
+        tr.CJR,
+        tr.CJSJ,
+        tr.ZHXGR,
+        tr.ZHXGSJ
+        )
+
+    </insert>
+~~~
+
 
 
 # 遍历

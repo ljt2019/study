@@ -725,6 +725,127 @@ const zximgprops = {
     };
 ~~~
 
+# 行点击选中
+
+~~~js
+//行点击选中
+const onRowClick = (selectedRow, key) => {
+    const { selectedRowKeys, selectedRows } = this.state;
+    if (selectedRowKeys.includes(key)) {
+        this.setState({
+            selectedRowKeys: selectedRowKeys.filter((item) => item !== key),
+            selectedRows: selectedRows.filter((item) => item !== selectedRow)
+        }, () => {
+            checkStatueListener();
+        });
+    } else {
+        this.setState({
+            selectedRowKeys: [...selectedRowKeys, key],
+            selectedRows: [...selectedRows, selectedRow]
+        }, () => {
+            checkStatueListener();
+        });
+    }
+};
+
+const checkStatueListener = () => {
+    console.log('----选中后接着执行动作-----')
+};
+     
+//表单
+rowKey: (record) => record.semesterCourseId,
+onRow: (record) => ({ onClick: () => onRowClick(record, record.semesterCourseId) }),
+~~~
+
+# 页面排序
+
+~~~js
+// 1.表单排序修改方法
+handleTableChange = (pagination, filters, sorter) => {
+    this.params.sorter = sorter;
+    this.indexQuery();
+};
+    
+// 2.表单查询
+indexQuery = params => {
+    let _params = {
+        ...this.params,
+        ...params
+    };
+    this.setState({
+        loading: true
+    });
+    // 排序
+    if (_params.sorter && _params.sorter.field && _params.sorter.order) {
+        _params["attributeNamesForOrderBy"] = {
+            [_params.sorter.field]: _params.sorter.order.substring(0, _params.sorter.order.length - 3)
+        };
+        delete _params.sorter;
+    }
+    selectQuery(_params, authority.query, (data) => {
+       
+    });
+};
+    
+//3.columns 中 sorter: true,
+{
+    title: '学年学期',
+    dataIndex: 'semesterId',
+    key: 'semesterId',
+    align: 'center',
+    width: '100px',
+    sorter: true,
+    // defaultSortOrder: "ascend",
+},
+
+//4.表单 onChange
+onChange: this.handleTableChange,
+ 
+//5.后台接口 SemesterCourseEntity 实体中含有columns中key的字段
+PageHelperUtil.startPage(
+        pageQueryParam.getPageNo(),
+        pageQueryParam.getPageSize(),
+        PageUtil.getOrderBy(
+                pageQueryParam.getAttributeNamesForOrderBy(),
+                SemesterCourseEntity.class));
+//6.SemesterCourseEntity 中对应 @Column("KCLBM")
+@Column("KCLBM")
+private java.lang.String courseClassifyCode;
+
+@Column("KCLBM")
+private java.lang.String courseClassifyName;
+~~~
+
+# 移动数组内元素
+
+~~~js
+// 移动数组内的元素
+const arrayMoveMutate = (array, from, to) => {
+    array.splice(to < 0 ? array.length + to : to, 0, array.splice(from, 1)[0]);
+};
+export const arrayMove = (array, from, to) => {
+    array = array.slice();
+    arrayMoveMutate(array, from, to);
+    return array;
+};
+~~~
+
+# 参数 FormData
+
+~~~js
+const paramData = new FormData();
+paramData.append('fileName', fileName)
+paramData.append('file', fileList[0]);
+paramData.append('importRemark', formData.importRemark);
+paramData.append('fileUid', uuid);
+paramData.append('exportType', formData.exportType);
+
+//后台接受参数方式 @RequestParam("file")
+@ApiOperation("学生照片上传_批量上传")
+@RequestMapping(value = "/uploadStudentPicture", method = RequestMethod.POST)
+Result<Object> uploadStudentPicture(@RequestParam("file") MultipartFile file, @RequestParam("exportType") String exportType);
+~~~
+
 
 
 
