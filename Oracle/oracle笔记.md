@@ -753,13 +753,6 @@ drop tablespace 表空间名 [including contents];
 ​    group by rollup(dept.dname)
 ​    ORDER BY count(emp.deptno);
 
-# 表复制备份,使用子查询创建表
-
-~~~sql
-CREATE  TABLE ly_gg_qx_zy_20200407 AS SELECT * FROM ly_gg_qx_zy where ...;
-CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;
-~~~
-
 # 条件运算符
 
 ## case when
@@ -782,37 +775,6 @@ decode(sex,'0','女','男')
 
 ~~~sql
 select TIMESTAMPDIFF(SECOND,start_time,end_time)
-~~~
-
-# 从其它表中复制行：使 INSERT 子句与子查询中的列数匹配。
-
-~~~sql
-    <insert id="initMajorDevelopLink" >
-        insert into T_PYFA_ZYPYHJSZ (
-		ZYPYHJSZ_ID,
-		ND,
-		DW_ID,
-		ZY_ID,
-        XSLBM,
-		ZHXGSJ
-        )
-        SELECT DISTINCT
-        ZYPYFX.NJ||ZYPYFX.DW_ID||ZYPYFX.ZY_ID||ZYPYFX.XSLBM,
-        nvl(ZYPYFX.NJ,'-') NJ,
-        nvl(ZYPYFX.DW_ID,'-') DW_ID,
-        ZYPYFX.ZY_ID,
-        nvl(ZYPYFX.XSLBM,'-') XSLBM,
-        sysdate
-		FROM ly_yjs_hxsj.T_PYFA_ZYPYFX ZYPYFX
-		WHERE ZYPYFX.ZYPYFX_ID in
-            <foreach item="item" index="index" collection="majorDevelopDirectionIdList" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        and NOT EXISTS (
-        SELECT 1 FROM T_PYFA_ZYPYHJSZ ZYPYHJSZ
-        WHERE ZYPYHJSZ.ZYPYHJSZ_ID=ZYPYFX.nj||ZYPYFX.Dw_Id||ZYPYFX.ZY_ID||ZYPYFX.XSLBM
-        )
-    </insert>
 ~~~
 
 
@@ -1030,7 +992,7 @@ WHERE st.major_id = mj.id(+);
 表之间数据的相互 拷贝 ，从一张表中批量选中数据插入另外一张表中：
 【insert into t2 (xjh,xsid) select xh|| '10' AS xjh ,xsid from t1  WHERE xx = yy;】
 
-# UUID
+# UUID uuid
 
 ~~~sql
 sys_guid()
@@ -1089,7 +1051,46 @@ WHERE ROWNUM <= 15;
 </insert>
 ~~~
 
+~~~sql
+    <insert id="initMajorDevelopLink" >
+        insert into T_PYFA_ZYPYHJSZ (
+		ZYPYHJSZ_ID,
+		ND,
+		DW_ID,
+		ZY_ID,
+        XSLBM,
+		ZHXGSJ
+        )
+        SELECT DISTINCT
+        ZYPYFX.NJ||ZYPYFX.DW_ID||ZYPYFX.ZY_ID||ZYPYFX.XSLBM,
+        nvl(ZYPYFX.NJ,'-') NJ,
+        nvl(ZYPYFX.DW_ID,'-') DW_ID,
+        ZYPYFX.ZY_ID,
+        nvl(ZYPYFX.XSLBM,'-') XSLBM,
+        sysdate
+		FROM ly_yjs_hxsj.T_PYFA_ZYPYFX ZYPYFX
+		WHERE ZYPYFX.ZYPYFX_ID in
+            <foreach item="item" index="index" collection="majorDevelopDirectionIdList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        and NOT EXISTS (
+        SELECT 1 FROM T_PYFA_ZYPYHJSZ ZYPYHJSZ
+        WHERE ZYPYHJSZ.ZYPYHJSZ_ID=ZYPYFX.nj||ZYPYFX.Dw_Id||ZYPYFX.ZY_ID||ZYPYFX.XSLBM
+        )
+    </insert>
+~~~
+
+
+
+# 表复制备份,使用子查询创建表
+
+~~~sql
+CREATE  TABLE ly_gg_qx_zy_20200407 AS SELECT * FROM ly_gg_qx_zy where ...;
+CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;
+~~~
+
 # 创建dblink，DataBase links dblink
+
 ~~~sql
 drop database link hxsj;
 CREATE DATABASE link hxsj CONNECT TO gzjwxt_hxk identified BY gzjwxt_hxk USING '(
@@ -1099,15 +1100,49 @@ CREATE DATABASE link hxsj CONNECT TO gzjwxt_hxk identified BY gzjwxt_hxk USING '
 )';
 ~~~
 
-
-
 # 查询表字段
 
 ~~~sql
 select  *  from user_col_comments  where Table_Name='T_DMK_DMZ'
 ~~~
 
+# nlssort方法/函数，排序
 
+## 按拼音排序：
+
+~~~sql
+select * from MEMBER t order by NLSSORT(t.b,'NLS_SORT = SCHINESE_PINYIN_M')
+~~~
+
+## 按笔画排序：
+
+~~~sql
+select * from MEMBER t order by NLSSORT(t.b,'NLS_SORT = SCHINESE_STROKE_M')
+~~~
+
+## 按部首排序：
+
+~~~sql
+select * from MEMBER t order by NLSSORT(t.b,'NLS_SORT = SCHINESE_RADICAL_M')
+~~~
+
+# oracle 进阶 connect by 和level 的用法
+
+为了快速的查询层级关系的关键字，在代理关系中，或者权限关系中，经常会有层层嵌套的场景，比如，同行数据的第一个字段是ID，第二个字段是parentID，parentID表示他的上级ID是谁
+
+~~~
+
+~~~
+
+
+
+# 开窗函数over()
+
+查询附件类型为pdf的文件名以及个数
+
+~~~sql
+SELECT fj.fjmc,fj.fjlx,COUNT(1)OVER() AS cnt FROM gzjwxt_hxk.T_XTGL_FJ fj WHERE INSTR(fj.fjlx,'pdf')>0
+~~~
 
 
 

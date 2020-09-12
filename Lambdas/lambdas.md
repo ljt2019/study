@@ -92,6 +92,22 @@ words.sort(Comparator.comparing(Word::getName).reversed());
 words.forEach(System.out::println);
 ~~~
 
+~~~java
+Stream.iterate(0, i -> i + 1).limit(words.size()).forEach(i -> {
+	System.out.println(words.get(i));
+});
+~~~
+
+~~~java
+IntStream.range(0,words.size()).forEach(i->{
+    System.out.println(words.get(i));
+});
+~~~
+
+
+
+
+
 ## list转Map
 
 ### key去重

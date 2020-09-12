@@ -460,60 +460,79 @@ return new Promise((resolve, reject) => {
     };
 ~~~
 
-# 公共组件 导出【import ExportModal from "src/utils/exportModal";】
+# 公共组件 ，导出
 
 ~~~js
-<DragModal
-          className="md-md"
-          title="导出"
-          destroyOnClose
-          maskClosable={false}
-          visible={this.state.exportVisible}
-          onCancel={this.showExportModal}
-          footer={[
-            <Button
-              key={2}
-              onClick={() => {
-                this.showExportModal();
-                this.exportModalState(false);
-              }}
-            >
-              取消
-            </Button>,
-            <Button
-              key={1}
-              disabled={this.state.exportLoading}
-              type="primary"
-              onClick={() => {
-                this.exportModal.exportSubmit();
-              }}
-            >
-              确定
-            </Button>
-          ]}
-        >
-          <Spin
-            spinning={this.state.exportLoading}
-            tip="处理中，请稍等...(若提示处理失败或等待时间过长，请重试)"
-          >
-            <ExportModal
-              dataSource={columns}
-              ref="exportModal"
-              showExportModal={this.showExportModal}
-              exportModalState={this.exportModalState}
-              exportExcelUrl={exportApi}
-              selectedRows={this.state.selectedRows}
-              permission={authority.exportExcel}
-              params={this.getExportParams(this.params)}
-              excelName="学生基本信息"
-              timeout={10000}
-              initSet={0}
-              disabledSet={false}
-              wrappedComponentRef={inst => (this.exportModal = inst)}
-            />
-          </Spin>
-        </DragModal>
+import ExportModal from "src/utils/exportModal";
+
+ {/* 导出模态框 */}
+ <DragModal
+     className="md-md"
+     title="导出"
+     destroyOnClose
+     maskClosable={false}
+     visible={this.state.exportVisible}
+     onCancel={this.showExportModal}
+     footer={[
+         <Button key={2} onClick={() => { this.showExportModal(); this.exportModalState(false); }} >
+             取消
+         </Button>,
+         <Button key={1} disabled={this.state.exportLoading} type="primary" onClick={() => { this.exportModal.exportSubmit(); }} >
+             确定
+         </Button>
+     ]}
+ >
+     <Spin spinning={this.state.exportLoading} tip="处理中，请稍等...(若提示处理失败或等待时间过长，请重试)">
+         <ExportModal
+             dataSource={columns}
+             ref="exportModal"
+             showExportModal={this.showExportModal}
+             exportModalState={this.exportModalState}
+             exportExcelUrl={projectInfoChangeApplyApi.export}
+             selectedRows={this.state.selectedRows}
+             params={this.params}
+             permission={authority.export}
+             excelName="项目变更信息"
+             timeout={15000}
+             initSet={0}
+             disabledSet={false}
+             wrappedComponentRef={(inst) => (this.exportModal = inst)} />
+     </Spin>
+ </DragModal>
 ~~~
+
+
+
+# 公共组件，导入
+
+~~~js
+import ImportModal from "src/utils/importModal";
+
+{/* 导入文件模态框 */}
+<DragModal
+    className="md-sm"
+    title="导入文件"
+    destroyOnClose
+    maskClosable={false}
+    visible={this.state.importVisible}
+    onCancel={this.closeImportModal}
+    footer={[
+        <Button key={2} onClick={this.closeImportModal}>
+            返回
+        </Button>
+    ]}
+>
+    <ImportModal ref="importModal"
+        onSearch={this.onSearch}
+        downloadTemplateUrl={doctorNamesApi.exportTemplate}
+        importDataUrl={doctorNamesApi.importData}
+        permission={authority.importData}
+        timeout={150000}
+    />
+</DragModal>
+~~~
+
+
 
 # 判断表单的值是否改变
 
@@ -846,6 +865,18 @@ paramData.append('exportType', formData.exportType);
 Result<Object> uploadStudentPicture(@RequestParam("file") MultipartFile file, @RequestParam("exportType") String exportType);
 ~~~
 
+#  Tooltip 提示
+
+~~~js
+import { Tooltip } from "antd";
+render: (text, record) => {
+       return (
+           <Tooltip title={record.majorName} placement="right" mouseEnterDelay={0.2}>
+               <span>{record.majorName}</span>
+           </Tooltip>
+       );
+}
+~~~
 
 
 
@@ -854,3 +885,5 @@ Result<Object> uploadStudentPicture(@RequestParam("file") MultipartFile file, @R
 
 
 
+
+ 
