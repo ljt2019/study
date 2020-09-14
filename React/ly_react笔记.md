@@ -878,6 +878,47 @@ render: (text, record) => {
 }
 ~~~
 
+# Switch 开关
+
+~~~js
+// 是否启用 switch 开关 回调函数
+onSwitchChange = (record, text) => {
+    console.log('record', record);
+    console.log('text', text);
+    let param = {
+        ...record,
+        studentLabelEnableSign: text ? "1" : "0",
+    }
+    studentLabelUpdate(param, 'studentLabel:update', () => {
+        this.onSearch({ pageNo: this.params.pageNo });
+    });
+}
+   
+//表单
+{
+    title: '是否启用',
+    dataIndex: 'studentLabelEnableSign',
+    key: 'studentLabelEnableSign',
+    width: '11%',
+    align: 'center',
+    render: (text, record) => {
+        return (
+            <div>
+                <Switch
+                    // checkedChildren={"是"}
+                    // unCheckedChildren={"否"}
+                    checkedChildren={<Icon type="check" />}
+                    unCheckedChildren={<Icon type="close" />}
+                    checked={record.studentLabelEnableSign == "1" ? true : false}
+                    onChange={this.onSwitchChange.bind(text, record)}
+                />
+            </div>
+        );
+    }
+},
+    
+~~~
+
 
 
 
