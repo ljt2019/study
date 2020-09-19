@@ -81,7 +81,7 @@ import { selectDepartment } from "../../../../../config/commonService"
 
 ~~~js
 import { Scrollbars } from "components";
-<Scrollbars id="Scrollbarsbox">
+<Scrollbars style={{ height: 400 }}>  </Scrollbars>
 ~~~
 
 # 遍历数组
