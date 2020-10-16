@@ -120,7 +120,7 @@ const supplierIds = this.supplierInfo.state.selectedRowKeys;
 this.props.record
 ~~~
 
-# 父组件获取子组件***表单和state值***
+# 父组件获取子组件***表单和state值以及方法***
 
 ~~~js
 <AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />
@@ -869,13 +869,11 @@ Result<Object> uploadStudentPicture(@RequestParam("file") MultipartFile file, @R
 
 ~~~js
 import { Tooltip } from "antd";
-render: (text, record) => {
-       return (
-           <Tooltip title={record.majorName} placement="right" mouseEnterDelay={0.2}>
-               <span>{record.majorName}</span>
-           </Tooltip>
-       );
-}
+render: (text) => (
+    <Tooltip placement="topLeft" title={text}>
+        <div style={{ overflow: "hidden", textOverflow: "ellipsis", "whiteSpace": 'nowrap' }}>{text}</div>
+    </Tooltip>
+)
 ~~~
 
 # Switch 开关

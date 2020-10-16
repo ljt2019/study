@@ -61,12 +61,7 @@ public String $END$(String para){
 9、【Material Theme UI】：切换/自定义颜色。默认很漂亮了，如需修改配色：Tools->Material Theme
 
 
-
-6、RestfulToolkit
-
-
-
-====== 自动热部署方式去 ======
+====== 自动热部署方式去，废弃 ======
 1、引入jar：
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -231,14 +231,25 @@ SELECT exists(SELECT _view.id FROM mem_body_report_view _view WHERE _view.member
     </insert>
 ~~~
 
+~~~sql
+
+    <insert id="insertColleges" parameterType="com.ly.education.cultivationprocess.server.entity.ProjectInfoCollegeEntity" >
+        insert all
+        <foreach collection="list" item="item">
+            into T_PYGC_XMXX_XY(xmxxid, xy, sbzt) values (#{item.projectInfoId}, #{item.collegeName}, #{item.status})
+        </foreach>
+        Select 1 from dual
+    </insert>
+~~~
+
 
 
 # 遍历
 
 ```sql
-<if test="statuses != null and !statuses.isEmpty()">
-     and da.status in
-    <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
+<if test="workloadIdList != null and !workloadIdList.isEmpty()">
+     and workloadId in
+    <foreach item="item" index="index" collection="workloadIdList" open="(" separator="," close=")">
       #{item}
     </foreach>
 </if>	
