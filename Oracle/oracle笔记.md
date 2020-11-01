@@ -631,20 +631,7 @@ drop tablespace 表空间名 [including contents];
 14、处理日期，默认的日期显示格式为 DD-MON-RR
   MONTHS_BETWEEN 两个日期之间的月数，计算工作年数和月数：【SELECT hire_date,trunc(months_between(SYSDATE,hire_date)/12) FROM emp;】
 
-15、条件表达式：
-  1)、CASE 表达式：【CASE expr WHEN comparison_expr1 THEN return_expr1 [WHEN comparison_expr2 THEN return_expr2 WHEN comparison_exprn THEN return_exprn ELSE else_expr] END】
-  【SELECT
-      last_name,
-      job_id,
-      salary,
-      CASE job_id
-          WHEN 'IT_PROG'    THEN 1.10 * salary
-          WHEN 'ST_CLERK'   THEN 1.15 * salary
-          WHEN 'SA_REP'     THEN 1.20 * salary
-          ELSE salary
-      END "REVISED_SALARY"
-  FROM
-      emp;】
+
 
   2)、DECODE 函数：【DECODE(col|expression, search1, result1 [, search2, result2,...,] [, default])】
   【SELECT
@@ -746,8 +733,6 @@ drop tablespace 表空间名 [including contents];
     UNION ALL
     SELECT '员工总数', COUNT(emp.deptno) cnt FROM emp;
 
-
-​      
 ​    --3、分析函数：求每个部门员工数以及总人数
 ​    SELECT dept.dname, c.count_id 
 ​    FROM (select distinct emp.deptno deptno,count(emp.deptno) 
@@ -760,19 +745,39 @@ drop tablespace 表空间名 [including contents];
 ​    UNION ALL
 ​    SELECT '员工总数', COUNT(emp.deptno) FROM emp;
 ​    
-    --4、使用rollup函数：求每个部门员工数以及总人数
-    select decode(grouping(dept.dname),1,'员工总数',dept.dname)
-           ,count(emp.deptno)
-    from dept,emp
-    where dept.deptno=emp.deptno(+)
-    group by rollup(dept.dname)
-    ORDER BY count(emp.deptno);
+​    --4、使用rollup函数：求每个部门员工数以及总人数
+​    select decode(grouping(dept.dname),1,'员工总数',dept.dname)
+​           ,count(emp.deptno)
+​    from dept,emp
+​    where dept.deptno=emp.deptno(+)
+​    group by rollup(dept.dname)
+​    ORDER BY count(emp.deptno);
 
-31、从其它表中复制行：请勿使用 VALUES 子句，使 INSERT 子句中的列数与子查询中的列数匹配。
-【 INSERT INTO sales_reps(id, name, salary, commission_pct) SELECT deptno, last_name, salary, commission_pct FROM emp WHERE job_id LIKE '%REP%'; 】
+# 条件运算符
 
-32、使用子查询创建表：
-【CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;】
+## case when
+
+1. case 表达式返回的是一个确定的 value，如果没有 else，若前面的都不匹配，则返回 null
+2. 简单 case 中的表达式，when 后面的表达式类型应该全部保持一致
+3. 所有的 then 后面的 return_value 类型要保持一致 
+
+~~~sql
+case when type_id = 'SALE' then '销售' when type_id = 'PURCHASE' then '采购' else '其他' end as orderType;
+~~~
+
+## decode()
+
+~~~sql
+decode(sex,'0','女','男')
+~~~
+
+# 两时间之差，返回SECOND数
+
+~~~sql
+select TIMESTAMPDIFF(SECOND,start_time,end_time)
+~~~
+
+
 
 33、将表重新置于读/写模式：【ALTER TABLE emp READ ONLY;】、【ALTER TABLE emp READ WRITE;】
 
@@ -783,24 +788,47 @@ drop tablespace 表空间名 [including contents];
 36、确保对视图执行的 DML 操作只在视图范围内起作用：【WITH CHECK OPTION】
 CREATE OR REPLACE VIEW empvu20 AS SELECT * FROM emp WHERE deptno = 20 WITH CHECK OPTION CONSTRAINT empvu20_ck ;
 
-37、创建序列：
-【CREATE SEQUENCE dept_deptid_seq
+# 创建序列
+
+~~~sql
+CREATE SEQUENCE deptid_seq
 INCREMENT BY 10
 START WITH 120
 MAXVALUE 9999
 NOCACHE
-NOCYCLE;】
+NOCYCLE;
+~~~
 
-38、创建索引：【CREATE [UNIQUE][BITMAP]INDEX index ON table (column[, column]...);】、【CREATE INDEX emp_last_name_idx ON emp(last_name);】
+# 格式时间
 
-39、删除索引：【DROP INDEX index;】
+~~~sql
+date_format(_re.time,'%Y-%m-%d %H:%i:%s') as timeStr
+~~~
 
-40、rollup和grouping函数
-  SELECT DECODE(grouping(GROUP_ID),1,'总量',GROUP_ID)
-         ,DECODE(grouping(JOB),1,'部门编号为【'||GROUP_ID||'】的总量',JOB) 
-         ,sum(salary) 
-  from group_test 
-  group by rollup(group_id, job);
+# 创建索引
+
+~~~sql
+CREATE [UNIQUE][BITMAP]INDEX index_name ON table (column[, column]...);
+CREATE INDEX index_name ON emp(last_name);
+~~~
+
+# 删除索引
+
+~~~sql
+DROP INDEX index_name;
+~~~
+
+# rollup和grouping函数
+
+  ~~~sql
+SELECT DECODE(GROUPING(GROUP_ID), 1, '总量', GROUP_ID),
+       DECODE(GROUPING(JOB), 1, '部门编号为【' || GROUP_ID || '】的总量', JOB),
+       SUM(SALARY)
+FROM GROUP_TEST
+ GROUP BY ROLLUP(GROUP_ID, JOB);
+  ~~~
+
+
 
 41、with 子句：使用 WITH AS 语句可以为一个子查询语句块 定义一个名称
   1)、SQL 可读性增强。比如对于特定 with 子查询取个有意义的名字等。
@@ -810,6 +838,12 @@ NOCYCLE;】
     a AS (SELECT emp.deptno deptno,SUM(emp.sal) cnt FROM emp GROUP BY emp.deptno)
     ,b AS (SELECT SUM(cnt)/COUNT(deptno) dep_avg FROM a)
   SELECT dept.dname,cnt FROM a,dept WHERE dept.deptno = a.deptno AND cnt > (SELECT dep_avg FROM b)
+
+# 集合查询
+
+~~~sql
+ SUM(NVL(XSCJHZB.XF, 0)) OVER(PARTITION BY XSCJHZB.XN, XSCJHZB.XH) AS QDZXF,
+~~~
 
 # merge into 合并资料
 
@@ -859,11 +893,6 @@ select [level],colum,expr... from table [where condition(s)] [start with conditi
 
   4)、找出每个部门的经理
     【select level,a.* from s_emp a start with manager_id is null connect by prior id=manager_id and dept_id !=prior dept_id; 】
-
-44、case
-  1)、case 表达式返回的是一个确定的 value，如果没有 else，若前面的都不匹配，则返回 null。
-  2)、简单 case 中的表达式，when 后面的表达式类型应该全部保持一致
-  3)、所有的 then 后面的 return_value 类型要保持一致 
 
 45、子查询：非相关子查询效率高相关子查询
   1)、非相关子查询：非相关子查询是独立于外部查询的子查询，子查询总共执行一次，执行完毕后
@@ -963,115 +992,157 @@ WHERE st.major_id = mj.id(+);
 表之间数据的相互 拷贝 ，从一张表中批量选中数据插入另外一张表中：
 【insert into t2 (xjh,xsid) select xh|| '10' AS xjh ,xsid from t1  WHERE xx = yy;】
 
-oracle中添加 UUID：【sys_guid()】
+# UUID uuid
 
-创建序列：自增序列
-【create SEQUENCE student_SEQ】
-插入序列：【INSERT INTO tbl_test VALUES(student_SEQ.nextval,'测试');】
+~~~sql
+sys_guid()
+~~~
 
+# 自增序列
+
+~~~sql
+create SEQUENCE student_SEQ
+INSERT INTO tbl_test VALUES(student_SEQ.nextval,'测试');
+--mysql中
 inert into [key存在的就报错] / replace into [key存在的就更新]
+~~~
 
-全模糊查询,效率更高
+# 模糊查询,
+
+~~~sql
   <if test="mallId !=null and mallId !='' ">
   	AND instr(mall_id,#{mallId}) > 0
   </if>
+~~~
 
-判断字符是否相等		
+# 判断字符是否相等		
+
+~~~sql
   <if test="grade!= null and grade!= '' and grade == '1'.toString()">
       id = ''
   </if>
+~~~
 
-    <!-- 批量添加 -->
-    <insert id="batchInsert"
-            parameterType="java.util.List">
-        INSERT INTO T_BSGL_BSKT_MXZY (
-            BSKT_ID,
-            NJZYFX_ID,
-            CJR,
-            CJSJ
-        )
-        <foreach collection="list" item="item" index="index" separator="UNION ALL" open="(" close=")">
-            SELECT
-                #{item.graduationTopicId,jdbcType=VARCHAR},
-                #{item.gradeMajorId,jdbcType=VARCHAR},
-                #{item.creator,jdbcType=VARCHAR},
-                #{item.createTime,jdbcType=DATE}
-            FROM dual
-        </foreach>
-    </insert>
+# 查询一行，ROWNUM
 
-18、oracle批量操作
+~~~sql
+WHERE ROWNUM <= 15;
+~~~
 
- <insert id="insertBatch"
-            parameterType="com.ly.education.teachingMaterial.api.dto.OutWareInfoDto">
-        insert into T_JCGL_XSCKMX (
-		ID,
-		XSCKDH,
-		ZDDH,
-		JG,
-		ISBN,
-		JCMC,
-		ZK,
-		CKSL,
-		GYSDM,
-		CBSDM,
-		CKZT,
-		TSZT,
-		SFCYFYHS,
-		DYZZ,
-		BZ,
-		CJRBH,
-		CJRXM
-        )
+# 批量插入
 
-        oracle 批量插入
-        <foreach item="item" index="index" collection="studentOutWareDetailsVoList"  open="(" close=")"  separator="union all">
-        select
-            sys_guid(),
-            #{outWareNumber,jdbcType=VARCHAR},
-            #{item.orderNumber,jdbcType=VARCHAR},
-            #{item.price,jdbcType=NUMERIC},
-            #{item.isbn,jdbcType=VARCHAR},
-            #{item.bookName,jdbcType=VARCHAR},
-            #{item.discount,jdbcType=NUMERIC},
-            #{item.studentOutWareCnt,jdbcType=NUMERIC},
-            #{item.supplierCode,jdbcType=VARCHAR},
-            #{item.publisherCode,jdbcType=VARCHAR},
-            #{item.useStatus,jdbcType=NUMERIC},
-            #{item.unOrderStatus,jdbcType=NUMERIC},
-            #{item.inCostAccounting,jdbcType=NUMERIC},
-            #{item.firstAuthor,jdbcType=VARCHAR},
-            '一键入库',
+~~~sql
+<insert id="batchInsert"
+        parameterType="java.util.List">
+    INSERT INTO T_BSGL_BSKT_MXZY (
+        BSKT_ID,
+        NJZYFX_ID,
+        CJR,
+        CJSJ
+    )
+    <foreach collection="list" item="item" index="index" separator="UNION ALL" open="(" close=")">
+        SELECT
+            #{item.graduationTopicId,jdbcType=VARCHAR},
+            #{item.gradeMajorId,jdbcType=VARCHAR},
             #{item.creator,jdbcType=VARCHAR},
-            #{item.creatorName,jdbcType=VARCHAR} from dual
-        </foreach>
+            #{item.createTime,jdbcType=DATE}
+        FROM dual
+    </foreach>
+</insert>
+~~~
+
+~~~sql
+    <insert id="initMajorDevelopLink" >
+        insert into T_PYFA_ZYPYHJSZ (
+		ZYPYHJSZ_ID,
+		ND,
+		DW_ID,
+		ZY_ID,
+        XSLBM,
+		ZHXGSJ
+        )
+        SELECT DISTINCT
+        ZYPYFX.NJ||ZYPYFX.DW_ID||ZYPYFX.ZY_ID||ZYPYFX.XSLBM,
+        nvl(ZYPYFX.NJ,'-') NJ,
+        nvl(ZYPYFX.DW_ID,'-') DW_ID,
+        ZYPYFX.ZY_ID,
+        nvl(ZYPYFX.XSLBM,'-') XSLBM,
+        sysdate
+		FROM ly_yjs_hxsj.T_PYFA_ZYPYFX ZYPYFX
+		WHERE ZYPYFX.ZYPYFX_ID in
+            <foreach item="item" index="index" collection="majorDevelopDirectionIdList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        and NOT EXISTS (
+        SELECT 1 FROM T_PYFA_ZYPYHJSZ ZYPYHJSZ
+        WHERE ZYPYHJSZ.ZYPYHJSZ_ID=ZYPYFX.nj||ZYPYFX.Dw_Id||ZYPYFX.ZY_ID||ZYPYFX.XSLBM
+        )
     </insert>
+~~~
 
-  <update id="batchChangeNoPracticeApplyStatus">
-      <foreach collection="list" item="item" separator=";" open="begin" close=";end;">
-          update T_SXGL_MSXSQ
-          <set>
-              <if test="item.applyStatus != null">
-                  SPZT = #{item.applyStatus,jdbcType=VARCHAR},
-              </if>
-          </set>
-          where
-          SQZJ =  #{item.applyId,jdbcType=VARCHAR}
-      </foreach>
-  </update>
 
-创建dblink
-DataBase links dblink
-  【
+
+# 表复制备份,使用子查询创建表
+
+~~~sql
+CREATE  TABLE ly_gg_qx_zy_20200407 AS SELECT * FROM ly_gg_qx_zy where ...;
+CREATE TABLE dept80 AS SELECT deptno, last_name,salary*12 ANNSAL,hire_date FROM emp  WHERE deptno = 80;
+~~~
+
+# 创建dblink，DataBase links dblink
+
+~~~sql
 drop database link hxsj;
 CREATE DATABASE link hxsj CONNECT TO gzjwxt_hxk identified BY gzjwxt_hxk USING '(
   DESCRIPTION =
    (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.2.97)(PORT = 1521)) )
    (CONNECT_DATA = (SERVICE_NAME =orcl))
 )';
-  】
+~~~
+
+# 查询表字段
+
+~~~sql
+select  *  from user_col_comments  where Table_Name='T_DMK_DMZ'
+~~~
+
+# nlssort方法/函数，排序
+
+## 按拼音排序：
+
+~~~sql
+select * from MEMBER t order by NLSSORT(t.b,'NLS_SORT = SCHINESE_PINYIN_M')
+~~~
+
+## 按笔画排序：
+
+~~~sql
+select * from MEMBER t order by NLSSORT(t.b,'NLS_SORT = SCHINESE_STROKE_M')
+~~~
+
+## 按部首排序：
+
+~~~sql
+select * from MEMBER t order by NLSSORT(t.b,'NLS_SORT = SCHINESE_RADICAL_M')
+~~~
+
+# oracle 进阶 connect by 和level 的用法
+
+为了快速的查询层级关系的关键字，在代理关系中，或者权限关系中，经常会有层层嵌套的场景，比如，同行数据的第一个字段是ID，第二个字段是parentID，parentID表示他的上级ID是谁
+
+~~~
+
+~~~
 
 
+
+# 开窗函数over()
+
+查询附件类型为pdf的文件名以及个数
+
+~~~sql
+SELECT fj.fjmc,fj.fjlx,COUNT(1)OVER() AS cnt FROM gzjwxt_hxk.T_XTGL_FJ fj WHERE INSTR(fj.fjlx,'pdf')>0
+~~~
 
 
 

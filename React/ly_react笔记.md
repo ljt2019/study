@@ -35,10 +35,6 @@ let jsonStr = JSON.parse(obj);
 
 7、时间格式化显示：new Date(Date.parse(${dataSource[i].events[0].timesStartTime}.replace(/-/g, "/"))).format('hh:mm'))
 
-8、查询所有节次
-to_char(JCSZ.KSSJ,'hh:mi') as KSSJ,
-        to_char(JCSZ.JSSJ,'hh:mi') as JSSJ,
-
 # 排序
 
 ~~~js
@@ -81,10 +77,11 @@ to_char(JCSZ.KSSJ,'hh:mi') as KSSJ,
 import { selectDepartment } from "../../../../../config/commonService"
 ~~~
 
-# 按钮控件
+# 滚动条
 
 ~~~js
-<Button type="primary" onClick={this.batchDelete} ghost> 取消订购  </Button>
+import { Scrollbars } from "components";
+<Scrollbars style={{ height: 400 }}>  </Scrollbars>
 ~~~
 
 # 遍历数组
@@ -98,25 +95,78 @@ import { selectDepartment } from "../../../../../config/commonService"
    })
 ~~~
 
-debugger
+## 遍历设值
 
-14、组件如果有default，则引用时不需要{}
+~~~
+dataSource: data.map((item) => ({ developLinkCode: item.code, developLinkName: item.name ,developLinkType:'1'}))
+~~~
 
-15、子组件传值给父组件：{/* 获取子table的数据 */}
-  1)、表单形式获取子组件值：【<SupplierInfo wrappedComponentRef={(inst) => (this.supplierInfo = inst)} />】
-  2)、不是表单形式获取子组件值：【<SupplierInfo ref={(ref)=>{this.supplierInfo=ref}} />】
-  父组件可以这样使用子组件传来的参数：【const supplierIds = this.supplierInfo.state.selectedRowKeys;】
+# 父组件获取子组件表单值，获取表单
 
-16、父组件传值给子组件：【record={this.state.record}】，子组件中通过【this.props.record】来获取
-  <ClassBooksModal ref="showClassOrderBooksModal"
-      setChild={this.setChild}
-      record={this.state.record}
-  />
+~~~js
+//方式1
+<SupplierInfo ref="supplierInfo "  record={this.state.record}  />
+ //方式2
+<SupplierInfo wrappedComponentRef={(inst) => (this.supplierInfo = inst)} record={this.state.record}/>
+~~~
 
-同时获取表单和state值【<AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />】
+# 父组件获取子组件state值，获取页面值
+
+~~~js
+<SupplierInfo ref={(ref)=>{this.supplierInfo=ref}} record={this.state.record} />
+//父组件可以这样使用子组件传来的参数
+const supplierIds = this.supplierInfo.state.selectedRowKeys;
+//子组件获取父组件值
+this.props.record
+~~~
+
+# 父组件获取子组件***表单和state值以及方法***
+
+~~~js
+<AddModal ref="addModal" wrappedComponentRef={(inst) => (this.addModal = inst)} />
+//取值
+let courseIdList = this.addModal.state.selectedRowKeys
+
+~~~
+
+# 当前页面表单数据操作
+
+~~~js
+//给表单属性设值
+this.props.form.setFieldsValue({ majorCreditList: this.MajorCreditModal.state.selectedRows });
+//获取单个表单输入值
+this.props.form.getFieldValue("majorCreditList")
+// 注册validateFields获取【整个表单输入值】并且校验是否输入
+ const { validateFields } = this.props.form; 
+ //this.props.form.validateFields((err, values) => {
+ validateFields((err, formData) => {
+     if (!err) {
+         
+     }
+ });
+//未知？
+const { getFieldDecorator,getFieldValue } = this.props.form
+~~~
+
+# 获取当前搜索框的值
+
+~~~js
+ this.refs.searchModal.validateFields((err, formData) => {
+     if (!err) {
+         let grade = formData.grade
+     }
+ });
+<SearchModal ref="searchModal" onSearch={this.onSearch} openChange={() => this.openChange()} />
+~~~
 
 
-17、注意：前台传值到后台，参数列表格式需要特别注意。大括号，等等
+
+# 表单组件，@Form.create()
+
+~~~js
+@Form.create()
+export default class Approval extends React.Component {}
+~~~
 
 # 确认提示框
 
@@ -140,97 +190,25 @@ approvalBooks = () => {
   };
 ~~~
 
-# 前端传参
+# 创建对象map并赋值
 
 ~~~js
-  let _params = {
-      ...this.params,
-      ...params,
-      param: {
-          teachingClassNumber: this.props.record.teachingClassNumber
-      }
-  }
-~~~
-
-# 给js对象赋值新属性
-
-~~~js
+//方式1
 record.studentOrderCnt = value.target.value;
+//方式2
+let applyMap = {}
+record['id'] = item.studentLinkRecordId
+this.state.selectedRows.map((item) => {
+    applyMap[item.applyName] = item.studentId
+})
 ~~~
 
-# 回调函数
+# 跳转页面，从URL参数中获取父页面传来的参数
 
 ~~~js
-  studentOrderCntOnChange = (value, record, index) => {
-      record.studentOrderCnt = value.target.value
-      let dataSource = this.state.dataSource
-      dataSource[index] = value.target.value
-      this.setState({ dataSource: dataSource })
-
-  }
-  //---------
- {
-    title: '请确认学生征订人数',
-    dataIndex: 'studentOrderCnt',
-    key: 'studentOrderCnt',
-    align: 'center',
-    width: 100,
-    render: (text, record, index) => {
-        return <Input
-            onChange={(v) => { this.studentOrderCntOnChange(v, record, index) }}
-            defaultValue={this.props.classRecord.classCnt}
-            rows={1}
-        />
-    }
-  },
-~~~
-
-# 批量修改保存
-
-~~~js
-  returnNoticeOnChange = (value, record, index) => {
-      let _data = {
-          "orderNumber": record.orderNumber,
-          "returnNotice": value.target.value,//回告
-          "approvalStatus": 4,
-      }
-      let dataSource = this.state.dataSource;
-      //通过索引赋值
-      dataSource[index].returnNotice = value.target.value;
-      this.setState({
-          dataSource: dataSource
-      });
-  }
-~~~
-
-# 模态框传递数据 参数
-
- codeList: this.props.codeList
-
-~~~js
-  <ClassBooksModal ref="showClassOrderBooksModal"
-      setChild={this.setChild}
-      codeList={this.state.selectedRowKeys}
-      record={this.state.record}
-  />
-~~~
-
- # form表单传参 @Form.create()
-
- ~~~
- <AddModal  wrappedComponentRef={(inst) => (this.addModal = inst)} />
- ~~~
-
-# 获取当前页面表格数据
-
-~~~js
-  onSearch = () => {
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.props.onSearch(values);
-      }
-    });
-  };
+this.setState({
+      enterWareNumber: this.props.match.params.enterWareNumber
+})
 ~~~
 
 # 设置表格行联合主键
@@ -243,12 +221,19 @@ record.studentOrderCnt = value.target.value;
 
 ~~~js
 import TableUtil from "src/utils/TableUtil";
+import TableUtil from '@/utils/TableUtil';
 scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
 ~~~
 
 # 设置样式
 
 ~~~js
+ style={{
+    marginLeft: '-4px',
+    color: '#1890ff',
+    fontSize: '8px',
+    textDecoration: 'none'
+ }}
 <Input style={{ height: 35.016, width: '246px' }} />
 ~~~
 
@@ -260,24 +245,20 @@ scroll: { x: TableUtil.calculateColumsWidthSum(columns, 0) },
     }
 ~~~
 
-28、传id查详情：【isExtraQuery: id => `${base}/studentExtraScore/queryIsExtraData?studentExtraScoreId=${id}`】 // 查询是否为额外成绩表数据
-
-# 数组元素操作
+# 传id查详情
 
 ~~~js
+isExtraQuery: id => `${base}/studentExtraScore/queryIsExtraData?studentExtraScoreId=${id}`
+~~~
+
+# 删除素组元素，添加数组元素
+
+~~~js
+let list=[]
 // 删除
 list.splice(index, 1)
 // 添加
 list.push(newState.inputValue)  
-~~~
-
-# 创建map集合并赋值
-
-~~~js
-  let applyMap = {}
-  this.state.selectedRows.map((item) => {
-      applyMap[item.applyId] = item.studentId
-  })
 ~~~
 
 # 所在部门和开课单位
@@ -299,8 +280,6 @@ selectDepartment({}, (data) => {
       })
     })
 
-
-
   returnTreeData = (data) => {
     return data.map((item) => {
       let child = [];
@@ -311,48 +290,40 @@ selectDepartment({}, (data) => {
     });
   };
 
-
-            <Col {...colSpan}>
-              <FormItem {...formItemLayout} label="所在部门">
-                {getFieldDecorator("departmentId", {})
-                  (
-                    <TreeSelect
-                      allowClear
-                      placeholder="所在部门"
-                      dropdownStyle={{
-                        maxHeight: 300,
-                        overflow: "auto"
-                      }}
-                      treeData={this.state.dwList} />
-                    // <Select
-                    //   placeholder="请选择"
-                    //   allowClear
-                    //   showSearch
-                    // >
-                    //   {this.state.dwList.map(val => (
-                    //     <Option key={val.dwh}>{val.dwmc}</Option>
-                    //   ))}
-                    // </Select>
-                  )}
-              </FormItem>
-            </Col>
-            <Col {...colSpan}>
-              <FormItem {...formItemLayout} label="开课部门">
-                {getFieldDecorator("collegeId")(
-                  <Select placeholder="请选择" allowClear showSearch optionFilterProp="children">
-                    {this.state.departmentList.map((item) => {
-                      return <Option key={item.dwh}>{item.dwmc}</Option>;
-                    })}
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
+//---------
+<Col {...colSpan}>
+  <FormItem {...formItemLayout} label="所在部门">
+    {getFieldDecorator("departmentId", {})
+      (
+        <TreeSelect
+          allowClear
+          placeholder="所在部门"
+          dropdownStyle={{
+            maxHeight: 300,
+            overflow: "auto"
+          }}
+          treeData={this.state.dwList} />
+      )}
+  </FormItem>
+</Col>
+<Col {...colSpan}>
+  <FormItem {...formItemLayout} label="开课部门">
+    {getFieldDecorator("collegeId")(
+      <Select placeholder="请选择" allowClear showSearch optionFilterProp="children">
+        {this.state.departmentList.map((item) => {
+          return <Option key={item.dwh}>{item.dwmc}</Option>;
+        })}
+      </Select>
+    )}
+  </FormItem>
+</Col>
 ~~~
 
+# 列隐藏
 
-
-列隐藏：
+~~~js
 ellipsis: true,
+~~~
 
 # 获取当前登陆用户
 
@@ -365,24 +336,19 @@ import Cookies from "js-cookie"
   newFormData1.proposerCode = JSON.parse(Cookies.get('user') || '{}').userName;
 ~~~
 
--- 刷新数据注意异步问题
-
-# 附件id
+# 获取UUID，附件id
 
 ~~~
 import { generatorUUIDString } from "src/app/config/commonService"
 ~~~
 
-# 拿到当前页输入值
-
-~~~
-const { getFieldDecorator,getFieldValue } = this.props.form
-~~~
-
 # 下拉框获取到值和代码 代码集
 
 ~~~js
+//获取数据
 let factor = option.props.data.scorePercentileValue;
+
+//下拉框
 let enablSelect = <Select
         showSearch
         style={{ width: "90%" }}
@@ -399,22 +365,6 @@ let enablSelect = <Select
             )
         }
     </Select>
-~~~
-
-# 【后期末备注】回调函数
-
-~~~js
-    changePositiveExamRemarkOnChange = (value, record, index) => {
-        let dataSource = this.state.dataSource;
-        console.log('dataSource', dataSource[index].positiveRemarkCode)
-        console.log('value', value)
-        dataSource[index].positiveRemarkCode = value;
-        this.setState({
-            dataSource: dataSource
-        });
-        console.log('dataSource111', dataSource[index].positiveRemarkCode)
-    }
-
 ~~~
 
 # 自定义 导出 文件调用
@@ -510,60 +460,79 @@ return new Promise((resolve, reject) => {
     };
 ~~~
 
-# 公共组件 导出【import ExportModal from "src/utils/exportModal";】
+# 公共组件 ，导出
 
 ~~~js
-<DragModal
-          className="md-md"
-          title="导出"
-          destroyOnClose
-          maskClosable={false}
-          visible={this.state.exportVisible}
-          onCancel={this.showExportModal}
-          footer={[
-            <Button
-              key={2}
-              onClick={() => {
-                this.showExportModal();
-                this.exportModalState(false);
-              }}
-            >
-              取消
-            </Button>,
-            <Button
-              key={1}
-              disabled={this.state.exportLoading}
-              type="primary"
-              onClick={() => {
-                this.exportModal.exportSubmit();
-              }}
-            >
-              确定
-            </Button>
-          ]}
-        >
-          <Spin
-            spinning={this.state.exportLoading}
-            tip="处理中，请稍等...(若提示处理失败或等待时间过长，请重试)"
-          >
-            <ExportModal
-              dataSource={columns}
-              ref="exportModal"
-              showExportModal={this.showExportModal}
-              exportModalState={this.exportModalState}
-              exportExcelUrl={exportApi}
-              selectedRows={this.state.selectedRows}
-              permission={authority.exportExcel}
-              params={this.getExportParams(this.params)}
-              excelName="学生基本信息"
-              timeout={10000}
-              initSet={0}
-              disabledSet={false}
-              wrappedComponentRef={inst => (this.exportModal = inst)}
-            />
-          </Spin>
-        </DragModal>
+import ExportModal from "src/utils/exportModal";
+
+ {/* 导出模态框 */}
+ <DragModal
+     className="md-md"
+     title="导出"
+     destroyOnClose
+     maskClosable={false}
+     visible={this.state.exportVisible}
+     onCancel={this.showExportModal}
+     footer={[
+         <Button key={2} onClick={() => { this.showExportModal(); this.exportModalState(false); }} >
+             取消
+         </Button>,
+         <Button key={1} disabled={this.state.exportLoading} type="primary" onClick={() => { this.exportModal.exportSubmit(); }} >
+             确定
+         </Button>
+     ]}
+ >
+     <Spin spinning={this.state.exportLoading} tip="处理中，请稍等...(若提示处理失败或等待时间过长，请重试)">
+         <ExportModal
+             dataSource={columns}
+             ref="exportModal"
+             showExportModal={this.showExportModal}
+             exportModalState={this.exportModalState}
+             exportExcelUrl={projectInfoChangeApplyApi.export}
+             selectedRows={this.state.selectedRows}
+             params={this.params}
+             permission={authority.export}
+             excelName="项目变更信息"
+             timeout={15000}
+             initSet={0}
+             disabledSet={false}
+             wrappedComponentRef={(inst) => (this.exportModal = inst)} />
+     </Spin>
+ </DragModal>
 ~~~
+
+
+
+# 公共组件，导入
+
+~~~js
+import ImportModal from "src/utils/importModal";
+
+{/* 导入文件模态框 */}
+<DragModal
+    className="md-sm"
+    title="导入文件"
+    destroyOnClose
+    maskClosable={false}
+    visible={this.state.importVisible}
+    onCancel={this.closeImportModal}
+    footer={[
+        <Button key={2} onClick={this.closeImportModal}>
+            返回
+        </Button>
+    ]}
+>
+    <ImportModal ref="importModal"
+        onSearch={this.onSearch}
+        downloadTemplateUrl={doctorNamesApi.exportTemplate}
+        importDataUrl={doctorNamesApi.importData}
+        permission={authority.importData}
+        timeout={150000}
+    />
+</DragModal>
+~~~
+
+
 
 # 判断表单的值是否改变
 
@@ -607,47 +576,345 @@ return isChange;
 
 # 数据行中添加弹出框
 
-~~~JS
-      {
-        title: "可用创新学分",
-        dataIndex: "availableCredit",
-        key: "availableCredit",
-        width: 100,
-        align: "center",
-        render: (text, record, index) => {
-          return (<Button onClick={() => { this.showAvailableCreditModal(record) }}
-            style={{
-              marginLeft: '-4px',
-              color: '#1890ff',
-              fontSize: '8px',
-              textDecoration: 'none'
-            }}
-            disabled={false}
-          >{record.availableCredit}</Button>)
-        },
-      },
+~~~js
+{
+  title: "可用创新学分",
+  dataIndex: "availableCredit",
+  key: "availableCredit",
+  width: 100,
+  align: "center",
+  render: (text, record, index) => {
+    return (<Button onClick={() => { this.showAvailableCreditModal(record) }}
+      style={{
+        marginLeft: '-4px',
+        color: '#1890ff',
+        fontSize: '8px',
+        textDecoration: 'none'
+      }}
+      disabled={false}
+    >{record.availableCredit}</Button>)
+  },
+},
       
 ~~~
 
-
+# 代码器选择器
 
 ~~~js
-                {/**教学班*/}
-                <DragModal
-                    title="教学班"
-                    width={780}
-                    destroyOnClose={true}
-                    maskClosable={false}
-                    visible={this.state.classModalVisible}
-                    onCancel={this.showClassModal}
-                    footer={[
-                        <Button key="addCancelkey11" onClick={this.showClassModal}>
-                            取消
-                       </Button>
-                    ]}
-                >
-                    <ClassAnaly ref="ClassAnaly" record={this.state.record} />
-                </DragModal>
+import { SearchBox, TeacheDeptSelector, CodeSelector } from "components";
+<Col {...colSpan}>
+    <FormItem {...formItemLayout} label="所属单位">
+      {getFieldDecorator("department")(<TeacheDeptSelector />)}
+    </FormItem>
+</Col>
+<Col {...colSpan}>
+  <FormItem {...formItemLayout} label="课程属性：">
+    {getFieldDecorator("courseAttr")(
+      <CodeSelector CODE="XTGL_KCSXDMJ" />
+    )}
+  </FormItem>
+</Col>
+
+~~~
+
+# 转圈圈
+
+~~~js
+//执行方法前开启圈圈效果
+this.setState({
+	spinLoading: true
+})
+
+//执行方法结束后关闭圈圈效果
+this.setState({
+	spinLoading: false
+})
+
+<Spin spinning={this.state.spinLoading} tip="处理中，请稍等...(若提示处理失败或等待时间过长，请重试)">
+ //包裹的内容
+</Spin>
+~~~
+
+# 将多个对象合并到某个对象
+
+~~~js
+const merge = (target, ...sources) => Object.assign(target, ...sources);
+~~~
+
+# 合并后返回一个新对象
+
+~~~js
+const merge = (...sources) => Object.assign({}, ...sources);
+~~~
+
+# 查询最新一条数据
+
+~~~sql
+select * FROM (select tt.*, row_number() over(partition by tt.jgh,tt.xnxq order by tt.jgh,tt.xnxq desc) rn FROM T_GZL_TJJG tt
+~~~
+
+
+
+## 自定义组件使用
+
+## 年级、院系单位、专业
+
+~~~js
+import {CodeSelector,DepartSelector, MajorSelector } from "@/components"
+<Row>
+     <Col {...colSpan}>
+         <FormItem {...formItemLayout} label="年级：">
+             {getFieldDecorator('grade', {
+                 rules: [
+                 ]
+             })(
+                 <CodeSelector CODE="NJ" />
+             )}
+         </FormItem>
+     </Col>
+     <Col {...colSpan}>
+         <FormItem {...formItemLayout} label="学院:">
+             {getFieldDecorator('departId', {
+                 rules: [
+                 ]
+             })(
+                 <DepartSelector />
+             )}
+         </FormItem>
+     </Col>
+     <Col {...colSpan}>
+         <FormItem {...formItemLayout} label="专业:">
+             {getFieldDecorator('majorId', {
+                 rules: [
+                 ]
+             })(
+                 <MajorSelector />
+             )}
+         </FormItem>
+     </Col>
+ 
+ </Row>
+~~~
+
+# 按钮属性
+
+~~~js
+<Button
+    className="ml10"
+    type="primary"
+    htmlType="submit"
+    onClick={this.onSearch}
+>
+    查询
+</Button>
+~~~
+
+# 照片授权
+
+~~~js
+import { hex_md5 } from 'utils/MD5'
+import { auth,config as globalConfig } from "app/config/global";
+function timestamp(url) {
+  
+  if (url.indexOf("?") > -1) {
+    url = url + "&_t=" + getTimestamp
+  } else {
+    url = url + "?_t=" + getTimestamp
+  }
+  return url
+}
+
+const zximgprops = {
+      name: "file",
+      action: timestamp(gradeExamManageApi.uploadStudentPictureByOne),
+      headers: {
+        permission: 'gradeExamPicture:uploadStudentPictureByOne',
+        csrfToken:hex_md5(getTimestamp + globalConfig.tokenKey)
+      },
+      data: (file) => {
+        return { postgraduateId: this.props.selectRow.postgraduateId, grade: this.props.selectRow.grade, studentPictureType: "student", file };
+      },
+      onChange(info) {
+        console.log("info", info);
+        const file = info.fileList[info.fileList.length - 1];
+
+        _this.setState({ loading: false, zxfileList: [file] });
+
+      }
+    };
+~~~
+
+# 行点击选中
+
+~~~js
+//行点击选中
+const onRowClick = (selectedRow, key) => {
+    const { selectedRowKeys, selectedRows } = this.state;
+    if (selectedRowKeys.includes(key)) {
+        this.setState({
+            selectedRowKeys: selectedRowKeys.filter((item) => item !== key),
+            selectedRows: selectedRows.filter((item) => item !== selectedRow)
+        }, () => {
+            checkStatueListener();
+        });
+    } else {
+        this.setState({
+            selectedRowKeys: [...selectedRowKeys, key],
+            selectedRows: [...selectedRows, selectedRow]
+        }, () => {
+            checkStatueListener();
+        });
+    }
+};
+
+const checkStatueListener = () => {
+    console.log('----选中后接着执行动作-----')
+};
+     
+//表单
+rowKey: (record) => record.semesterCourseId,
+onRow: (record) => ({ onClick: () => onRowClick(record, record.semesterCourseId) }),
+~~~
+
+# 页面排序
+
+~~~js
+// 1.表单排序修改方法
+handleTableChange = (pagination, filters, sorter) => {
+    this.params.sorter = sorter;
+    this.indexQuery();
+};
+    
+// 2.表单查询
+indexQuery = params => {
+    let _params = {
+        ...this.params,
+        ...params
+    };
+    this.setState({
+        loading: true
+    });
+    // 排序
+    if (_params.sorter && _params.sorter.field && _params.sorter.order) {
+        _params["attributeNamesForOrderBy"] = {
+            [_params.sorter.field]: _params.sorter.order.substring(0, _params.sorter.order.length - 3)
+        };
+        delete _params.sorter;
+    }
+    selectQuery(_params, authority.query, (data) => {
+       
+    });
+};
+    
+//3.columns 中 sorter: true,
+{
+    title: '学年学期',
+    dataIndex: 'semesterId',
+    key: 'semesterId',
+    align: 'center',
+    width: '100px',
+    sorter: true,
+    // defaultSortOrder: "ascend",
+},
+
+//4.表单 onChange
+onChange: this.handleTableChange,
+ 
+//5.后台接口 SemesterCourseEntity 实体中含有columns中key的字段
+PageHelperUtil.startPage(
+        pageQueryParam.getPageNo(),
+        pageQueryParam.getPageSize(),
+        PageUtil.getOrderBy(
+                pageQueryParam.getAttributeNamesForOrderBy(),
+                SemesterCourseEntity.class));
+//6.SemesterCourseEntity 中对应 @Column("KCLBM")
+@Column("KCLBM")
+private java.lang.String courseClassifyCode;
+
+@Column("KCLBM")
+private java.lang.String courseClassifyName;
+~~~
+
+# 移动数组内元素
+
+~~~js
+// 移动数组内的元素
+const arrayMoveMutate = (array, from, to) => {
+    array.splice(to < 0 ? array.length + to : to, 0, array.splice(from, 1)[0]);
+};
+export const arrayMove = (array, from, to) => {
+    array = array.slice();
+    arrayMoveMutate(array, from, to);
+    return array;
+};
+~~~
+
+# 参数 FormData
+
+~~~js
+const paramData = new FormData();
+paramData.append('fileName', fileName)
+paramData.append('file', fileList[0]);
+paramData.append('importRemark', formData.importRemark);
+paramData.append('fileUid', uuid);
+paramData.append('exportType', formData.exportType);
+
+//后台接受参数方式 @RequestParam("file")
+@ApiOperation("学生照片上传_批量上传")
+@RequestMapping(value = "/uploadStudentPicture", method = RequestMethod.POST)
+Result<Object> uploadStudentPicture(@RequestParam("file") MultipartFile file, @RequestParam("exportType") String exportType);
+~~~
+
+#  Tooltip 提示
+
+~~~js
+import { Tooltip } from "antd";
+render: (text) => (
+    <Tooltip placement="topLeft" title={text}>
+        <div style={{ overflow: "hidden", textOverflow: "ellipsis", "whiteSpace": 'nowrap' }}>{text}</div>
+    </Tooltip>
+)
+~~~
+
+# Switch 开关
+
+~~~js
+// 是否启用 switch 开关 回调函数
+onSwitchChange = (record, text) => {
+    console.log('record', record);
+    console.log('text', text);
+    let param = {
+        ...record,
+        studentLabelEnableSign: text ? "1" : "0",
+    }
+    studentLabelUpdate(param, 'studentLabel:update', () => {
+        this.onSearch({ pageNo: this.params.pageNo });
+    });
+}
+   
+//表单
+{
+    title: '是否启用',
+    dataIndex: 'studentLabelEnableSign',
+    key: 'studentLabelEnableSign',
+    width: '11%',
+    align: 'center',
+    render: (text, record) => {
+        return (
+            <div>
+                <Switch
+                    // checkedChildren={"是"}
+                    // unCheckedChildren={"否"}
+                    checkedChildren={<Icon type="check" />}
+                    unCheckedChildren={<Icon type="close" />}
+                    checked={record.studentLabelEnableSign == "1" ? true : false}
+                    onChange={this.onSwitchChange.bind(text, record)}
+                />
+            </div>
+        );
+    }
+},
+    
 ~~~
 
 
@@ -658,5 +925,4 @@ return isChange;
 
 
 
-
-
+ 
