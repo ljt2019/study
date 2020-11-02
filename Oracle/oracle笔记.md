@@ -1144,7 +1144,12 @@ select * from MEMBER t order by NLSSORT(t.b,'NLS_SORT = SCHINESE_RADICAL_M')
 SELECT fj.fjmc,fj.fjlx,COUNT(1)OVER() AS cnt FROM gzjwxt_hxk.T_XTGL_FJ fj WHERE INSTR(fj.fjlx,'pdf')>0
 ~~~
 
+# 存在则不添加，保证数据唯一性
 
+~~~sql
+insert when (not exists (select 1 from T_PYGC_XMXX_XY where xmxxid || xy = #{projectInfoId} || #{collegeName})) then
+into T_PYGC_XMXX_XY(xmxxid, xy) values (#{projectInfoId}, #{collegeName}) select 1 from dual
+~~~
 
 
 
