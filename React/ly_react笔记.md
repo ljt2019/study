@@ -146,6 +146,8 @@ this.props.form.getFieldValue("majorCreditList")
  });
 //未知？
 const { getFieldDecorator,getFieldValue } = this.props.form
+
+let courseAttributeCode = this.refs.modifyCourseAttributeModal.getFieldValue("courseAttributeCode")
 ~~~
 
 # 获取当前搜索框的值
