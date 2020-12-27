@@ -7,7 +7,7 @@ flushall
 
 ## 字符串（String）Map<key,value>
 
-二进制的形式存储，value最大容纳数据长度512M，key-value(string/int/float)，雷同：Map<key,value>
+二进制的形式存储，value最大容纳数据长度512M，(string/int/float)
 
    ### 基本操作命令
 
@@ -73,7 +73,7 @@ flushall
 
 ## 哈希（Hash）Map<String,HashMap<String,value>>
 
-由多个无序键值对(key-value)散列组组成，其中key是字符串，value是元素，按key进行增删，每个key可以存储2^32-1,4294967295个键值对（40亿）；雷同：Map<String,HashMap<String,value>>
+由多个无序键值对(key-value)散列组组成，其中key是字符串，value是元素，按key进行增删，每个key可以存储2^32-1（40亿）
 
 ### 基本操作命令
 
@@ -113,7 +113,13 @@ flushall
    hlen key  --获取指定key的里面field的个数，长度
    ~~~
 
-6. …
+6. 对于field存储的是integer类型的可以进行加减
+
+   ~~~
+   hincrby key field
+   ~~~
+
+7. …
 
 
 
@@ -132,37 +138,42 @@ flushall
 ### 存储结构
 
 1. ziplist(OBJECT_ENCODING_ZIPLIST)：压缩列表
+
+   > 经过特殊编码，由连续的内存块组成的双向链表，它不存储指向上和下链表的指针，而是存储上和当前节点的长度
+   >
+   > > 1. 一个hash对象保存的field数量<512
+   > > 2. 一个hash对象所有的field和value字符长度都<64byte
+
 2. hashtable(OBJECT_ENCODING_HT)：哈希表
 
-## 字符串列表（List）Map<key,List<value>>
+## 字符串列表（List）Map<key,LinkedList<value>>
 
-允许重复元素，雷同：Map<key,List<value>>
+有序可重复字符串(左head->右tail)，可以存储2^32-1（40亿）
 
    ### 基本操作命令
 
 1. 赋值
 
    ~~~
-   lpush/rpush key value[value...]  --往key列表键中左/右边放入一个元素，key不存在则新建
-   lpushx/rpushx key value[value...]  --往key列表键中左/右边放入一个元素，key存在才赋值
+   lpush/rpush key value[value...]  --往key列表键中左/右边放入元素，key不存在则新建
+   lpushx/rpushx key value[value...]  --往key列表键中左/右边放入元素，key存在才赋值
    ~~~
 
 2. 取值
 
    ~~~
-   lrange key start stop --获取列表键从start下标到stop下标元素
-   lrange key 0 -1  --获取所有
+   lrange key start stop --获取指定key中从start下标到stop下标元素
+   lrange key 0 -1  --获取指定key中所有的元素
+   lindex key index  --根据指定索引index获取元素
    ~~~
 
 3. 删除
 
    ~~~
    lpop/rpop key --弹出左/右边的元素
-   blpop key [key...] timeout  --阻塞从key列表键最左端弹出一个元素，若列表键中不存在元素，阻塞等待{timeout}秒，若{timeout}=0，则一直等待
+   blpop key [key...] timeout  --阻塞从key列表键最左端弹出元素，若列表键中不存在元素，阻塞等待{timeout}秒，若{timeout}=0，则一直等待
    brpop key [key...] timeout  --改性质可以用来做消息队列的实现
    ~~~
-
-   
 
 4. 获取长度
 
@@ -174,11 +185,36 @@ flushall
 
 ### 应用场景
 
+1. 消息列表
+2. 文章列表
+3. 公告列表
+4. 评论列表
+5. 活动列表
 
+### 存储结构
+
+quicklist
+
+1. list-max-ziplist-szie(fill)
+
+   1. 正数表示单个ziplist最多存储的entry个数
+
+   2. 负数表示单个ziplist的大小
+
+      > * -1:4KB
+      > * -2:8KB
+      > * -3:16KB
+      > * -4:32KB
+      > * -5:64KB
+
+2. list-compress-depth(compress),压缩深度魔人是0
+
+   1. 首尾ziplist不压缩
+   2. 首尾第一第二个ziplist不压缩，以此类推
 
 ## 字符串集合（Set）Map<key,Set<value>>
 
-无序不重复，跟踪数据唯一性，维护数据对象之间的关联关系，雷同：Map<key,Set<value>>
+无序不可重复，可以存储2^32-1（40亿）
 
 ### 基本操作命令
 
@@ -186,13 +222,13 @@ flushall
 
    ~~~
    sadd key member [member ...]  --往集合键key中存放元素，若key不存在则新建
-   
    ~~~
 
 2. 取值
 
    ~~~
    smembers key  --获取集合键key中所有元素
+   srandmember key  --从集合键中随机获取1个元素
    srandmember key [count]  --从集合键中随机获取{count}个元素
    sismember key member  --判断{member}是否存在于集合键key中
    scard key  --获取集合键key元素个数
@@ -201,14 +237,14 @@ flushall
 3. 删除
 
    ~~~
-   srem key member [member ...]  --从集合键key中删除元素
-   spop key [count]  --从集合键中随机选{count}个元素，并删除
+   srem key member [member ...]  --从集合键key中删除指定元素
+   spop key  --从集合键中随机选1个元素，并删除
    ~~~
 
 4. 差集运算，存储
 
    ~~~
-   sdiff set1 set2  --求出两集合中相差的元素
+   sdiff set1 set2  --set1中元素减去set2中元素之差
    sdiffstore set set1 set2  --
    ~~~
 
@@ -228,25 +264,61 @@ flushall
 
 7. …
 
-## 有序字符串集合（Sorted Set）   Map<key,TreeMap<key,value>>
+### 应用场景
 
-带分数score-value有序集合,value不可重复，score可重复，雷同：   Map<key,TreeMap<key,value>>
+* 跟踪数据唯一性
+
+* 维护数据对象之间的关联关系
+
+* 抽奖
+
+* 点赞
+
+* 签到
+
+* 打卡
+
+* 商品标签
+
+* 用户画像（兴趣爱好，信用属性，人口属性，社交）
+
+* 用户关注，推荐模型
+
+* 案例1
+
+  > * 用like:t1001来维护t1001这条微博所有的点赞用户
+  > * 用户utiger点赞：sadd like:t1001 utiger
+  > * 用户utiger取消点赞：srem like:t1001 utiger
+  > * 用户utiger是否点赞：sismember like:t1001 utiger
+  > * 点赞的所有用户：smembers like:t1001
+  > * 点赞总数：scard like:t1001
+
+* 相互关注，我关注的人也关注了她？可能认识的人？
+
+### 存储结构
+
+1. inset
+2. hashtable
+
+## 有序字符串集合（Sorted Set）  Map<key,TreeMap<value,score>>
+
+带分数(value,score)有序集合，value不可重复，score可重复
 
 ### 基本操作命令
 
 1. 赋值， https://yq.aliyun.com/articles/504008
 
    ~~~
-   zadd key [NX|XX] [CH] [INCR] score member [score member ...]  --往有序集合键key中存放元素，若key不存在则新建
-   zadd key 100 zs  --会替换掉之前存在的分数的值
+   zadd key score member score1 member1  --往有序集合键key中存放元素，若key不存在则新建
+   zadd key score member  --会替换掉之前存在的member分数scored的值
    ~~~
 
 2. 取值
 
    ~~~
-   zscore key zs
+   zscore key member  --获取指定member的分数
    zrange key 0 -1  --取某范围内的值，默认是升序
-   zrevrange key 0 -1  --取某范围内的值，从大到小
+   zrevrange key 0 -1  --取某范围内的值，降序
    zrange key 0 -1 withscores  --取某范围内的值，并将分数也取出
    zrangebyscore key 80 100 withscores limit 0 2  --根据分数的范围进行取值
    zcard key  --取长度
@@ -262,8 +334,6 @@ flushall
    
    ~~~
 
-   
-
 4. 给某个分数加值
 
    ~~~
@@ -278,9 +348,30 @@ flushall
 
 * 热点话
 
+  > * id为n1001的新闻的点阅数加1
+  >
+  >   ~~~
+  >   zincrby hotnews:20201111 1 n1001
+  >   ~~~
+  >
+  > * 获取今天点击量最多的15条：
+  >
+  >   ~~~
+  >   zrevrange hotnews:202011 0 15 withscores
+  >   ~~~
+  >
+  > * 
+  >
+  > 
+
 * 构建索引数据
 
   
+
+### 存储结构
+
+1. ziplist（元素个数小于128，所有元素长度小于64bytes）
+2. skiplist+dick
 
 ## Redis Key 的通用命令
 
