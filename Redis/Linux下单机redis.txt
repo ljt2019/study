@@ -9,7 +9,7 @@
 	【yum -y install gcc gcc-c++ autoconf pcre pcre-devel make automake】
 	【yum -y install wget httpd-tools vim】
 	
-4、进入目录：【cd redis-5.0.3】
+4、进入目录：【cd redis-3.0.7】
 
 5、执行编译：【make】，出现[Hint: It's a good idea to run 'make test' ;)],则说明编译成功
 
@@ -21,12 +21,12 @@
 	【mkdir -p /usr/local/redis/etc】
 	【mkdir -p /usr/local/redis/bin】
 	
-9、将redis-3.0.7目录下的redis.conf拷贝到新建的etc目录下：【cp redis.conf /usr/local/redis/etc/】
+9、将redis-3.0.7目录下的redis.conf拷贝到新建的etc目录下：【cp /usr/local/redis-3.0.7/redis.conf /usr/local/redis/etc/】
 
 10、将redis-3.0.7/src目录下的一些文件移动到新建的bin目录下：
-   【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/bin/】
+   【mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server /usr/local/redis/bin】
 
-11、编辑redis.conf文件，使之后台启动：【vim redis.conf】，后台启动【daemonize yes】，持久化存放的位置【dir /usr/local/redis/etc/】
+11、编辑redis.conf文件，使之后台启动：【vim /usr/local/redis/etc/redis.conf】，后台启动【daemonize yes】，持久化存放的位置【dir /usr/local/redis/etc/】
 
 12、退出编辑器：【:wq+enter键】
 

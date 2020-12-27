@@ -1,5 +1,7 @@
 
-更加纤细查询redis官方网站【https://www.redis.net.cn/order/3625.html】
+更加详细查询redis官方网站【https://www.redis.net.cn/order/3625.html】
+
+flushall
 
 ============ Redis 5种数据类型 ============
 
