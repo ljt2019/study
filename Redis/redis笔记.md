@@ -13,52 +13,52 @@ flushall
 
 1. 赋值更新
 
-   ~~~
+   ~~~shell
    set key value
-   setnx key value --如果key存在就不设置，返回0，不存在才设置，返回
+   setnx key value  #如果key存在就不设置，返回0，不存在才设置，返回
    ~~~
 
 2. 赋值多个值
 
-   ~~~
+   ~~~shell
    mset key1 value1 key2 value2
    ~~~
 
 3. 设置过期时间
 
-   ~~~
-   setex key second value --second表示second后秒过期
+   ~~~shell
+   setex key second value  #second表示second后秒过期
    ~~~
 
 4. 按索引替换
 
-   ~~~
-   setrange key index value --index表示从index处开始替换
+   ~~~shell
+   setrange key index value  #index表示从index处开始替换
    ~~~
 
 5. 取值
 
-   ~~~
+   ~~~shell
    get key
    ~~~
 
 6. 删除
 
-   ~~~
+   ~~~shell
    del key
    ~~~
 
 7. 扩展
 
-   ~~~
-   getset key value --表示先将值取出再重新覆盖赋值
+   ~~~shell
+   getset key value  #表示先将值取出再重新覆盖赋值
    ~~~
 
 8. 数值增减
 
-   ~~~
-   incr/decr key --key自增/减1，如果key不存在，则先给key自动赋值0，再加/减1	
-   incrby/decrby key 2 --key的加/减加2	
+   ~~~shell
+   incr/decr key  #key自增/减1，如果key不存在，则先给key自动赋值0，再加/减1	
+   incrby/decrby key 2  #key的加/减加2	
    ~~~
 
 9. …
@@ -79,43 +79,43 @@ flushall
 
 1. 赋值
 
-   ~~~
+   ~~~shell
    hset key field value  
-   hmset key filed1 value1 filed2 value2  --一次设置多个值
+   hmset key filed1 value1 filed2 value2  #一次设置多个值
    ~~~
 
 2. 取值
 
-   ~~~
-   hget key field  --取指定key中field的value
-   hmget key field1 field2 --取指定key中多个field的值
-   hgetall key  --获取指定key中所有(field,value)
-   hkeys key  --获取指定key中所有field
-   hvals key  ----获取指定key中所有value
+   ~~~shell
+   hget key field  #取指定key中field的value
+   hmget key field1 field2  #取指定key中多个field的值
+   hgetall key  #获取指定key中所有(field,value)
+   hkeys key  #获取指定key中所有field
+   hvals key  ##获取指定key中所有value
    ~~~
 
 3. 删除
 
-   ~~~
-   hdel key field1 field2  --删除指定key中(field,value)
-   del key  --删除指定key中的所有元素
+   ~~~shell
+   hdel key field1 field2  #删除指定key中(field,value)
+   del key  #删除指定key中的所有元素
    ~~~
 
 4. 自学命令
 
-   ~~~
-   hexists key field  --判断某属性是否存在
+   ~~~shell
+   hexists key field  #判断某属性是否存在
    ~~~
 
 5. 获取长度
 
-   ~~~
-   hlen key  --获取指定key的里面field的个数，长度
+   ~~~shell
+   hlen key  #获取指定key的里面field的个数，长度
    ~~~
 
 6. 对于field存储的是integer类型的可以进行加减
 
-   ~~~
+   ~~~shell
    hincrby key field
    ~~~
 
@@ -154,31 +154,31 @@ flushall
 
 1. 赋值
 
-   ~~~
-   lpush/rpush key value[value...]  --往key列表键中左/右边放入元素，key不存在则新建
-   lpushx/rpushx key value[value...]  --往key列表键中左/右边放入元素，key存在才赋值
+   ~~~shell
+   lpush/rpush key value[value...]  #往key列表键中左/右边放入元素，key不存在则新建
+   lpushx/rpushx key value[value...]  #往key列表键中左/右边放入元素，key存在才赋值
    ~~~
 
 2. 取值
 
-   ~~~
-   lrange key start stop --获取指定key中从start下标到stop下标元素
-   lrange key 0 -1  --获取指定key中所有的元素
-   lindex key index  --根据指定索引index获取元素
+   ~~~shell
+   lrange key start stop  #获取指定key中从start下标到stop下标元素
+   lrange key 0 -1  #获取指定key中所有的元素
+   lindex key index  #根据指定索引index获取元素
    ~~~
 
 3. 删除
 
-   ~~~
-   lpop/rpop key --弹出左/右边的元素
-   blpop key [key...] timeout  --阻塞从key列表键最左端弹出元素，若列表键中不存在元素，阻塞等待{timeout}秒，若{timeout}=0，则一直等待
-   brpop key [key...] timeout  --改性质可以用来做消息队列的实现
+   ~~~shell
+   lpop/rpop key #弹出左/右边的元素
+   blpop key [key...] timeout  #阻塞从key列表键最左端弹出元素，若列表键中不存在元素，阻塞等待{timeout}秒，若{timeout}=0，则一直等待
+   brpop key [key...] timeout  #改性质可以用来做消息队列的实现
    ~~~
 
 4. 获取长度
 
    ~~~
-   llen key  --取元素的长度
+   llen key  #取元素的长度
    ~~~
 
 5. …
@@ -220,46 +220,46 @@ quicklist
 
 1. 赋值
 
-   ~~~
-   sadd key member [member ...]  --往集合键key中存放元素，若key不存在则新建
+   ~~~shell
+   sadd key member [member ...]  #往集合键key中存放元素，若key不存在则新建
    ~~~
 
 2. 取值
 
-   ~~~
-   smembers key  --获取集合键key中所有元素
-   srandmember key  --从集合键中随机获取1个元素
-   srandmember key [count]  --从集合键中随机获取{count}个元素
-   sismember key member  --判断{member}是否存在于集合键key中
-   scard key  --获取集合键key元素个数
+   ~~~shell
+   smembers key  #获取集合键key中所有元素
+   srandmember key  #从集合键中随机获取1个元素
+   srandmember key [count]  #从集合键中随机获取{count}个元素
+   sismember key member  #判断{member}是否存在于集合键key中
+   scard key  #获取集合键key元素个数
    ~~~
 
 3. 删除
 
-   ~~~
-   srem key member [member ...]  --从集合键key中删除指定元素
-   spop key  --从集合键中随机选1个元素，并删除
+   ~~~shell
+   srem key member [member ...]  #从集合键key中删除指定元素
+   spop key  #从集合键中随机选1个元素，并删除
    ~~~
 
 4. 差集运算，存储
 
-   ~~~
-   sdiff set1 set2  --set1中元素减去set2中元素之差
-   sdiffstore set set1 set2  --
+   ~~~shell
+   sdiff set1 set2  #set1中元素减去set2中元素之差
+   sdiffstore set set1 set2  #
    ~~~
 
 5. 交集运算，存储
 
-   ~~~
-   sinter set1 set2  --求出两集合中都有的元素
-   sinterstore set set1 set2  --
+   ~~~shell
+   sinter set1 set2  #求出两集合中都有的元素
+   sinterstore set set1 set2  #
    ~~~
 
 6. 并集运算，存储
 
-   ~~~
-   sdunion set1 set2  --合并两个集合，重复的元素set会去掉
-   sunionstore set set1 set2  --
+   ~~~shell
+   sdunion set1 set2  #合并两个集合，重复的元素set会去掉
+   sunionstore set set1 set2  #
    ~~~
 
 7. …
@@ -308,36 +308,36 @@ quicklist
 
 1. 赋值， https://yq.aliyun.com/articles/504008
 
-   ~~~
-   zadd key score member score1 member1  --往有序集合键key中存放元素，若key不存在则新建
-   zadd key score member  --会替换掉之前存在的member分数scored的值
+   ~~~shell
+   zadd key score member score1 member1  #往有序集合键key中存放元素，若key不存在则新建
+   zadd key score member  #会替换掉之前存在的member分数scored的值
    ~~~
 
 2. 取值
 
-   ~~~
-   zscore key member  --获取指定member的分数
-   zrange key 0 -1  --取某范围内的值，默认是升序
-   zrevrange key 0 -1  --取某范围内的值，降序
-   zrange key 0 -1 withscores  --取某范围内的值，并将分数也取出
-   zrangebyscore key 80 100 withscores limit 0 2  --根据分数的范围进行取值
-   zcard key  --取长度
-   zcount key 80 90  --获取某分数之间的个数
+   ~~~shell
+   zscore key member  #获取指定member的分数
+   zrange key 0 -1  #取某范围内的值，默认是升序
+   zrevrange key 0 -1  #取某范围内的值，降序
+   zrange key 0 -1 withscores  #取某范围内的值，并将分数也取出
+   zrangebyscore key 80 100 withscores limit 0 2  #根据分数的范围进行取值
+   zcard key  #取长度
+   zcount key 80 90  #获取某分数之间的个数
    ~~~
 
 3. 删除
 
-   ~~~
+   ~~~shell
    zrem key zs ls
-   zremrangebyrank key 0 4  --根据排名的范围进行删除
-   zremrangebyscore key 80 100  --根据分数的范围进行删除
+   zremrangebyrank key 0 4  #根据排名的范围进行删除
+   zremrangebyscore key 80 100  #根据分数的范围进行删除
    
    ~~~
 
 4. 给某个分数加值
 
-   ~~~
-   zincrby key 3 ls  --表示给ls的分数加3
+   ~~~shell
+   zincrby key 3 ls  #表示给ls的分数加3
    ~~~
 
 5. …
@@ -350,13 +350,13 @@ quicklist
 
   > * id为n1001的新闻的点阅数加1
   >
-  >   ~~~
+  >   ~~~shell
   >   zincrby hotnews:20201111 1 n1001
   >   ~~~
   >
   > * 获取今天点击量最多的15条：
   >
-  >   ~~~
+  >   ~~~shell
   >   zrevrange hotnews:202011 0 15 withscores
   >   ~~~
   >
@@ -377,45 +377,64 @@ quicklist
 
 1. 获得所有key
 
-   ~~~
+   ~~~shell
    keys *
    ~~~
 
 2. 删除指定key
 
-   ~~~
+   ~~~shell
    del key1 key2 key3
    ~~~
 
 3. 查看指定key是否存在
 
-   ~~~
+   ~~~shell
    exists key
    ~~~
 
 4. 对key重命名
 
-   ~~~
+   ~~~shell
    rename key newKey
    ~~~
 
 5. 设置key的过期时间
 
-   ~~~
-   expire key 1000  --单位是秒
+   ~~~shell
+   expire key 1000  #单位是秒
    ~~~
 
 6. 查看key过期所剩的时间
 
-   ~~~
+   ~~~shell
    ttl key
    ~~~
 
 7. 获取key的类型
 
-   ~~~
+   ~~~shell
    type key
    ~~~
 
 8. …
+
+# 事务操作
+
+演示
+
+~~~shell
+ set tiger 100  #充值100元
+set sp 100  #充值100元
+multi  #开启事务
+decrby tiger 100  #向sp转账100元
+incrby sp 100  #收到tiger转来的100元
+exec  #执行事务
+
+discard  #取消事务，执行到一半时发现有吴，则可以这样取消
+~~~
+
+## 
+
+
 
