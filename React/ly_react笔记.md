@@ -921,6 +921,40 @@ onSwitchChange = (record, text) => {
 
 
 
+# 区间查询框
+
+~~~js
+<Col {...colSpan}>
+                            <FormItem {...formItemLayout} label="正考:">
+                                <Row>
+                                    <Col span={11}>
+                                        <FormItem>
+                                            {getFieldDecorator('scoreMin', {
+                                                rules: [
+                                                ]
+                                            })(
+                                                <InputNumber placeholder='>=' style={{ width: '100%' }} />
+                                            )}
+                                        </FormItem>
+                                    </Col>
+
+                                    <Col span={2} className="tc">~</Col>
+
+                                    <Col span={11}>
+                                        <FormItem>
+                                            {getFieldDecorator('scoreMax', {
+                                                rules: [
+                                                ]
+                                            })(
+                                                <InputNumber placeholder='<=' style={{ width: '100%' }} />
+                                            )}
+                                        </FormItem>
+                                    </Col>
+                                </Row>
+                            </FormItem>
+                        </Col>
+~~~
+
 
 
 

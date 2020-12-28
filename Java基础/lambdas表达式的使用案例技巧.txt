@@ -92,7 +92,11 @@
 12、对象集合转属性集合【List<String> result = words.stream().map(Word::getName).collect(Collectors.toList());】
                       【List<String> result = words.stream().map(y -> y.getName().concat(".jpg")).collect(Collectors.toList());】
 		
-		
+13、交集：【List<String> intersection = list1.stream().filter(item -> list2.contains(item)).collect(Collectors.toList());】
+
+14、差集：【 List<String> reduce1 = list1.stream().filter(item -> !list2.contains(item)).collect(Collectors.toList());】
+
+
 ====== 数组 ======
 
 1、数组排序
