@@ -3,6 +3,8 @@
 
 flushall
 
+flushdb 
+
 # Redis 5种数据类型
 
 ## 字符串（String）Map<key,value>
@@ -434,7 +436,90 @@ exec  #执行事务
 discard  #取消事务，执行到一半时发现有吴，则可以这样取消
 ~~~
 
-## 
+# Lua脚本
+
+为什么要使用Lua脚本？
+
+1. 批量执行命令
+2. 原子性
+3. 操作集合的复用
+4. 排他，在执行lua脚本时，会拒绝其他客户端的任何请求
+
+## 基本命令
+
+~~~shell
+EVAL script numkeys key [key ...] arg [arg ...]
+~~~
+
+> - **script**： 参数是一段 Lua 5.1 脚本程序。脚本不必(也不应该)定义为一个 Lua 函数。
+> - **numkeys**： 用于指定键名参数的个数。
+> - **key [key ...]**： 从 EVAL 的第三个参数开始算起，表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
+> - **arg [arg ...]**： 附加参数，在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
+
+## Lua执行redis命令
+
+~~~shell
+redis.call(command,key[param1,param2…])
+~~~
+
+* 案例
+
+  ~~~shell
+  eval "return redis.call('set','foo','bar')" 0  #写死
+  eval "return redis.call('set',KEYS[1],ARGV[1])" 1 tiger 10000  #带参数
+  ~~~
+
+* 调用Lua脚本，对ip进行限流
+
+  ~~~shell
+  ./redis-cli --eval "ip_limit.lua" app:ip:limit:192.168.3.10 , 6 10
+  ~~~
+
+  > ip_limit.lua
+  >
+  > ~~~shell
+  > local num=redis.call('incr',KEYS[1])  #计数1，key不存在则创建
+  > if tonumber(num)==1 then 
+  >    redis.call('expire',KEYS[1],ARGV[1])  #第一次访问，设置过期时间
+  >    return 1
+  > elseif tonumber(num)>tonumber(ARGV[2]) then  #第二个参数表示否超过限制的次数
+  >   return 0  #超限
+  > else 
+  >   return 1  #可以正常访问
+  > end
+  > ~~~
+  >
+  > 
+
+* 自乘
+
+  ~~~
+  ./redis-cli --eval "self_multiply.lua" mutliply , 3
+  ~~~
+
+  > 缓存脚本，得到一个摘要 ‘8b25e457d2e7c839ca9d3ed00f69d13cffbb7253’
+  >
+  > ~~~shell
+  > script load "local curVal = redis.call('get',KEYS[1]);if curVal == false then curVal = 0 else curVal = tonumber(curVal) end;curVal = curVal*tonumber(ARGV[1]);redis.call('set',KEYS[1],curVal); return curVal;"
+  > ~~~
+  >
+  > 执行缓存脚本
+  >
+  > ~~~shell
+  > evalsha '8b25e457d2e7c839ca9d3ed00f69d13cffbb7253' 1 num 5
+  > ~~~
+  >
+  > 脚本执行太长时间时，可以对其进行杀死
+  >
+  > ~~~
+  > script kill
+  > ~~~
+  >
+  > 
+
+  
+
+* 
 
 
 
