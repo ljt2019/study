@@ -275,7 +275,8 @@ LEFT JOIN pub_region region ON region.id = xx.regionId
 ~~~
 
    1)、首先写一个 resultMap【返回list集合就需要写这个resultMap】
-	<!-- 根据场馆查询场馆设备结果集 -->
+
+~~~
 	<resultMap id="GymRegionOutDTOMap" type="cn.healthmall.sail.base.dto.GymDeviceOutDTO"> 
 		<id column="gymId" property="gymId"/>
 		<result column="gymName" property="gymName"/>
@@ -350,12 +351,13 @@ LEFT JOIN pub_region region ON region.id = xx.regionId
 		AND _region.level_type = 1
 	</select>
 	
-
-
+~~~
 
 12、返回txt文本信息【带With,在xml中】：List<Medal> selectByExampleWithBLOBs(MedalExample example);
 
-13、【union all】的用法，两个表字段顺序要一致
+# 【union all】的用法，两个表字段顺序要一致
+
+~~~
 	<select id="list" parameterType="java.lang.String" resultType="cn.healthmall.sail.member.dto.ArSportRecordOutDTO">
 		SELECT a.* from (
 			SELECT
@@ -404,6 +406,9 @@ LEFT JOIN pub_region region ON region.id = xx.regionId
 				) AS a
 		ORDER BY a.startTime DESC
 	</select>
+~~~
+
+
 
 15、inert into [key存在的就报错] / replace into [key存在的就更新]
 
