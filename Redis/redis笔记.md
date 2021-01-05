@@ -346,7 +346,7 @@ quicklist
 
 ### 应用场景
 
-* 排名
+* 排名、排行榜
 
 * 热点话
 
@@ -556,4 +556,16 @@ redis.call(command,key[param1,param2…])
 ~~~
 dir /usr/local/redis/etc/
 ~~~
+
+
+
+
+
+# 分布式锁，使用zk会更专业，但是如果需要高并发处理，则redis会更合适
+
+## redission
+
+## zookeeper
+
+
 
