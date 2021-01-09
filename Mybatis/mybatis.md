@@ -427,6 +427,23 @@ LEFT JOIN pub_region region ON region.id = xx.regionId
 
 
 
+~~~
+        <choose>
+            <when test="emptyType == 'batch'.toString()">
+                jxzrw_id in
+                <foreach collection="teachingClassChildrenIds" index="index" item="item" close=")" open="(" separator=",">
+                    #{item,jdbcType=VARCHAR}
+                </foreach>
+            </when>
+            <when test="emptyType == 'alone'.toString()">
+                jsrkap_id = #{classOpenArrangeId,jdbcType=VARCHAR}
+            </when>
+            <otherwise>
+                1 = 2
+            </otherwise>
+        </choose>
+~~~
+
 
 
 
