@@ -563,9 +563,153 @@ dir /usr/local/redis/etc/
 
 # 分布式锁，使用zk会更专业，但是如果需要高并发处理，则redis会更合适
 
-## redission
+## redisson
+
+## Luttuce
+
+## Jedis
 
 ## zookeeper
 
+## 分布式锁的基本要求
 
+1. 互斥性：只有一个客户端能够持有锁【jedis.setnx(key, value)】
+
+   ~~~java
+   package distlock;
+   
+   import redis.clients.jedis.Jedis;
+   import java.util.Collections;
+   
+   /**
+    * tiger
+    */
+   public class DistLock {
+       private static final String LOCK_SUCCESS = "OK";
+       private static final String SET_IF_NOT_EXIST = "NX";
+       private static final String SET_WITH_EXPIRE_TIME = "PX";
+       private static final Long RELEASE_SUCCESS = 1L;
+   
+       /**
+        * 尝试获取分布式锁
+        * @param jedis Redis客户端
+        * @param lockKey 锁
+        * @param requestId 请求标识
+        * @param expireTime 超期时间
+        * @return 是否获取成功
+        */
+       public static boolean tryGetDistributedLock(Jedis jedis, String lockKey, String requestId, int expireTime) {
+           // set支持多个参数 NX（not exist） XX（exist） EX（seconds） PX（million seconds）
+           String result = jedis.set(lockKey, requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
+           if (LOCK_SUCCESS.equals(result)) {
+               return true;
+           }
+           return false;
+       }
+   
+       /**
+        * 释放分布式锁
+        * @param jedis Redis客户端
+        * @param lockKey 锁
+        * @param requestId 请求标识
+        * @return 是否释放成功
+        */
+       public static boolean releaseDistributedLock(Jedis jedis, String lockKey, String requestId) {
+           String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+           Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));
+           if (RELEASE_SUCCESS.equals(result)) {
+               return true;
+           }
+           return false;
+       }
+   }
+   
+   ~~~
+
+   
+
+2. 不会产生死锁：即使持有锁的客户端崩溃，也能保证其他客户端后续获得锁【jedis.expire(key, seconds)】
+
+3. 只有持有锁的客户端才能释放锁
+
+## Pipeline
+
+~~~java
+package pipeline;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
+
+/**
+ * tiger
+ */
+public class PipelineSet {
+    public static void main(String[] args) {
+        Jedis jedis = new Jedis("192.168.3.81", 6379);
+        Pipeline pipelined = jedis.pipelined();
+        long t1 = System.currentTimeMillis();
+        for (int i=0; i < 1000000; i++) {
+            pipelined.set("batch"+i,""+i);
+        }
+        pipelined.syncAndReturnAll();
+        long t2 = System.currentTimeMillis();
+        System.out.println("耗时："+(t2-t1)+"ms");
+    }
+}
+
+~~~
+
+~~~java
+package pipeline;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * tiger
+ */
+public class PipelineGet {
+    public static void main(String[] args) {
+        new Thread(){
+            public void run(){
+                Jedis jedis = new Jedis("192.168.3.81", 6379);
+                Set<String> keys = jedis.keys("batch*");
+                List<String> result = new ArrayList();
+                long t1 = System.currentTimeMillis();
+                for (String key : keys) {
+                    result.add(jedis.get(key));
+                }
+                for (String src : result) {
+                    //System.out.println(src);
+                }
+                System.out.println("直接get耗时："+(System.currentTimeMillis() - t1));
+            }
+        }.start();
+
+        new Thread(){
+            public void run(){
+                Jedis jedis = new Jedis("192.168.3.81", 6379);
+//                jedis.auth("tiger@139.com");
+                Set<String> keys = jedis.keys("batch*");
+                List<Object> result = new ArrayList();
+                Pipeline pipelined = jedis.pipelined();
+                long t1 = System.currentTimeMillis();
+                for (String key : keys) {
+                    pipelined.get(key);
+                }
+                result = pipelined.syncAndReturnAll();
+                for (Object src : result) {
+                    //System.out.println(src);
+                }
+                System.out.println("Pipeline get耗时："+(System.currentTimeMillis() - t1));
+            }
+        }.start();
+    }
+}
+
+~~~
 

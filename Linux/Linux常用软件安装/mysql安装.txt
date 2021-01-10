@@ -1,0 +1,47 @@
+//下载
+[root@localhost ~]# wget http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm
+//安装
+[root@localhost ~]# yum -y install mysql57-community-release-el7-10.noarch.rpm
+
+修改安装版本信息
+vi /etc/yum.repos.d/mysql-community.repo 
+
+安装服务
+yum install -y mysql-community-server
+
+启动服务
+systemctl start mysqld.service
+查看状态
+systemctl status mysqld.service
+
+密码：
+grep "password" /var/log/mysqld.log
+2021-01-10T11:36:56.946030Z 1 [Note] A temporary password is generated for root@localhost: AZ*#a9HfAMDn
+
+
+//登录MySQL
+mysql -uroot -p
+//修改root密码
+ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';
+//查看密码设置规范
+SHOW VARIABLES LIKE 'validate_password%';
+//设置密码查看规范
+set global validate_password_length=4;  //设置长度最低为4位
+set global validate_password_policy=0;  //设置可以为简单的密码
+
+
+------ MySQL 1130错误，无法远程连接 解决 ------
+
+总体运行语句:
+
+mysql -u root -p
+
+mysql>use mysql;
+
+mysql>select 'host' from user where user='root';
+
+mysql>update user set host = '%' where user ='root';
+
+mysql>flush privileges;
+
+mysql>select 'host'   from user where user='root';
