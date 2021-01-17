@@ -1,3 +1,4 @@
+20210117
 
 更加详细查询redis官方网站【https://www.redis.net.cn/order/3625.html】
 
@@ -561,9 +562,25 @@ dir /usr/local/redis/etc/
 
 
 
-# 分布式锁，使用zk会更专业，但是如果需要高并发处理，则redis会更合适
+# 分布式锁
+
+使用zk会更专业，但是如果需要高并发处理，则redis会更合适
 
 ## redisson
+
+基于redis实现的java驻内存数据网格（In-Memory Data-Grid），提供了分布式和可扩展的java数据结构
+
+~~~xml
+    <dependencies>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.5.4</version>
+        </dependency>
+    </dependencies>
+~~~
+
+
 
 ## Luttuce
 
@@ -682,5 +699,78 @@ public class PipelineGet {
     }
 }
 
+~~~
+
+## 缓存雪崩
+
+大量热点数据同时过期
+
+1. 加锁
+2. 预更新
+3. ttl加随机数
+4. 永不过期
+
+## 缓存击穿
+
+一个热点key过期
+
+1.永不过期
+
+## 缓存穿透
+
+请求数据库不存在的值，redis失去作用
+
+
+
+## BitMap（位图）
+
+存储0/1（默认全部是0），类似签到表，在打勾1，不在打叉0
+
+1. 把不定长度转成相同长度输出
+2. 均匀（hash函数：MD5、SHA-1）,hash碰撞一定存在，只能尽可能减少概率，
+
+## Bloom Filter（布隆过滤器），Guava
+
+快速判断某个元素是否在容器里边，而且又节省内存，案例：海量元素中（100亿无序，不定长，不重复）快速判断元素是否存在？
+
+一个位数组和若干个hash函数
+
+> 1. 位数组容量基于元素个数和误判率计算得出
+> 2. 根据为数组容量大小进一步计算出哈希函数个数
+
+1. 如果布隆过滤器判断某个元素在容器中存在，不一定存在，因为可能是其他元素标记的
+2. 如果布隆过滤器判断某个元素在容器中不存在，那么一定不存在
+
+~~~xml
+         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<!-- Guava布隆过滤器-->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>21.0</version>
+		</dependency>
+
+		<!-- CountingBloomFilter 带计数器的布隆过滤器-->
+		<dependency>
+			<groupId>com.baqend</groupId>
+			<artifactId>bloom-filter</artifactId>
+			<version>1.0.7</version>
+		</dependency>
+~~~
+
+
+
+## 保留小数点位数,显示百分比
+
+~~~java
+    public static void main(String[] args) {
+        int wrong = 1100;
+        NumberFormat percentFormat = NumberFormat.getPercentInstance();
+        percentFormat.setMaximumFractionDigits(2); //最大小数位数
+        float percent = (float) wrong / 9900;
+        float bingo = (float) (9900 - wrong) / 9900;
+        System.out.println(percentFormat.format(bingo));
+        System.out.println(percentFormat.format(percent));
+    }
 ~~~
 
