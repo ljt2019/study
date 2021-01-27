@@ -159,6 +159,8 @@ let courseAttributeCode = this.refs.modifyCourseAttributeModal.getFieldValue("co
      }
  });
 <SearchModal ref="searchModal" onSearch={this.onSearch} openChange={() => this.openChange()} />
+<SearchModal wrappedComponentRef={(inst) => (this.searchModal = inst)} ref="searchModal" onSearch={this.onSearch}  />
+
 ~~~
 
 
@@ -953,6 +955,38 @@ onSwitchChange = (record, text) => {
                                 </Row>
                             </FormItem>
                         </Col>
+~~~
+
+# 选择查询
+
+~~~js
+<Col {...colSpan}>
+                                <FormItem
+                                    {...formItemLayout}
+                                    label="学年学期："
+                                >
+                                    {getFieldDecorator('semesterId', {
+                                        initialValue: this.state.semesterNow.semesterId,
+                                    })(
+                                        <Select placeholder="请选择"
+                                            optionFilterProp="children"
+                                            showSearch
+                                            onSelect={(value, semestervalue) => {
+                                                this.props.onSearch({
+                                                    semesterId: value,
+                                                    semester: semestervalue.props.semestervalue || ''
+                                                });
+                                            }}
+                                            onFocus={this.getSemesterList}
+                                        >
+                                            {this.state.semesterList.map(val =>
+                                                <Option key={val.id} semestervalue={val.name}
+                                                    value={val.name}>{val.name}</Option>
+                                            )}
+                                        </Select>
+                                    )}
+                                </FormItem>
+                            </Col>
 ~~~
 
 
