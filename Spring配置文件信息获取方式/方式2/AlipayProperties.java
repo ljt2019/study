@@ -2,6 +2,7 @@ package cn.healthmall.sail.common.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+//获取配置文件中的信息类
 @ConfigurationProperties(prefix = AlipayProperties.ALIPAY_PREFIX)
 public class AlipayProperties {
     public static final String ALIPAY_PREFIX = "pay.alipay";

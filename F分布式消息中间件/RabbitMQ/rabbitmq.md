@@ -292,3 +292,234 @@ rabbitmq.uri=amqp://guest:guest@127.0.0.1:5672
 # 默认使用 / 的vhost，如果修改vhost，加在端口后即可，如 /tigerhost
 rabbitmq.uri=amqp://guest:guest@127.0.0.1:5672/tigerhost
 ```
+
+## 死信队列
+
+
+
+
+
+
+
+# springboot使用rabbitmq
+
+## 引入依赖包
+
+~~~xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.gupaoedu</groupId>
+    <artifactId>springboot-rabbit-consumer</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>springboot-rabbit-consumer</name>
+    <description>Demo project for RabbitMQ Consumer</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.6.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.21</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+~~~
+
+## RabbitConfig配置类
+
+创建队列、交换机、队列与交换机的绑定关系
+
+~~~java
+package com.gupaoedu.config;
+
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+/**
+ * @Author: qingshan
+ * @Description: 咕泡学院，只为更好的你
+ */
+@Configuration
+@PropertySource("classpath:gupaomq.properties")
+public class RabbitConfig {
+    @Value("${com.gupaoedu.firstqueue}")
+    private String firstQueue;
+
+    @Value("${com.gupaoedu.secondqueue}")
+    private String secondQueue;
+
+    @Value("${com.gupaoedu.thirdqueue}")
+    private String thirdQueue;
+
+    @Value("${com.gupaoedu.fourthqueue}")
+    private String fourthQueue;
+
+    @Value("${com.gupaoedu.directexchange}")
+    private String directExchange;
+
+    @Value("${com.gupaoedu.topicexchange}")
+    private String topicExchange;
+
+    @Value("${com.gupaoedu.fanoutexchange}")
+    private String fanoutExchange;
+
+    // 创建四个队列
+    @Bean("vipFirstQueue")
+    public Queue getFirstQueue(){
+        return new Queue(firstQueue);
+    }
+
+    @Bean("vipSecondQueue")
+    public Queue getSecondQueue(){
+        return new Queue(secondQueue);
+    }
+
+    @Bean("vipThirdQueue")
+    public Queue getThirdQueue(){
+        return  new Queue(thirdQueue);
+    }
+
+    @Bean("vipFourthQueue")
+    public Queue getFourthQueue(){
+        return  new Queue(fourthQueue);
+    }
+
+    // 创建三个交换机
+    @Bean("vipDirectExchange")
+    public DirectExchange getDirectExchange(){
+        return new DirectExchange(directExchange);
+    }
+
+    @Bean("vipTopicExchange")
+    public TopicExchange getTopicExchange(){
+        return new TopicExchange(topicExchange);
+    }
+
+    @Bean("vipFanoutExchange")
+    public FanoutExchange getFanoutExchange(){
+        return new FanoutExchange(fanoutExchange);
+    }
+
+    // 定义四个绑定关系
+
+    // 直连型交换机(directExchange) 与 队列1绑定
+    @Bean
+    public Binding bindFirst(@Qualifier("vipFirstQueue") Queue queue, @Qualifier("vipDirectExchange") DirectExchange exchange){
+        return BindingBuilder.bind(queue).to(exchange).with("gupao.best");
+    }
+
+    // 主题型交换机(topicExchange) 与 队列2绑定
+    @Bean
+    public Binding bindSecond(@Qualifier("vipSecondQueue") Queue queue, @Qualifier("vipTopicExchange") TopicExchange exchange){
+        return BindingBuilder.bind(queue).to(exchange).with("*.gupao.*");
+    }
+
+    // 广播型交换机(fanoutExchange) 与 队列3绑定
+    @Bean
+    public Binding bindThird(@Qualifier("vipThirdQueue") Queue queue, @Qualifier("vipFanoutExchange") FanoutExchange exchange){
+        return BindingBuilder.bind(queue).to(exchange);
+    }
+
+    // 广播型交换机(fanoutExchange) 与 队列4绑定
+    @Bean
+    public Binding bindFourth(@Qualifier("vipFourthQueue") Queue queue, @Qualifier("vipFanoutExchange") FanoutExchange exchange){
+        return BindingBuilder.bind(queue).to(exchange);
+    }
+
+    /**
+     * 在消费端转换JSON消息
+     * 监听类都要加上containerFactory属性
+     * @param connectionFactory
+     * @return
+     */
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(new Jackson2JsonMessageConverter());
+        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        factory.setAutoStartup(true);
+        return factory;
+    }
+}
+~~~
+
+## 创建消费者
+
+~~~java
+package com.gupaoedu.consumer;
+
+import com.gupaoedu.entity.Merchant;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Component;
+
+/**
+ * @Author: qingshan
+ * @Description: 咕泡学院，只为更好的你
+ */
+@Component
+@PropertySource("classpath:gupaomq.properties")
+// 监听的队列名称，可以同时监听多个
+@RabbitListener(queues = "${com.gupaoedu.firstqueue}", containerFactory="rabbitListenerContainerFactory")
+public class FirstConsumer {
+
+    @RabbitHandler
+    public void process(@Payload Merchant merchant){
+        System.out.println("First Queue received msg : " + merchant.getName());
+    }
+}
+~~~
+
