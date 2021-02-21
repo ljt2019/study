@@ -183,7 +183,7 @@ Mycat 和 Sharding-Proxy
 
 docker 安装mysql
 
-~~~
+~~~shell
 docker run -itd --name mysql01 -p 3301:3306 -v /my/own/mysql01data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=a9k62c mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 ~~~
 
