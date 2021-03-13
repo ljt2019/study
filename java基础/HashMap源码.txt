@@ -3,4 +3,4 @@ ArrayList数据结构：【数组】
 
 LinkedList数据结构：【链表】，单向和双向  Node节点中 element、next、prev
 
-1、HashMap数据结构：【数组+链表】
+1、HashMap数据结构：【数组+链表】，哈希冲突过8，则红黑树
